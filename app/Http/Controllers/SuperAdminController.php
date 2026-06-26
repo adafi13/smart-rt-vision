@@ -1,0 +1,250 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Plan;
+use App\Models\Subscription;
+use App\Models\Tenant;
+use Illuminate\Http\Request;
+
+class SuperAdminController extends Controller
+{
+    public function index(Request $request)
+    {
+        // Only for recent registrations on dashboard
+        $tenants = Tenant::with([
+            'subscriptions' => fn($q) => $q->latest()->limit(1)->with('plan'),
+            'users' => fn($q) => $q->where('role', 'admin_rt')
+                ->where(fn($q2) => $q2->where('tenant_role', 'owner')->orWhereNull('tenant_role'))
+                ->limit(1),
+        ])->withCount('families')->latest()->limit(5)->get();
+
+        $activeTenantsStartOfMonth = Tenant::where('created_at', '<', now()->startOfMonth())->where('status', 'active')->count();
+        $churnedThisMonth = Tenant::whereIn('status', ['expired', 'suspended'])
+            ->where('updated_at', '>=', now()->startOfMonth())
+            ->count();
+        $churnRate = $activeTenantsStartOfMonth > 0 ? ($churnedThisMonth / $activeTenantsStartOfMonth) * 100 : 0;
+
+        // Tenants expiring in next 7 days
+        $expiringTenants = Tenant::with(['subscriptions' => fn($q) => $q->latest()->with('plan')])
+            ->where(function ($q) {
+                $q->where(function ($q2) {
+                    $q2->where('status', 'trial')->whereBetween('trial_ends_at', [now(), now()->addDays(7)]);
+                })->orWhereHas('subscriptions', function ($q3) {
+                    $q3->where('status', 'active')->whereBetween('current_period_end', [now(), now()->addDays(7)]);
+                });
+            })
+            ->get();
+
+        $stats = [
+            'total'             => Tenant::count(),
+            'trial'             => Tenant::where('status', 'trial')->count(),
+            'active'            => Tenant::where('status', 'active')->count(),
+            'expired'           => Tenant::whereIn('status', ['expired', 'suspended'])->count(),
+            'mrr'               => Subscription::where('status', 'active')
+                ->where('current_period_end', '>', now())
+                ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
+                ->sum('plans.price_monthly'),
+            'churn_rate'        => round($churnRate, 1),
+            'total_revenue'     => Subscription::whereNotNull('paid_at')->sum('amount'),
+            'revenue_this_month' => Subscription::whereNotNull('paid_at')
+                ->whereMonth('paid_at', now()->month)
+                ->whereYear('paid_at', now()->year)
+                ->sum('amount'),
+        ];
+
+        // Build revenue chart data (last 6 months) — computed in controller to avoid Blade+PHP parse errors
+        $revenueChartData = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonths($i);
+            $revenueChartData[] = [
+                'label' => $month->translatedFormat('M Y'),
+                'total' => Subscription::whereNotNull('paid_at')
+                    ->whereMonth('paid_at', $month->month)
+                    ->whereYear('paid_at', $month->year)
+                    ->sum('amount'),
+            ];
+        }
+
+        return view('super-admin.index', compact('stats', 'tenants', 'revenueChartData', 'expiringTenants'));
+    }
+
+    public function tenants(Request $request)
+    {
+        $query = Tenant::with([
+            'subscriptions' => fn($q) => $q->latest()->limit(1)->with('plan'),
+            'users' => fn($q) => $q->where('role', 'admin_rt')
+                ->where(fn($q2) => $q2->where('tenant_role', 'owner')->orWhereNull('tenant_role'))
+                ->limit(1),
+        ])->withCount('families');
+
+        if ($search = $request->input('search')) {
+            $query->where('name', 'like', "%{$search}%")->orWhere('slug', 'like', "%{$search}%");
+        }
+
+        if ($status = $request->input('status')) {
+            $query->where('status', $status);
+        }
+
+        $tenants = $query->latest()->paginate(20)->withQueryString();
+
+        return view('super-admin.tenants', compact('tenants'));
+    }
+
+    public function show(Tenant $tenant)
+    {
+        $tenant->load(['users', 'subscriptions.plan']);
+        $plans = Plan::where('is_active', true)->orderBy('sort_order')->get();
+
+        // Owner = user admin_rt with owner/null tenant_role
+        $ownerUser = $tenant->users()
+            ->where('role', 'admin_rt')
+            ->where(function ($q) {
+                $q->where('tenant_role', 'owner')->orWhereNull('tenant_role');
+            })
+            ->first();
+
+        $usage = [
+            'kk'      => $tenant->families()->count(),
+            'warga'   => \App\Models\Member::whereHas('family', fn($q) => $q->where('tenant_id', $tenant->id))->count(),
+            'staff'   => $tenant->users()->where('role', 'admin_rt')->count(),
+            'ai_used' => $tenant->ai_extractions_used,
+        ];
+
+        $activeSub = $tenant->activeSubscription();
+        $isExpired = in_array($tenant->status, ['expired', 'suspended']);
+
+        // Revenue and Transactions Data for ApoApps layout
+        $revenueStats = [
+            'total_revenue' => $tenant->subscriptions()->where('status', 'active')->sum('amount'),
+            'trx_all_time' => $tenant->subscriptions()->where('status', 'active')->count(),
+            'trx_this_month' => $tenant->subscriptions()->where('status', 'active')->whereMonth('paid_at', now()->month)->whereYear('paid_at', now()->year)->count(),
+            'revenue_this_month' => $tenant->subscriptions()->where('status', 'active')->whereMonth('paid_at', now()->month)->whereYear('paid_at', now()->year)->sum('amount'),
+        ];
+
+        $staffs = $tenant->users()->where('role', 'admin_rt')->get();
+        $recentTransactions = $tenant->subscriptions()->with('plan')->latest()->limit(5)->get();
+        $histories = $tenant->subscriptions()->with('plan')->latest()->limit(3)->get(); // For right sidebar
+
+        return view('super-admin.show', compact('tenant', 'plans', 'usage', 'ownerUser', 'activeSub', 'isExpired', 'revenueStats', 'staffs', 'recentTransactions', 'histories'));
+    }
+    public function edit(Tenant $tenant)
+    {
+        $plans = Plan::where('is_active', true)->orderBy('sort_order')->get();
+        $activeSub = $tenant->activeSubscription();
+        return view('super-admin.edit', compact('tenant', 'plans', 'activeSub'));
+    }
+
+    public function update(Request $request, Tenant $tenant)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'status' => 'required|in:trial,active,expired,suspended',
+            'plan_id' => 'nullable|exists:plans,id',
+            'current_period_end' => 'nullable|date',
+        ]);
+
+        $tenant->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'status' => $request->status,
+        ]);
+
+        if ($request->plan_id && $request->current_period_end) {
+            $activeSub = $tenant->activeSubscription();
+            if ($activeSub) {
+                // if same plan, just update end date
+                if ($activeSub->plan_id == $request->plan_id) {
+                    $activeSub->update(['current_period_end' => $request->current_period_end]);
+                } else {
+                    // end current sub and create new
+                    $activeSub->update(['status' => 'expired']);
+                    Subscription::forceCreate([
+                        'tenant_id' => $tenant->id,
+                        'plan_id' => $request->plan_id,
+                        'status' => 'active',
+                        'current_period_start' => now(),
+                        'current_period_end' => $request->current_period_end,
+                        'amount' => 0,
+                        'paid_at' => now(),
+                    ]);
+                }
+            } else {
+                Subscription::forceCreate([
+                    'tenant_id' => $tenant->id,
+                    'plan_id' => $request->plan_id,
+                    'status' => 'active',
+                    'current_period_start' => now(),
+                    'current_period_end' => $request->current_period_end,
+                    'amount' => 0,
+                    'paid_at' => now(),
+                ]);
+            }
+        } elseif (!$request->plan_id) {
+            // If they selected "Tanpa Paket", expire active sub
+            if ($activeSub = $tenant->activeSubscription()) {
+                $activeSub->update(['status' => 'expired']);
+            }
+        }
+
+        return redirect()->route('super-admin.show', $tenant)->with('success', 'Data tenant berhasil diperbarui.');
+    }
+
+    public function updateStatus(Request $request, Tenant $tenant)
+    {
+        $request->validate(['status' => 'required|in:trial,active,expired,suspended']);
+
+        $tenant->update(['status' => $request->status]);
+
+        return back()->with('success', "Status tenant {$tenant->name} diubah menjadi {$request->status}.");
+    }
+
+    public function grantSubscription(Request $request, Tenant $tenant)
+    {
+        $request->validate([
+            'plan_id' => 'required|exists:plans,id',
+            'months' => 'required|integer|min:1|max:24',
+        ]);
+
+        $plan = Plan::find($request->plan_id);
+
+        Subscription::forceCreate([
+            'tenant_id' => $tenant->id,
+            'plan_id' => $plan->id,
+            'status' => 'active',
+            'current_period_start' => now(),
+            'current_period_end' => now()->addMonths((int) $request->months),
+            'amount' => 0,
+            'paid_at' => now(),
+        ]);
+
+        $tenant->update(['status' => 'active']);
+
+        return back()->with('success', "Subscription {$plan->name} ({$request->months} bulan) diberikan manual ke {$tenant->name}.");
+    }
+
+    public function resetOwnerPassword(Request $request, Tenant $tenant)
+    {
+        $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $owner = $tenant->users()
+            ->where('role', 'admin_rt')
+            ->where(function ($q) {
+                $q->where('tenant_role', 'owner')->orWhereNull('tenant_role');
+            })
+            ->first();
+
+        if (!$owner) {
+            return back()->with('error', 'Owner RT tidak ditemukan.');
+        }
+
+        $owner->update(['password' => \Illuminate\Support\Facades\Hash::make($request->password)]);
+
+        return back()->with('success', "Password Owner RT {$tenant->name} berhasil direset.");
+    }
+}
