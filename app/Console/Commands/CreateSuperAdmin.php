@@ -53,7 +53,8 @@ class CreateSuperAdmin extends Command
             'name' => $name,
             'email' => $email,
             'password' => Hash::make($password),
-            // Jika ada column role, tambahkan di sini (opsional tergantung struktur DB Anda)
+            'is_super_admin' => true,
+            'su_role' => 'superadmin'
         ]);
 
         $this->info("Akun Super Admin ({$email}) berhasil dibuat! Silakan login.");
