@@ -187,6 +187,23 @@ class HomeController extends Controller
         ]);
         
         $rtPhone = $tenant->phone;
+        
+        // Fallback: Jika nomor RT utama kosong, cari nomor pengurus (Ketua RT atau Keamanan)
+        if (empty($rtPhone)) {
+            $staff = \App\Models\RtStaff::where('tenant_id', $tenantId)
+                        ->whereNotNull('phone')
+                        ->where(function($q) {
+                            $q->where('position', 'like', '%Ketua%')
+                              ->orWhere('position', 'like', '%Keamanan%')
+                              ->orWhere('position', 'like', '%Satpam%');
+                        })
+                        ->orderBy('order_level')
+                        ->first();
+            if ($staff) {
+                $rtPhone = $staff->phone;
+            }
+        }
+        
         $waUrl = null;
         
         if ($rtPhone) {
