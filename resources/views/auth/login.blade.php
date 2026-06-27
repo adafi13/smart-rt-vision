@@ -8,9 +8,12 @@
         </div>
     @endif
 
-    @if ($errors->any())
+    @php
+        $globalErrors = $errors->except(['email', 'password']);
+    @endphp
+    @if ($globalErrors->any())
         <div style="margin-bottom:20px;padding:12px 16px;border-radius:12px;background:#fff1f2;border:1px solid #fecdd3;">
-            @foreach ($errors->all() as $error)
+            @foreach ($globalErrors->all() as $error)
                 <p style="font-size:12px;color:#be123c;font-weight:600;margin:0 0 4px;">{{ $error }}</p>
             @endforeach
         </div>
