@@ -27,6 +27,7 @@
             background: #ffffff;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             overflow-y: auto;
         }
         @media (min-width: 1024px) {
