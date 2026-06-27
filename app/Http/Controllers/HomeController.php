@@ -212,12 +212,17 @@ class HomeController extends Controller
                 $rtPhone = '62' . substr($rtPhone, 1);
             }
             
-            $msg = "*🚨 DARURAT (PANIC BUTTON) 🚨*\n\n";
-            $msg .= "Telah dilaporkan kondisi darurat dari Portal Warga:\n";
-            $msg .= "👤 *Pelapor:* " . $request->reporter_name . " (" . $request->reporter_contact . ")\n";
-            $msg .= "📍 *Lokasi:* " . $request->location . "\n";
-            $msg .= "⚠️ *Kategori:* " . $request->type . "\n\n";
-            $msg .= "Mohon segera ditindaklanjuti!";
+            $msg = "[URGENT] LAPORAN DARURAT WARGA\n";
+            $msg .= "--------------------------------------\n";
+            $msg .= "Telah diterima laporan kondisi darurat melalui Sistem Portal Warga dengan rincian sebagai berikut:\n\n";
+            $msg .= "*DATA PELAPOR*\n";
+            $msg .= "Nama      : " . $request->reporter_name . "\n";
+            $msg .= "Kontak    : " . $request->reporter_contact . "\n\n";
+            $msg .= "*INFORMASI KEJADIAN*\n";
+            $msg .= "Kategori  : " . strtoupper($request->type) . "\n";
+            $msg .= "Lokasi    : " . $request->location . "\n\n";
+            $msg .= "--------------------------------------\n";
+            $msg .= "Dimohon kepada tim Keamanan/Pengurus RT untuk dapat segera menindaklanjuti laporan ini. Terima kasih.";
             
             $waUrl = "https://wa.me/" . $rtPhone . "?text=" . urlencode($msg);
         }
