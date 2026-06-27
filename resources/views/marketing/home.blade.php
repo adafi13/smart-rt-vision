@@ -332,10 +332,15 @@
                 </div>
             </div>
 
-            <div class="border-t border-white/10 mt-12 pt-6">
+            <div class="border-t border-white/10 mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <p class="text-xs text-slate-400">
                     &copy; {{ date('Y') }} <strong class="text-slate-200 font-semibold">PT. Sekawan Putra Pratama</strong>. Seluruh Hak Cipta Dilindungi.
                 </p>
+                <div class="flex items-center gap-4 text-xs text-slate-500">
+                    <a href="{{ url('/kebijakan-privasi') }}" class="hover:text-slate-300 transition-colors">Kebijakan Privasi</a>
+                    <span>·</span>
+                    <a href="{{ url('/syarat-dan-ketentuan') }}" class="hover:text-slate-300 transition-colors">Syarat & Ketentuan</a>
+                </div>
             </div>
         </div>
     </footer>
