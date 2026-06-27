@@ -77,12 +77,6 @@
             <span style="font-size:13px;color:#64748b;font-weight:500;">Ingat sesi saya</span>
         </label>
 
-        <!-- Cloudflare Turnstile -->
-        <div style="margin-top:4px;">
-            <div class="cf-turnstile" data-sitekey="{{ env('TURNSTILE_SITE_KEY', '1x00000000000000000000AA') }}" data-theme="light"></div>
-            @error('cf-turnstile-response') <p class="auth-error" style="margin-top:4px;">{{ $message }}</p> @enderror
-        </div>
-
         <!-- Submit -->
         <button type="submit" id="loginBtn" class="auth-btn" style="margin-top:4px;">
             <span id="btnText" style="display:flex;align-items:center;justify-content:center;gap:8px;">

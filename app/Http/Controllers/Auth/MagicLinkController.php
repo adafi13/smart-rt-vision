@@ -21,19 +21,6 @@ class MagicLinkController extends Controller
     {
         $request->validate(['email' => 'required|email']);
         
-        // Turnstile
-        $turnstileResponse = \Illuminate\Support\Facades\Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
-            'secret' => env('TURNSTILE_SECRET_KEY', '1x0000000000000000000000000000000AA'),
-            'response' => $request->input('cf-turnstile-response'),
-            'remoteip' => $request->ip(),
-        ]);
-
-        if (!$turnstileResponse->json('success')) {
-            throw ValidationException::withMessages([
-                'cf-turnstile-response' => 'Verifikasi keamanan gagal. Silakan coba lagi.'
-            ]);
-        }
-
         $user = User::where('email', $request->email)->first();
 
         if ($user) {

@@ -31,12 +31,6 @@
             </div>
             @error('email') <p class="auth-error">{{ $message }}</p> @enderror
         </div>
-        
-        <!-- Cloudflare Turnstile -->
-        <div>
-            <div class="cf-turnstile" data-sitekey="{{ env('TURNSTILE_SITE_KEY', '1x00000000000000000000AA') }}" data-theme="light"></div>
-            @error('cf-turnstile-response') <p class="auth-error" style="margin-top:4px;">{{ $message }}</p> @enderror
-        </div>
 
         <button type="submit" id="magicBtn" class="auth-btn" style="margin-top:4px;">
             <span id="btnText" style="display:flex;align-items:center;justify-content:center;gap:8px;">

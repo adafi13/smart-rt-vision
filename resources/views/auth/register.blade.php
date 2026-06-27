@@ -188,12 +188,6 @@
             @error('terms') <p class="auth-error" style="margin-top:4px;">{{ $message }}</p> @enderror
         </div>
 
-        <!-- Cloudflare Turnstile -->
-        <div style="margin-top:8px;">
-            <div class="cf-turnstile" data-sitekey="{{ env('TURNSTILE_SITE_KEY', '1x00000000000000000000AA') }}" data-theme="light"></div>
-            @error('cf-turnstile-response') <p class="auth-error" style="margin-top:4px;">Verifikasi keamanan gagal. Silakan coba lagi.</p> @enderror
-        </div>
-
         <!-- Submit -->
         <button type="submit" class="auth-btn" style="margin-top:4px;">
             <span style="display:flex;align-items:center;justify-content:center;gap:8px;">
