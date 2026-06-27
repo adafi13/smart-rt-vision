@@ -1,4 +1,6 @@
 <x-guest-layout>
+
+    {{-- ═══════ DEFAULT SLOT (Form Panel) ═══════ --}}
     @if ($errors->any())
         <div style="margin-bottom:20px;padding:12px 16px;border-radius:12px;background:#fff1f2;border:1px solid #fecdd3;">
             @foreach ($errors->all() as $error)
@@ -38,7 +40,7 @@
             @error('tenant_name') <p class="auth-error">{{ $message }}</p> @enderror
         </div>
 
-        <!-- Nama -->
+        <!-- Nama Lengkap -->
         <div>
             <label class="auth-label" for="name">Nama Lengkap Anda</label>
             <div class="icon-field">
@@ -98,38 +100,51 @@
         </p>
     </div>
 
-    @push('sidebar')
+    {{-- ═══════ NAMED SLOT: Sidebar (harus langsung di dalam komponen, TIDAK dalam @push) ═══════ --}}
     <x-slot name="sidebar">
         <div style="display:flex;flex-direction:column;gap:28px;">
+
+            <!-- Heading -->
             <div class="fade-in-up">
-                <h2 style="font-size:36px;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1.15;margin:0 0 12px;">
+                <h2 style="font-size:32px;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1.15;margin:0 0 12px;">
                     Mulai perjalanan<br><span style="color:#60a5fa;">digital RT Anda.</span>
                 </h2>
-                <p style="font-size:14px;color:rgba(255,255,255,0.5);font-weight:500;line-height:1.7;max-width:320px;margin:0;">
-                    Ratusan RT di seluruh Indonesia sudah membuktikan manfaatnya. Bergabunglah sekarang secara gratis.
+                <p style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:500;line-height:1.7;margin:0;">
+                    Ratusan RT sudah membuktikan manfaatnya. Bergabunglah sekarang secara gratis.
                 </p>
             </div>
 
             <!-- Steps -->
-            <div style="display:flex;flex-direction:column;gap:12px;">
-                @foreach([
-                    ['num' => '1', 'title' => 'Daftar Akun', 'desc' => 'Isi nama RT dan email Anda dalam 30 detik'],
-                    ['num' => '2', 'title' => 'Upload Data KK', 'desc' => 'AI kami otomatis membaca dan mengekstrak data'],
-                    ['num' => '3', 'title' => 'Aktifkan Portal', 'desc' => 'Warga bisa langsung mengakses layanan online'],
-                ] as $step)
-                <div class="glass-card fade-in-up" style="padding:14px 18px;border-radius:16px;display:flex;align-items:center;gap:14px;">
+            <div style="display:flex;flex-direction:column;gap:10px;">
+                <div class="glass-card fade-in-up" style="padding:14px 18px;border-radius:14px;display:flex;align-items:center;gap:14px;">
                     <div style="width:32px;height:32px;border-radius:10px;background:rgba(96,165,250,0.2);border:1px solid rgba(96,165,250,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        <span style="font-size:13px;font-weight:900;color:#60a5fa;">{{ $step['num'] }}</span>
+                        <span style="font-size:13px;font-weight:900;color:#60a5fa;">1</span>
                     </div>
                     <div>
-                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 2px;">{{ $step['title'] }}</h4>
-                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;">{{ $step['desc'] }}</p>
+                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 2px;">Daftar Akun</h4>
+                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;">Isi nama RT dan email Anda dalam 30 detik</p>
                     </div>
                 </div>
-                @endforeach
+                <div class="glass-card fade-in-up" style="padding:14px 18px;border-radius:14px;display:flex;align-items:center;gap:14px;">
+                    <div style="width:32px;height:32px;border-radius:10px;background:rgba(96,165,250,0.2);border:1px solid rgba(96,165,250,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span style="font-size:13px;font-weight:900;color:#60a5fa;">2</span>
+                    </div>
+                    <div>
+                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 2px;">Upload Data KK</h4>
+                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;">AI kami otomatis membaca dan mengekstrak data</p>
+                    </div>
+                </div>
+                <div class="glass-card fade-in-up" style="padding:14px 18px;border-radius:14px;display:flex;align-items:center;gap:14px;">
+                    <div style="width:32px;height:32px;border-radius:10px;background:rgba(96,165,250,0.2);border:1px solid rgba(96,165,250,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span style="font-size:13px;font-weight:900;color:#60a5fa;">3</span>
+                    </div>
+                    <div>
+                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 2px;">Aktifkan Portal</h4>
+                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;">Warga langsung bisa mengakses layanan online</p>
+                    </div>
+                </div>
             </div>
         </div>
     </x-slot>
-    @endpush
 
 </x-guest-layout>

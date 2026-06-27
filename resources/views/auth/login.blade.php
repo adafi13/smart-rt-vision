@@ -1,4 +1,6 @@
 <x-guest-layout>
+
+    {{-- ═══════ DEFAULT SLOT (Form Panel) ═══════ --}}
     @if (session('status'))
         <div style="margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:12px;padding:12px 16px;border-radius:12px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;font-weight:600;">
             <svg style="width:15px;height:15px;flex-shrink:0;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
@@ -82,7 +84,7 @@
                 <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </span>
             <span id="btnLoading" style="display:none;align-items:center;justify-content:center;gap:8px;">
-                <svg style="width:18px;height:18px;animation:spin 1s linear infinite;" fill="none" viewBox="0 0 24 24"><circle style="opacity:0.25;" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path style="opacity:0.75;" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                <svg style="width:18px;height:18px;animation:loginSpin 1s linear infinite;" fill="none" viewBox="0 0 24 24"><circle style="opacity:0.25;" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path style="opacity:0.75;" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                 Memproses...
             </span>
         </button>
@@ -98,14 +100,14 @@
     </a>
 
     <!-- Register link -->
-    <div style="text-align:center;margin-top:24px;padding-top:20px;border-top:1px solid #f1f5f9;">
+    <div style="text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid #f1f5f9;">
         <p style="font-size:13px;color:#64748b;font-weight:500;margin:0;">
             Belum memiliki akun?
             <a href="{{ route('register') }}" style="color:#2563eb;font-weight:700;text-decoration:none;">Buat Akun RT &rarr;</a>
         </p>
     </div>
 
-    @push('scripts')
+    <style>@keyframes loginSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</style>
     <script>
         function togglePassword(id, btn) {
             const input = document.getElementById(id);
@@ -121,70 +123,78 @@
                 eyeClosed.style.display = 'none';
             }
         }
-
         document.getElementById('loginForm').addEventListener('submit', function() {
             const btn = document.getElementById('loginBtn');
-            const btnText = document.getElementById('btnText');
-            const btnLoading = document.getElementById('btnLoading');
             btn.disabled = true;
-            btnText.style.display = 'none';
-            btnLoading.style.display = 'flex';
+            document.getElementById('btnText').style.display = 'none';
+            const loading = document.getElementById('btnLoading');
+            loading.style.display = 'flex';
         });
     </script>
-    <style>
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    </style>
-    @endpush
 
-    @push('sidebar')
+    {{-- ═══════ NAMED SLOT: Sidebar (harus langsung di dalam komponen, TIDAK dalam @push) ═══════ --}}
     <x-slot name="sidebar">
-        <div style="display:flex;flex-direction:column;gap:32px;">
-            <div style="display:flex;flex-direction:column;gap:12px;">
-                <h2 style="font-size:38px;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1.1;margin:0;" class="fade-in-up">
+        <div style="display:flex;flex-direction:column;gap:28px;">
+
+            <!-- Heading -->
+            <div class="fade-in-up">
+                <h2 style="font-size:32px;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1.15;margin:0 0 12px;">
                     Kelola <span style="color:#60a5fa;">Warga RT</span><br>Lebih Cerdas.
                 </h2>
-                <p style="font-size:14px;color:rgba(255,255,255,0.5);font-weight:500;line-height:1.7;max-width:340px;margin:0;" class="fade-in-up">
-                    Platform terintegrasi untuk mengelola data warga, keuangan RT, pelaporan, inventaris, dan layanan mandiri dalam satu sistem.
+                <p style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:500;line-height:1.7;margin:0;">
+                    Platform terintegrasi untuk mengelola data warga, keuangan RT, pelaporan, inventaris, dan layanan mandiri.
                 </p>
-                <!-- Stats -->
-                <div style="display:flex;align-items:center;gap:24px;padding-top:8px;" class="fade-in-up">
-                    <div>
-                        <p style="font-size:24px;font-weight:900;color:#fff;line-height:1;margin:0;">AI<span style="color:#60a5fa;">✦</span></p>
-                        <p style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.18em;margin-top:6px;">Gemini AI</p>
-                    </div>
-                    <span style="width:1px;height:36px;background:rgba(255,255,255,0.1);"></span>
-                    <div>
-                        <p style="font-size:24px;font-weight:900;color:#fff;line-height:1;margin:0;">100<span style="color:#60a5fa;">%</span></p>
-                        <p style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.18em;margin-top:6px;">Transparan</p>
-                    </div>
-                    <span style="width:1px;height:36px;background:rgba(255,255,255,0.1);"></span>
-                    <div>
-                        <p style="font-size:24px;font-weight:900;color:#fff;line-height:1;margin:0;">4.9<span style="color:#60a5fa;">/5</span></p>
-                        <p style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.18em;margin-top:6px;">Rating</p>
-                    </div>
+            </div>
+
+            <!-- Stats -->
+            <div style="display:flex;align-items:center;gap:20px;" class="fade-in-up">
+                <div>
+                    <p style="font-size:22px;font-weight:900;color:#fff;line-height:1;margin:0;">AI<span style="color:#60a5fa;">✦</span></p>
+                    <p style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.15em;margin-top:5px;">Gemini AI</p>
+                </div>
+                <span style="width:1px;height:32px;background:rgba(255,255,255,0.1);"></span>
+                <div>
+                    <p style="font-size:22px;font-weight:900;color:#fff;line-height:1;margin:0;">100<span style="color:#60a5fa;">%</span></p>
+                    <p style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.15em;margin-top:5px;">Transparan</p>
+                </div>
+                <span style="width:1px;height:32px;background:rgba(255,255,255,0.1);"></span>
+                <div>
+                    <p style="font-size:22px;font-weight:900;color:#fff;line-height:1;margin:0;">4.9<span style="color:#60a5fa;">/5</span></p>
+                    <p style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.15em;margin-top:5px;">Rating</p>
                 </div>
             </div>
 
             <!-- Feature Cards -->
-            <div style="display:flex;flex-direction:column;gap:12px;">
-                @foreach([
-                    ['icon' => 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', 'title' => 'Data Warga Aman', 'desc' => 'Seluruh data KK terenkripsi dan terlindungi'],
-                    ['icon' => 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', 'title' => 'Keuangan Transparan', 'desc' => 'Laporan kas real-time yang dapat diakses warga'],
-                    ['icon' => 'M13 10V3L4 14h7v7l9-11h-7z', 'title' => 'Ekstraksi AI Otomatis', 'desc' => 'Upload foto KK, data langsung terisi oleh AI'],
-                ] as $feature)
-                <div class="glass-card" style="padding:16px 20px;border-radius:16px;display:flex;align-items:center;gap:16px;" class="fade-in-up">
-                    <div class="glass-icon" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        <svg style="width:22px;height:22px;color:#60a5fa;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $feature['icon'] }}"/></svg>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+                <div class="glass-card fade-in-up" style="padding:14px 18px;border-radius:14px;display:flex;align-items:center;gap:14px;">
+                    <div class="glass-icon" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <svg style="width:20px;height:20px;color:#60a5fa;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                     </div>
                     <div>
-                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 3px;">{{ $feature['title'] }}</h4>
-                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;line-height:1.5;">{{ $feature['desc'] }}</p>
+                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 2px;">Data Warga Aman</h4>
+                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;">Seluruh data KK terenkripsi dan terlindungi</p>
                     </div>
                 </div>
-                @endforeach
+                <div class="glass-card fade-in-up" style="padding:14px 18px;border-radius:14px;display:flex;align-items:center;gap:14px;">
+                    <div class="glass-icon" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <svg style="width:20px;height:20px;color:#60a5fa;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    </div>
+                    <div>
+                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 2px;">Keuangan Transparan</h4>
+                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;">Laporan kas real-time dapat diakses warga</p>
+                    </div>
+                </div>
+                <div class="glass-card fade-in-up" style="padding:14px 18px;border-radius:14px;display:flex;align-items:center;gap:14px;">
+                    <div class="glass-icon" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <svg style="width:20px;height:20px;color:#60a5fa;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <div>
+                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 2px;">Ekstraksi AI Otomatis</h4>
+                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;">Upload foto KK, data langsung terisi AI</p>
+                    </div>
+                </div>
             </div>
         </div>
     </x-slot>
-    @endpush
 
 </x-guest-layout>
