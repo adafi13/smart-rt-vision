@@ -28,4 +28,9 @@ class Plan extends Model
     {
         return $this->max_ai_extractions_per_month === null;
     }
+
+    public function isUnlimitedUsers(): bool
+    {
+        return $this->max_users === null;
+    }
 }

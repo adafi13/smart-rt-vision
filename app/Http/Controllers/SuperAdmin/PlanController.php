@@ -61,8 +61,8 @@ class PlanController extends Controller
             'price_monthly' => 'required|numeric|min:0',
             'price_yearly' => 'required|numeric|min:0',
             'max_kk' => 'nullable|integer|min:1',
+            'max_users' => 'nullable|integer|min:1',
             'max_ai_extractions_per_month' => 'nullable|integer|min:1',
-            'features' => 'nullable|array',
             'is_popular' => 'boolean',
             'is_active' => 'boolean',
             'sort_order' => 'required|integer',
@@ -70,19 +70,7 @@ class PlanController extends Controller
 
         $data['is_popular'] = $request->boolean('is_popular');
         $data['is_active'] = $request->boolean('is_active');
-
-        // Ambil semua key fitur yang tersedia dari request features
-        $availableFeatures = [
-            'data_kk', 'data_warga', 'iuran_warga', 'pengeluaran_kas', 
-            'pengajuan_surat', 'laporan_warga', 'lapor_peristiwa', 'berita_pengumuman', 
-            'pasar_umkm', 'export_laporan'
-        ];
-
-        $features = [];
-        foreach ($availableFeatures as $feature) {
-            $features[$feature] = $request->boolean("features.$feature");
-        }
-        $data['features'] = $features;
+        $data['features'] = []; // Modul eksklusif dihilangkan, selalu kosong
 
         return $data;
     }

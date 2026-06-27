@@ -49,6 +49,11 @@ class HomeController extends Controller
                 ->where('is_active', true)
                 ->orderBy('order_level')
                 ->get(),
+                
+            'active_polls' => \App\Models\Poll::with('options')
+                ->where('tenant_id', app('currentTenant')->id)
+                ->get()
+                ->filter(function($poll) { return $poll->is_active; }),
         ];
 
         return view('public.home', $stats);
@@ -232,5 +237,116 @@ class HomeController extends Controller
             'message' => 'Laporan Darurat telah dikirim! ' . ($waUrl ? 'Anda akan dialihkan ke WhatsApp pengurus...' : 'Pengurus RT akan segera menindaklanjuti.'),
             'whatsapp_url' => $waUrl
         ]);
+    }
+    public function submitVote(\Illuminate\Http\Request $request)
+    {
+        $tenantId = app('currentTenant')->id;
+
+        $request->validate([
+            'nik' => 'required|string',
+            'poll_id' => 'required|exists:polls,id',
+            'poll_option_id' => 'required|exists:poll_options,id',
+        ]);
+
+        // Cek validasi NIK aktif
+        $member = \App\Models\Member::where('tenant_id', $tenantId)
+                    ->where('nik', $request->nik)
+                    ->where('status_warga', 'Aktif')
+                    ->first();
+
+        if (!$member) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal: NIK tidak ditemukan atau status warga tidak aktif.'
+            ]);
+        }
+
+        // Cek apakah poll valid dan aktif
+        $poll = \App\Models\Poll::where('id', $request->poll_id)->where('tenant_id', $tenantId)->first();
+        if (!$poll || !$poll->is_active) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal: Polling tidak ditemukan atau sudah ditutup.'
+            ]);
+        }
+
+        // Cek apakah sudah pernah vote
+        $alreadyVoted = \App\Models\PollVote::where('poll_id', $poll->id)
+                            ->where('nik', $request->nik)
+                            ->exists();
+
+        if ($alreadyVoted) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal: Anda (NIK ini) sudah pernah memberikan suara pada polling ini. 1 Warga = 1 Suara.'
+            ]);
+        }
+
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($request, $poll) {
+                \App\Models\PollVote::create([
+                    'poll_id' => $poll->id,
+                    'poll_option_id' => $request->poll_option_id,
+                    'nik' => $request->nik,
+                ]);
+
+                \App\Models\PollOption::where('id', $request->poll_option_id)->increment('votes_count');
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Terima kasih! Suara Anda berhasil direkam.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem. Silakan coba lagi.'
+            ]);
+        }
+    }
+
+    public function submitGuestbook(\Illuminate\Http\Request $request)
+    {
+        $tenantId = app('currentTenant')->id;
+
+        $request->validate([
+            'pin' => 'required|string',
+            'nama_tamu' => 'required|string|max:255',
+            'plat_nomor' => 'nullable|string|max:20',
+            'tujuan_rumah' => 'required|string|max:255',
+            'keperluan' => 'required|string',
+        ]);
+
+        // Verifikasi PIN dengan pengaturan (fallback ke PIN default '1234' jika belum diatur)
+        $securityPin = \App\Models\Setting::get("tenant_{$tenantId}_security_pin", "1234");
+        
+        if ($request->pin !== $securityPin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal: PIN Keamanan salah!'
+            ]);
+        }
+
+        try {
+            \App\Models\Guestbook::create([
+                'tenant_id' => $tenantId,
+                'nama_tamu' => $request->nama_tamu,
+                'plat_nomor' => strtoupper($request->plat_nomor),
+                'tujuan_rumah' => $request->tujuan_rumah,
+                'keperluan' => $request->keperluan,
+                'status' => 'Masuk',
+                'waktu_masuk' => now(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data tamu berhasil dicatat!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem.'
+            ]);
+        }
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Member;
 use App\Models\Report;
+use App\Models\ReportReply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -96,16 +97,18 @@ class ReportController extends Controller
 
         // Format replies
         foreach ($laporan->replies as $reply) {
+            $sender = $reply->is_system ? 'Sistem' : ($reply->user_id ? ($reply->user->name ?? 'Pengurus RT') : 'Warga');
             $timeline[] = [
                 'waktu' => $reply->created_at->translatedFormat('d M Y, H:i'),
                 'pesan' => $reply->message,
                 'is_system' => $reply->is_system,
-                'sender' => $reply->is_system ? 'Sistem' : ($reply->user->name ?? 'Pengurus RT'),
+                'is_admin' => !is_null($reply->user_id),
+                'sender' => $sender,
+                'attachment_url' => $reply->attachment_path ? asset('storage/' . $reply->attachment_path) : null,
             ];
         }
 
         return response()->json([
-            'success' => true,
             'data' => [
                 'ticket_number' => $laporan->ticket_number,
                 'pelapor' => $laporan->member ? $laporan->member->nama : $laporan->reporter_name,
@@ -114,6 +117,45 @@ class ReportController extends Controller
                 'status' => $laporan->status,
                 'timeline' => array_reverse($timeline), // Newest first
             ]
+        ]);
+    }
+
+    public function balasLaporan(Request $request)
+    {
+        $request->validate([
+            'ticket_number' => 'required|string',
+            'message' => 'required|string',
+            'attachment' => 'nullable|image|max:2048',
+        ]);
+
+        $laporan = Report::where('tenant_id', app('currentTenant')->id)
+            ->where('ticket_number', $request->ticket_number)
+            ->first();
+
+        if (! $laporan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tiket tidak ditemukan.',
+            ]);
+        }
+
+        $attachmentPath = null;
+        if ($request->hasFile('attachment')) {
+            $attachmentPath = $request->file('attachment')->store('reports', 'public');
+        }
+
+        ReportReply::create([
+            'tenant_id' => $laporan->tenant_id,
+            'report_id' => $laporan->id,
+            'user_id' => null, // null means from Warga
+            'message' => $request->message,
+            'attachment_path' => $attachmentPath,
+            'is_system' => false,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Balasan berhasil dikirim.',
         ]);
     }
 }

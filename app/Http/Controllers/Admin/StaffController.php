@@ -32,6 +32,10 @@ class StaffController extends Controller
             'tenant_role' => 'required|in:sekretaris,bendahara,owner',
         ]);
 
+        if (! app('currentTenant')->canAddMoreUsers()) {
+            return back()->with('error', 'Batas maksimal Akun Pengurus sudah tercapai. Silakan upgrade paket.');
+        }
+
         User::create([
             'name' => $request->name,
             'email' => $request->email,

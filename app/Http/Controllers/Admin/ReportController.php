@@ -33,10 +33,16 @@ class ReportController extends Controller
         $request->validate([
             'status' => 'required|in:Menunggu,Proses,Selesai,Ditolak',
             'message' => 'required|string',
+            'attachment' => 'nullable|image|max:2048',
         ]);
 
         try {
-            DB::transaction(function () use ($request, $report) {
+            $attachmentPath = null;
+            if ($request->hasFile('attachment')) {
+                $attachmentPath = $request->file('attachment')->store('reports', 'public');
+            }
+
+            DB::transaction(function () use ($request, $report, $attachmentPath) {
                 $oldStatus = $report->status;
                 
                 // Save reply
@@ -45,6 +51,7 @@ class ReportController extends Controller
                     'report_id' => $report->id,
                     'user_id' => auth()->id(),
                     'message' => $request->message,
+                    'attachment_path' => $attachmentPath,
                     'is_system' => false,
                 ]);
 

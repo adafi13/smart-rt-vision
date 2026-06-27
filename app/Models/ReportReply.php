@@ -15,6 +15,7 @@ class ReportReply extends Model
         'user_id',
         'message',
         'is_system',
+        'attachment_path',
     ];
 
     protected $casts = [

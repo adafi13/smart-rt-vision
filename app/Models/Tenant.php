@@ -112,4 +112,19 @@ class Tenant extends Model
             ])->save();
         }
     }
+
+    public function canAddMoreUsers(): bool
+    {
+        $plan = $this->effectivePlan();
+
+        if (! $plan) {
+            return false;
+        }
+
+        if ($plan->isUnlimitedUsers()) {
+            return true;
+        }
+
+        return $this->users()->count() < $plan->max_users;
+    }
 }

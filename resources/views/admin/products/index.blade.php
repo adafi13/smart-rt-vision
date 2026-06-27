@@ -153,11 +153,27 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Kategori</label>
-                        <input type="text" name="kategori" required class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm font-medium" placeholder="Makanan, Jasa, Pakaian...">
+                        <select name="kategori" required class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm font-medium">
+                            <option value="">Pilih Kategori...</option>
+                            <option value="Makanan & Minuman">Makanan & Minuman</option>
+                            <option value="Jasa & Pelayanan">Jasa & Pelayanan</option>
+                            <option value="Pakaian & Fashion">Pakaian & Fashion</option>
+                            <option value="Kebutuhan Harian">Kebutuhan Harian</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
                     </div>
-                    <div>
+                    <div x-data="{ 
+                        rawVal: '', 
+                        formattedVal: '',
+                        formatNumber() {
+                            let val = this.formattedVal.replace(/\D/g, '');
+                            this.rawVal = val;
+                            this.formattedVal = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                        }
+                    }">
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Harga (Rp)</label>
-                        <input type="number" name="harga" min="0" step="500" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm font-bold text-indigo-600" placeholder="Kosongkan jika tidak pasti">
+                        <input type="text" x-model="formattedVal" @input="formatNumber" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm font-bold text-indigo-600" placeholder="Kosongkan jika tidak pasti">
+                        <input type="hidden" name="harga" x-model="rawVal">
                     </div>
                 </div>
 
@@ -232,11 +248,27 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Kategori</label>
-                        <input type="text" name="kategori" required value="{{ $p->kategori }}" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm font-medium">
+                        <select name="kategori" required class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm font-medium">
+                            <option value="">Pilih Kategori...</option>
+                            <option value="Makanan & Minuman" @selected($p->kategori === 'Makanan & Minuman')>Makanan & Minuman</option>
+                            <option value="Jasa & Pelayanan" @selected($p->kategori === 'Jasa & Pelayanan')>Jasa & Pelayanan</option>
+                            <option value="Pakaian & Fashion" @selected($p->kategori === 'Pakaian & Fashion')>Pakaian & Fashion</option>
+                            <option value="Kebutuhan Harian" @selected($p->kategori === 'Kebutuhan Harian')>Kebutuhan Harian</option>
+                            <option value="Lainnya" @selected(!in_array($p->kategori, ['Makanan & Minuman', 'Jasa & Pelayanan', 'Pakaian & Fashion', 'Kebutuhan Harian']))>Lainnya</option>
+                        </select>
                     </div>
-                    <div>
+                    <div x-data="{ 
+                        rawVal: '{{ $p->harga }}', 
+                        formattedVal: '{{ $p->harga ? number_format($p->harga, 0, '', '.') : '' }}',
+                        formatNumber() {
+                            let val = this.formattedVal.replace(/\D/g, '');
+                            this.rawVal = val;
+                            this.formattedVal = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                        }
+                    }">
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Harga (Rp)</label>
-                        <input type="number" name="harga" min="0" step="500" value="{{ $p->harga }}" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm font-bold text-indigo-600">
+                        <input type="text" x-model="formattedVal" @input="formatNumber" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm font-bold text-indigo-600" placeholder="Kosongkan jika tidak pasti">
+                        <input type="hidden" name="harga" x-model="rawVal">
                     </div>
                 </div>
 

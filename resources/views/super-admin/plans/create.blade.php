@@ -93,7 +93,8 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             @foreach([
                                 ['max_kk', 'Kartu Keluarga', 'Maksimal KK Terdaftar', 'Unlimited'],
-                                ['max_ai_extractions_per_month', 'Kuota AI', 'Scan KTP/KK per Bulan', 'Unlimited']
+                                ['max_ai_extractions_per_month', 'Kuota AI', 'Scan KTP/KK per Bulan', 'Unlimited'],
+                                ['max_users', 'Akun Pengurus', 'Maksimal Akun Staf RT', 'Unlimited']
                             ] as [$key, $label, $sub, $def])
                             <div class="group">
                                 <div class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 transition-all group-focus-within:ring-2 group-focus-within:ring-indigo-500">
@@ -113,72 +114,7 @@
                         </div>
                     </div>
 
-                    {{-- 3. Advanced Features Grid --}}
-                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800">
-                        <div class="flex items-center justify-between mb-8">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-400 text-white flex items-center justify-center shadow-lg shadow-amber-200 dark:shadow-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
-                                </div>
-                                <div>
-                                    <h2 class="text-xl font-black text-slate-800 dark:text-white">Modul Eksklusif</h2>
-                                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Aktifkan Fitur Berdasarkan Tier</p>
-                                </div>
-                            </div>
-                            <div class="hidden sm:block">
-                                <span class="px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-widest rounded-full">10 Modul Tersedia</span>
-                            </div>
-                        </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            @php
-                                $featuresConfig = [
-                                    'data_kk' => ['label' => 'Manajemen Data KK', 'icon' => '👥', 'color' => 'blue'],
-                                    'data_warga' => ['label' => 'Manajemen Data Warga', 'icon' => '📝', 'color' => 'indigo'],
-                                    'iuran_warga' => ['label' => 'Pencatatan Iuran Warga', 'icon' => '💰', 'color' => 'emerald'],
-                                    'pengeluaran_kas' => ['label' => 'Pencatatan Pengeluaran Kas', 'icon' => '📉', 'color' => 'rose'],
-                                    'pengajuan_surat' => ['label' => 'Layanan Pengajuan Surat', 'icon' => '📄', 'color' => 'amber'],
-                                    'laporan_warga' => ['label' => 'Sistem Pelaporan Warga', 'icon' => '📢', 'color' => 'orange'],
-                                    'lapor_peristiwa' => ['label' => 'Pencatatan Peristiwa Warga', 'icon' => '🚨', 'color' => 'red'],
-                                    'berita_pengumuman' => ['label' => 'Portal Berita & Pengumuman', 'icon' => '📰', 'color' => 'cyan'],
-                                    'pasar_umkm' => ['label' => 'Pasar Warga (UMKM)', 'icon' => '🏪', 'color' => 'violet'],
-                                    'export_laporan' => ['label' => 'Ekspor Laporan (Excel & PDF)', 'icon' => '📊', 'color' => 'teal'],
-                                ];
-                            @endphp
-
-                            @foreach($featuresConfig as $key => $conf)
-                            <div x-data="{ active: {{ old('features.' . $key) ? 'true' : 'false' }} }">
-                                <label class="relative block h-full">
-                                    <input type="checkbox" name="features[{{ $key }}]" value="1" x-model="active" class="sr-only">
-                                    <div class="h-full p-4 rounded-3xl border-2 transition-all cursor-pointer group flex items-center gap-4"
-                                         :class="active ? 'bg-emerald-600 border-emerald-600 shadow-lg shadow-emerald-200 dark:shadow-none' : 'bg-white dark:bg-slate-800/50 border-slate-100 dark:border-slate-800 hover:border-emerald-300'">
-                                        
-                                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl transition-transform group-hover:scale-110"
-                                             :class="active ? 'bg-white shadow-inner' : 'bg-slate-50 dark:bg-slate-700'">
-                                            {{ $conf['icon'] }}
-                                        </div>
-                                        
-                                        <div class="flex-1">
-                                            <h3 class="text-xs font-black transition-colors uppercase tracking-wider"
-                                                :class="active ? 'text-white' : 'text-slate-800 dark:text-slate-200'">
-                                                {{ $conf['label'] }}
-                                            </h3>
-                                            <p class="text-[10px] font-bold mt-0.5"
-                                               :class="active ? 'text-emerald-100' : 'text-slate-400'"
-                                               x-text="active ? 'Fitur Aktif' : 'Non-aktif'">
-                                            </p>
-                                        </div>
-
-                                        <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all"
-                                             :class="active ? 'bg-white border-white scale-110' : 'bg-transparent border-slate-200 dark:border-slate-700'">
-                                            <svg x-show="active" class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
                 </div>
 
                 {{-- Right Column: Unified Sidebar --}}

@@ -347,6 +347,262 @@
         </div>
     </section>
 
+    <!-- ===================== E-VOTING / MUSYAWARAH ===================== -->
+    @if(isset($active_polls) && $active_polls->count() > 0)
+    <section id="evoting" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60 bg-slate-50">
+        <div class="text-center mb-16">
+            <h2 class="text-sm font-black tracking-[0.2em] text-indigo-600 uppercase mb-3">Musyawarah Warga</h2>
+            <h3 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-6">E-Voting Aktif</h3>
+            <p class="text-lg text-slate-500 max-w-2xl mx-auto font-medium">Sampaikan suara Anda untuk keputusan lingkungan kita. 1 NIK = 1 Suara.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @foreach($active_polls as $poll)
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-xl relative overflow-hidden group hover:-translate-y-2 transition-all duration-300">
+                <div class="absolute top-0 right-0 p-4">
+                    <span class="px-3 py-1 bg-rose-100 text-rose-700 font-black text-xs rounded-full animate-pulse uppercase tracking-widest">Live Polling</span>
+                </div>
+                <h4 class="text-2xl font-black text-slate-900 mb-2 pr-20">{{ $poll->title }}</h4>
+                <p class="text-slate-500 text-sm font-medium mb-6">{{ $poll->description }}</p>
+
+                <form onsubmit="return submitForm(event, 'vote-form-{{ $poll->id }}', '{{ route('submit-vote', ['tenant' => $tenant->slug]) }}', 'POST')" id="vote-form-{{ $poll->id }}">
+                    @csrf
+                    <input type="hidden" name="poll_id" value="{{ $poll->id }}">
+                    
+                    <div class="space-y-3 mb-6">
+                        @foreach($poll->options as $option)
+                        <label class="block relative border-2 border-slate-100 rounded-2xl p-4 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-colors">
+                            <input type="radio" name="option_id" value="{{ $option->id }}" required class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-600 focus:ring-indigo-500 border-slate-300">
+                            <span class="block font-bold text-slate-900">{{ $option->option_text }}</span>
+                        </label>
+                        @endforeach
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Verifikasi NIK (Rahasia) <span class="text-red-500">*</span></label>
+                        <input type="text" name="nik" required pattern="\d{16}" maxlength="16" placeholder="Masukkan 16 digit NIK" class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2.5 text-sm mb-4">
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-colors">
+                        Kirim Suara
+                    </button>
+                    <div id="vote-result-{{ $poll->id }}" class="mt-4"></div>
+                </form>
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+
+    <!-- ===================== JADWAL & ABSENSI RONDA ===================== -->
+    <section id="ronda" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60 bg-white">
+        <div class="text-center mb-16 reveal">
+            <h2 class="text-sm font-black tracking-[0.2em] text-indigo-600 uppercase mb-3">Keamanan & Ketertiban</h2>
+            <h3 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-6">Jadwal Ronda Malam</h3>
+            <p class="text-lg text-slate-500 max-w-2xl mx-auto font-medium">Cek jadwal tugas ronda Anda malam ini dan lakukan absensi kehadiran langsung di sini.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <!-- Kolom Kiri: Daftar Petugas Hari Ini -->
+            <div class="reveal">
+                <h4 class="text-xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </span>
+                    Jadwal Malam Ini
+                    <span class="text-sm font-bold text-slate-400 font-mono ml-auto">{{ now()->translatedFormat('l, d M Y') }}</span>
+                </h4>
+
+                @if(isset($ronda_schedules) && $ronda_schedules->count() > 0)
+                    <div class="space-y-4">
+                        @foreach($ronda_schedules as $schedule)
+                        <div class="p-4 rounded-2xl border {{ $schedule->attendance ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-white' }} flex items-center justify-between shadow-sm transition-all hover:shadow-md">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full {{ $schedule->attendance ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600' }} flex flex-shrink-0 items-center justify-center font-bold text-lg border {{ $schedule->attendance ? 'border-emerald-200' : 'border-slate-200' }}">
+                                    {{ substr($schedule->member->nama, 0, 1) }}
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-slate-900">{{ $schedule->member->nama }}</h5>
+                                    <p class="text-xs text-slate-500 font-mono">Blok/No: {{ $schedule->member->blok_rumah }}</p>
+                                </div>
+                            </div>
+                            <div>
+                                @if($schedule->attendance)
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                        Hadir
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 text-xs font-bold rounded-full border border-amber-200">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                        Menunggu
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="p-8 rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50 text-center">
+                        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-slate-100">
+                            <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                        </div>
+                        <h5 class="text-sm font-bold text-slate-900 mb-1">Tidak Ada Jadwal</h5>
+                        <p class="text-xs text-slate-500">Malam ini tidak ada jadwal ronda yang ditugaskan oleh pengurus RT.</p>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Kolom Kanan: Form Absensi -->
+            <div class="reveal">
+                <div class="bg-indigo-600 rounded-3xl p-8 shadow-2xl shadow-indigo-600/20 relative overflow-hidden text-white">
+                    <div class="absolute top-0 right-0 p-6 opacity-10">
+                        <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-2.33v8.02z"/></svg>
+                    </div>
+                    
+                    <h4 class="text-2xl font-black mb-2 relative z-10">Absensi Kehadiran</h4>
+                    <p class="text-indigo-200 text-sm mb-8 relative z-10">Petugas ronda malam ini silakan melakukan absensi di bawah ini.</p>
+
+                    <form onsubmit="return submitAbsenRonda(event)" id="absen-ronda-form" class="relative z-10 space-y-5">
+                        @csrf
+                        <div>
+                            <label class="block text-xs font-bold text-indigo-200 mb-1">16 Digit NIK <span class="text-rose-400">*</span></label>
+                            <input type="text" name="nik" required pattern="\d{16}" maxlength="16" placeholder="Masukkan NIK Anda" class="w-full bg-indigo-700/50 border border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-indigo-300 focus:ring-2 focus:ring-white focus:border-transparent transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-indigo-200 mb-1">Lokasi Berjaga <span class="text-rose-400">*</span></label>
+                            <input type="text" name="location" required value="Pos Kamling RT" class="w-full bg-indigo-700/50 border border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-indigo-300 focus:ring-2 focus:ring-white focus:border-transparent transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-indigo-200 mb-1">Foto Selfie Kehadiran <span class="text-rose-400">*</span></label>
+                            <div class="relative group">
+                                <input type="file" name="foto" accept="image/*" capture="environment" required onchange="document.getElementById('foto-label').textContent = this.files[0] ? this.files[0].name : 'Buka Kamera / Pilih Foto'" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="w-full bg-indigo-700/50 border-2 border-dashed border-indigo-400 rounded-xl p-6 text-center group-hover:bg-indigo-700 transition-colors">
+                                    <svg class="w-8 h-8 text-indigo-300 mx-auto mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                    <span class="text-sm font-bold text-white block truncate" id="foto-label">Buka Kamera / Pilih Foto</span>
+                                    <span class="text-xs text-indigo-300 mt-1 block">Arahkan kamera ke wajah & pos kamling</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full py-3.5 bg-white hover:bg-slate-50 text-indigo-700 text-sm font-black uppercase tracking-wider rounded-xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 mt-2 flex items-center justify-center gap-2">
+                            <span>Kirim Absensi</span>
+                            <div id="ronda-loading" class="hidden w-4 h-4 rounded-full border-2 border-indigo-700 border-t-transparent animate-spin"></div>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== BERITA & PENGUMUMAN ===================== -->
+    <section id="warta" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div>
+                <h2 class="text-sm font-black tracking-[0.2em] text-indigo-600 uppercase mb-3">Warta Warga</h2>
+                <h3 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Berita & Pengumuman</h3>
+            </div>
+            <p class="text-slate-500 font-medium max-w-sm">Dapatkan informasi, undangan, dan pengumuman terbaru langsung dari pengurus RT.</p>
+        </div>
+
+        @if(isset($warta) && $warta->count() > 0)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($warta as $news)
+            <!-- Card Berita -->
+            <div @click="modal = 'berita-{{ $news->id }}'" class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-indigo-100 transition-all duration-300 flex flex-col h-full group cursor-pointer relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-indigo-50 to-transparent rounded-bl-full -z-10 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+                
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider rounded-md border {{ $news->kategori === 'Penting' || $news->is_penting ? 'bg-rose-50 text-rose-600 border-rose-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200' }}">
+                        {{ $news->kategori }}
+                    </span>
+                    <span class="text-xs font-semibold text-slate-400">{{ $news->created_at->translatedFormat('d M Y') }}</span>
+                </div>
+                
+                <h4 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors line-clamp-2 leading-tight">{{ $news->judul }}</h4>
+                <p class="text-sm text-slate-500 mb-6 line-clamp-3 leading-relaxed flex-1">{{ Str::limit(strip_tags($news->isi), 150) }}</p>
+                
+                <div class="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-400">Oleh: Pengurus RT</span>
+                    <div class="text-indigo-600 bg-indigo-50 p-2 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Detail Berita -->
+            <div x-show="modal === 'berita-{{ $news->id }}'" style="display: none;" class="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                    <!-- Background Overlay -->
+                    <div x-show="modal === 'berita-{{ $news->id }}'" 
+                         x-transition:enter="ease-out duration-300" 
+                         x-transition:enter-start="opacity-0" 
+                         x-transition:enter-end="opacity-100" 
+                         x-transition:leave="ease-in duration-200" 
+                         x-transition:leave-start="opacity-100" 
+                         x-transition:leave-end="opacity-0" 
+                         class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm" 
+                         @click="modal = null" aria-hidden="true"></div>
+
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                    <!-- Modal Panel -->
+                    <div x-show="modal === 'berita-{{ $news->id }}'" 
+                         x-transition:enter="ease-out duration-300" 
+                         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                         x-transition:leave="ease-in duration-200" 
+                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                         class="inline-block w-full max-w-2xl px-1 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-3xl shadow-2xl sm:my-8 sm:align-middle sm:p-8 border border-slate-100">
+                        
+                        <!-- Close Button -->
+                        <div class="absolute top-4 right-4 sm:top-6 sm:right-6">
+                            <button @click="modal = null" type="button" class="text-slate-400 hover:text-slate-500 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors">
+                                <span class="sr-only">Close</span>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Content -->
+                        <div>
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider rounded-md border {{ $news->kategori === 'Penting' || $news->is_penting ? 'bg-rose-50 text-rose-600 border-rose-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200' }}">
+                                    {{ $news->kategori }}
+                                </span>
+                                <span class="text-xs font-semibold text-slate-400">{{ $news->created_at->translatedFormat('d M Y, H:i') }} WIB</span>
+                            </div>
+                            
+                            <h3 class="text-2xl font-black text-slate-900 mb-6 leading-tight">{{ $news->judul }}</h3>
+                            
+                            @if($news->gambar)
+                                <div class="w-full h-64 sm:h-80 mb-6 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200">
+                                    <img src="{{ Storage::url($news->gambar) }}" alt="{{ $news->judul }}" class="w-full h-full object-cover">
+                                </div>
+                            @endif
+
+                            <div class="prose prose-sm sm:prose-base prose-slate max-w-none text-slate-600 leading-relaxed custom-scrollbar max-h-[50vh] overflow-y-auto pr-2 pb-4">
+                                {!! nl2br(e($news->isi)) !!}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        @else
+        <div class="bg-white border border-slate-200 border-dashed rounded-3xl p-12 text-center shadow-sm">
+            <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-slate-100">
+                <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15M9 11l3 3L22 4"/></svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-1">Belum Ada Pengumuman</h3>
+            <p class="text-sm text-slate-500 max-w-sm mx-auto">Informasi terbaru dari pengurus RT akan tampil di sini secara otomatis.</p>
+        </div>
+        @endif
+    </section>
+
     <!-- ===================== PASAR WARGA (UMKM) ===================== -->
     <section id="umkm" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60">
         <div class="text-center mb-16">
@@ -405,9 +661,8 @@
     </section>
 
     <!-- ===================== MODALS ( ALPINE ) ===================== -->
-    <template x-if="modal">
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" x-transition.opacity style="background: rgba(15,23,42,0.8); backdrop-filter: blur(8px);">
-            <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 max-h-[90vh] overflow-y-auto shadow-2xl relative" @click.away="modal = null" x-transition.scale.95>
+    <div x-show="modal !== null" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" x-transition.opacity style="background: rgba(15,23,42,0.8); backdrop-filter: blur(8px);">
+        <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 max-h-[90vh] overflow-y-auto shadow-2xl relative" @click.away="modal = null" x-transition.scale.95 x-show="modal !== null">
                 
                 <!-- Modal Close -->
                 <button @click="modal = null" class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors">
@@ -503,6 +758,47 @@
                     <div id="ajukan-surat-result" class="mt-4"></div>
                 </div>
 
+                <!-- FORM: Lapor Peristiwa -->
+                <div x-show="modal === 'lapor-peristiwa'">
+                    <form onsubmit="return submitFormData(event, 'lapor-peristiwa-form', '{{ route('lapor-peristiwa', ['tenant' => $tenant->slug]) }}')" id="lapor-peristiwa-form" class="space-y-4">
+                        @csrf
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="label">NIK Pelapor (Keluarga)</label>
+                                <input type="text" name="nik_subjek" required pattern="\d{16}" maxlength="16" class="input-field" placeholder="16 digit NIK">
+                            </div>
+                            <div>
+                                <label class="label">Nama Subjek Peristiwa</label>
+                                <input type="text" name="nama_subjek" required class="input-field" placeholder="Contoh: Budi Santoso / Bayi Laki-laki">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="label">Kategori</label>
+                                <select name="jenis_laporan" class="input-field" required>
+                                    <option value="Kelahiran">Kelahiran</option>
+                                    <option value="Kematian">Kematian</option>
+                                    <option value="Pindah Masuk">Pindah Masuk</option>
+                                    <option value="Pindah Keluar">Pindah Keluar</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="label">Tanggal Peristiwa</label>
+                                <input type="date" name="tanggal_kejadian" required class="input-field">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="label">Deskripsi Lengkap</label>
+                            <textarea name="keterangan" rows="2" required class="input-field resize-none" placeholder="Contoh: Telah lahir anak laki-laki / Warga pindah ke Jakarta Selatan"></textarea>
+                        </div>
+                        <div>
+                            <label class="label">Dokumen Pendukung (Foto SKL/SKK)</label>
+                            <input type="file" name="foto" accept="image/*" required class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 transition-colors">
+                        </div>
+                        <button type="submit" class="btn-gradient w-full mt-4" style="background: linear-gradient(135deg, #7c3aed, #c026d3);">Kirim Laporan Peristiwa</button>
+                    </form>
+                    <div id="lapor-peristiwa-result" class="mt-4"></div>
+                </div>
                 <!-- FORM: Cek Iuran -->
                 <div x-show="modal === 'cek-iuran'">
                     <form onsubmit="return submitForm(event, 'cek-iuran-form', '{{ route('cek-iuran', ['tenant' => $tenant->slug]) }}', 'GET')" id="cek-iuran-form">
@@ -561,9 +857,19 @@
                     <div id="kirim-laporan-result" class="mt-4"></div>
                 </div>
 
+                <!-- FORM: Cek Tiket Laporan -->
+                <div x-show="modal === 'cek-laporan'">
+                    <form onsubmit="return submitForm(event, 'cek-laporan-form', '{{ route('cek-laporan', ['tenant' => $tenant->slug]) }}', 'GET')" id="cek-laporan-form">
+                        <label class="label">Nomor Tiket (Ticket ID)</label>
+                        <input type="text" name="ticket_number" required class="input-field font-mono text-center tracking-widest text-lg uppercase" placeholder="TICKET-XXXX">
+                        <button type="submit" class="btn-gradient w-full mt-6" style="background: linear-gradient(135deg, #d97706, #f59e0b);">Cek Status Penanganan</button>
+                    </form>
+                    <div id="cek-laporan-result" class="mt-4"></div>
+                </div>
+
             </div>
         </div>
-    </template>
+    </div>
 
     <!-- FLOATING PANIC BUTTON (REDESIGNED FOR DANGER) -->
     <div class="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-40 flex flex-col items-center gap-2">
@@ -583,6 +889,60 @@
             <span class="text-[11px] md:text-xs font-black uppercase tracking-widest relative z-10">SOS</span>
         </button>
     </div>
+
+    <!-- ===================== SECURITY GATE (BUKU TAMU) ===================== -->
+    <section id="security-gate" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60">
+        <div class="bg-slate-900 rounded-3xl overflow-hidden shadow-2xl relative">
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-500 via-slate-900 to-black"></div>
+            <div class="relative p-8 md:p-12 flex flex-col md:flex-row items-center gap-12">
+                <div class="flex-1 text-center md:text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 text-xs font-black uppercase tracking-widest mb-6">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        Security Gate
+                    </div>
+                    <h3 class="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">Buku Tamu Digital</h3>
+                    <p class="text-slate-400 text-lg">Khusus Petugas Keamanan. Catat setiap tamu dan kendaraan yang masuk ke area lingkungan RT untuk keamanan bersama.</p>
+                </div>
+                <div class="w-full max-w-md bg-white rounded-2xl p-6 shadow-xl">
+                    <form id="guestbook-form" onsubmit="return submitForm(event, 'guestbook-form', '{{ route('submit-guestbook', ['tenant' => $tenant->slug]) }}', 'POST')" class="space-y-4">
+                        @csrf
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap Tamu <span class="text-red-500">*</span></label>
+                            <input type="text" name="nama_tamu" required placeholder="Bpk. Budi / Kurir Paket" class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2.5 text-sm">
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Plat Kendaraan</label>
+                                <input type="text" name="plat_nomor" placeholder="B 1234 XYZ" class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2.5 text-sm uppercase">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Tujuan Rumah <span class="text-red-500">*</span></label>
+                                <input type="text" name="tujuan_rumah" required placeholder="Blok A1 No. 5" class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2.5 text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Keperluan <span class="text-red-500">*</span></label>
+                            <input type="text" name="keperluan" required placeholder="Antar Paket / Bertamu / Teknisi AC" class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2.5 text-sm">
+                        </div>
+
+                        <div class="border-t border-slate-100 mt-4 pt-4">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">PIN Keamanan (Otorisasi Satpam) <span class="text-red-500">*</span></label>
+                            <input type="password" name="pin" required placeholder="****" class="w-full rounded-xl border-amber-200 bg-amber-50 focus:border-amber-500 focus:ring-amber-500 px-4 py-2.5 text-center tracking-[0.5em] text-lg font-bold">
+                        </div>
+
+                        <div id="guestbook-result" class="mt-2"></div>
+
+                        <button type="submit" class="w-full mt-2 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-all shadow-md">
+                            Catat Tamu Masuk
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- FOOTER -->
     @include('partials.public-footer')
@@ -666,6 +1026,104 @@
                 return;
             }
 
+            if (json.data && json.data.timeline && Array.isArray(json.data.timeline)) {
+                let timelineHtml = json.data.timeline.map(t => {
+                    let attachmentHtml = t.attachment_url ? `
+                        <div class="mt-2">
+                            <a href="${t.attachment_url}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:bg-slate-200 transition-colors">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                Foto Lampiran
+                            </a>
+                        </div>
+                    ` : '';
+
+                    if (t.is_system) {
+                        return `
+                        <div class="flex items-center gap-3 justify-center my-5">
+                            <div class="h-px bg-slate-100 flex-1"></div>
+                            <span class="text-[10px] font-bold text-slate-400 tracking-wide flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-full border border-slate-200 shadow-sm">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                ${t.pesan} &bull; ${t.waktu.split(', ')[1]}
+                            </span>
+                            <div class="h-px bg-slate-100 flex-1"></div>
+                        </div>`;
+                    } else if (t.is_admin) {
+                        // Admin Reply (Left bubble)
+                        return `
+                        <div class="flex gap-3 mt-4 w-full">
+                            <div class="w-8 h-8 rounded-full bg-indigo-100 border border-indigo-200 flex-shrink-0 flex items-center justify-center text-indigo-700 font-bold text-xs shadow-sm">RT</div>
+                            <div class="flex flex-col max-w-[85%]">
+                                <div class="bg-white rounded-2xl rounded-tl-none px-4 py-3 text-sm text-slate-700 shadow-sm border border-slate-200">
+                                    <p class="text-[10px] font-bold text-indigo-600 mb-1 opacity-90">${t.sender}</p>
+                                    <p class="whitespace-pre-wrap">${t.pesan}</p>
+                                    ${attachmentHtml}
+                                </div>
+                                <span class="text-[10px] text-slate-400 font-semibold mt-1 block ml-1">${t.waktu}</span>
+                            </div>
+                        </div>`;
+                    } else {
+                        // Warga Reply (Right bubble)
+                        let rightAttachment = t.attachment_url ? `
+                            <div class="mt-2">
+                                <a href="${t.attachment_url}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-indigo-700/50 border border-indigo-400 rounded-lg text-[10px] font-bold text-indigo-50 hover:bg-indigo-700 transition-colors">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    Foto Lampiran
+                                </a>
+                            </div>
+                        ` : '';
+                        
+                        return `
+                        <div class="flex gap-3 justify-end ml-auto max-w-[90%] mt-4">
+                            <div class="flex flex-col items-end">
+                                <div class="bg-indigo-600 shadow-sm rounded-2xl rounded-tr-none px-4 py-3 text-sm text-white border border-indigo-500">
+                                    <p class="whitespace-pre-wrap">${t.pesan}</p>
+                                    ${rightAttachment}
+                                </div>
+                                <span class="text-[10px] text-slate-400 font-semibold mt-1.5 block mr-1">${t.waktu}</span>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-slate-100 flex-shrink-0 flex items-center justify-center text-slate-500 font-bold text-xs shadow-sm border border-slate-200">W</div>
+                        </div>`;
+                    }
+                }).join('');
+                
+                let statusColor = json.data.status === 'MENUNGGU' ? 'bg-amber-100 text-amber-700' : (json.data.status === 'DIPROSES' ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700');
+                
+                let replyFormHtml = ``;
+                if(json.data.status !== 'Selesai' && json.data.status !== 'Ditolak') {
+                    replyFormHtml = `
+                        <div class="mt-4 pt-4 border-t border-slate-100">
+                            <form onsubmit="return submitBalasan(event, '${json.data.ticket_number}')" id="form-balasan-${json.data.ticket_number}" class="flex gap-2 items-center bg-slate-50 p-1.5 rounded-xl border border-slate-200 focus-within:border-indigo-400 focus-within:ring-1 focus-within:ring-indigo-400 transition-all">
+                                <input type="text" name="message" required placeholder="Ketik balasan..." class="w-full text-sm bg-transparent border-0 focus:ring-0 px-2 py-1 placeholder-slate-400">
+                                <div class="relative group cursor-pointer flex-shrink-0">
+                                    <input type="file" name="attachment" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" title="Lampirkan Foto">
+                                    <div class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-colors">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                                    </div>
+                                </div>
+                                <button type="submit" class="w-8 h-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center justify-center transition-colors flex-shrink-0">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transform: translateX(1px);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                </button>
+                            </form>
+                            <div id="result-balasan-${json.data.ticket_number}" class="mt-2 text-xs"></div>
+                        </div>
+                    `;
+                }
+
+                document.getElementById(resultBox).innerHTML = `
+                    <div class="p-5 bg-white shadow-sm rounded-2xl border border-slate-200 mt-2 text-left">
+                        <div class="flex justify-between items-center mb-4 pb-4 border-b border-slate-100">
+                            <span class="font-black text-slate-800">Perkembangan Laporan</span>
+                            <span class="px-2.5 py-1 ${statusColor} text-xs font-black uppercase rounded-md tracking-wider">${json.data.status}</span>
+                        </div>
+                        <div class="pt-4 pb-2 px-3 max-h-[50vh] overflow-y-auto custom-scrollbar mb-2 bg-slate-50 rounded-2xl border border-slate-100 shadow-inner">
+                            ${timelineHtml}
+                        </div>
+                        ${replyFormHtml}
+                    </div>
+                `;
+                return;
+            }
+
             showResult(resultBox, !!json.success, json.message || 'Data berhasil diproses.');
             
             if (json.whatsapp_url) {
@@ -673,6 +1131,85 @@
                     window.location.href = json.whatsapp_url;
                 }, 1500);
             }
+        }
+
+        async function submitBalasan(event, ticketNumber) {
+            event.preventDefault();
+            const form = event.target;
+            const btn = form.querySelector('button[type="submit"]');
+            const ogContent = btn.innerHTML;
+            btn.innerHTML = '...'; btn.disabled = true;
+            
+            const resultBox = document.getElementById(`result-balasan-${ticketNumber}`);
+            resultBox.innerHTML = '<span class="text-indigo-600">Mengirim...</span>';
+            
+            const data = new FormData(form);
+            data.append('ticket_number', ticketNumber);
+
+            try {
+                const url = '{{ route('balas-laporan', ['tenant' => $tenant->slug]) }}';
+                const res = await fetch(url, { 
+                    method: 'POST', 
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }, 
+                    body: data 
+                });
+                const json = await res.json();
+                
+                if (json.success) {
+                    resultBox.innerHTML = '<span class="text-emerald-600 font-bold">Terkirim! Memuat ulang...</span>';
+                    form.reset();
+                    // Reload the chat by calling submitForm directly
+                    setTimeout(() => {
+                        submitForm({ preventDefault: () => {} }, 'cek-laporan-form', '{{ route('cek-laporan', ['tenant' => $tenant->slug]) }}', 'GET');
+                    }, 500);
+                } else {
+                    resultBox.innerHTML = `<span class="text-rose-600 font-bold">Gagal: ${json.message || 'Terjadi kesalahan'}</span>`;
+                }
+            } catch (e) {
+                resultBox.innerHTML = '<span class="text-rose-600 font-bold">Gagal: Koneksi terputus.</span>';
+            }
+            
+            btn.innerHTML = ogContent; btn.disabled = false;
+            return false;
+        }
+
+        async function submitAbsenRonda(event) {
+            event.preventDefault();
+            const form = event.target;
+            const btn = form.querySelector('button[type="submit"]');
+            const btnSpan = btn.querySelector('span');
+            const loading = document.getElementById('ronda-loading');
+            
+            const ogContent = btnSpan.innerText;
+            btnSpan.innerText = 'Mengirim...';
+            btn.disabled = true;
+            loading.classList.remove('hidden');
+            
+            const data = new FormData(form);
+
+            try {
+                const url = '{{ route('absen-ronda', ['tenant' => $tenant->slug]) }}';
+                const res = await fetch(url, { 
+                    method: 'POST', 
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }, 
+                    body: data 
+                });
+                const json = await res.json();
+                
+                if (json.success) {
+                    alert('Absen Kehadiran Berhasil: ' + (json.message || 'Tercatat'));
+                    window.location.reload();
+                } else {
+                    alert('Gagal: ' + (json.message || 'Terjadi kesalahan'));
+                }
+            } catch (e) {
+                alert('Gagal: Koneksi terputus.');
+            }
+            
+            btnSpan.innerText = ogContent; 
+            btn.disabled = false;
+            loading.classList.add('hidden');
+            return false;
         }
 
         // Intersection Observer for scroll animations

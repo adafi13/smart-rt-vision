@@ -79,6 +79,8 @@
                         !$isBendahara ? ['route' => 'admin.laporan.index', 'match' => 'admin.laporan.*', 'label' => 'Laporan Warga'] : null,
                         !$isBendahara ? ['route' => 'admin.peristiwa.index', 'match' => 'admin.peristiwa.*', 'label' => 'Lapor Peristiwa'] : null,
                         !$isBendahara ? ['route' => 'admin.panic.index', 'match' => 'admin.panic.*', 'label' => 'Riwayat Darurat (Panic)'] : null,
+                        !$isBendahara ? ['route' => 'admin.polls.index', 'match' => 'admin.polls.*', 'label' => 'Musyawarah (E-Voting)'] : null,
+                        !$isBendahara ? ['route' => 'admin.guestbooks.index', 'match' => 'admin.guestbooks.*', 'label' => 'Buku Tamu (Security)'] : null,
                         ['route' => 'admin.inventaris.index', 'match' => 'admin.inventaris.*', 'label' => 'Inventaris & Aset'],
                         !$isBendahara ? ['route' => 'admin.ronda.index', 'match' => 'admin.ronda.*', 'label' => 'Jadwal Ronda'] : null,
                     ]),

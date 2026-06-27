@@ -112,14 +112,38 @@
                         </div>
                         
                         <ul class="space-y-4 mb-8">
-                            @foreach($plan->features as $f)
+                            <li class="flex items-start gap-4">
+                                <div class="w-6 h-6 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </div>
+                                <span class="text-sm font-medium text-slate-700 leading-relaxed">
+                                    Maks. <b>{{ $plan->max_kk ?: 'Unlimited' }}</b> Kartu Keluarga
+                                </span>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <div class="w-6 h-6 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </div>
+                                <span class="text-sm font-medium text-slate-700 leading-relaxed">
+                                    Maks. <b>{{ $plan->max_users ?: 'Unlimited' }}</b> Akun Pengurus
+                                </span>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <div class="w-6 h-6 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </div>
+                                <span class="text-sm font-medium text-slate-700 leading-relaxed">
+                                    <b>{{ $plan->max_ai_extractions_per_month ?: 'Unlimited' }}x</b> Scan KTP/KK per Bulan
+                                </span>
+                            </li>
                             <li class="flex items-start gap-4">
                                 <div class="w-6 h-6 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                                     <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                 </div>
-                                <span class="text-sm font-medium text-slate-700 leading-relaxed">{{ $f }}</span>
+                                <span class="text-sm font-medium text-slate-700 leading-relaxed">
+                                    <b>Akses Penuh</b> ke Seluruh Modul Aplikasi
+                                </span>
                             </li>
-                            @endforeach
                         </ul>
                     </div>
                     
