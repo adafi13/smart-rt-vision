@@ -48,6 +48,10 @@ Route::get('/kebijakan-privasi', function () {
     return view('privacy');
 })->name('privacy');
 
+// Alias untuk Google OAuth Console (English URLs)
+Route::get('/privacy-policy', fn() => redirect('/kebijakan-privasi', 301));
+Route::get('/terms', fn() => redirect('/syarat-dan-ketentuan', 301));
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/suspended', function () {
         if (auth()->user()->tenant?->status !== 'suspended') {
