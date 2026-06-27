@@ -43,15 +43,9 @@ class GoogleController extends Controller
                 ]);
             }
         } else {
-            // Create a new user if they don't exist
-            $user = User::create([
-                'name' => $googleUser->getName() ?? 'Pengguna',
-                'email' => $googleUser->getEmail(),
-                'password' => Hash::make(Str::random(24)),
-                'google_id' => $googleUser->getId(),
-                'avatar' => $googleUser->getAvatar(),
-                'role' => 'admin_rt', // Defaulting new Google signups to admin_rt role
-                'tenant_role' => 'owner', // Default owner
+            // User belum terdaftar di sistem
+            return redirect('/login')->withErrors([
+                'email' => 'Akun Google ini belum terdaftar di sistem. Silakan buat akun baru terlebih dahulu atau minta pengurus RT untuk mendaftarkan Anda.'
             ]);
         }
 
