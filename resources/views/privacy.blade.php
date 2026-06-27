@@ -1,51 +1,105 @@
-<x-guest-layout>
-    <div style="max-width:800px;margin:0 auto;padding:40px 20px;background:#fff;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,0.05);">
-        
-        <a href="javascript:history.back()" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#64748b;text-decoration:none;margin-bottom:32px;transition:color 0.2s;" onmouseover="this.style.color='#0f172a'" onmouseout="this.style.color='#64748b'">
-            <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-            Kembali
-        </a>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kebijakan Privasi - SmartRT Vision</title>
+    <meta name="description" content="Kebijakan privasi SmartRT Vision menjelaskan bagaimana kami menjaga keamanan data warga dan informasi pribadi Anda dengan standar enkripsi tinggi.">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/img/icon.png') }}">
 
-        <div style="text-align:center;margin-bottom:40px;">
-            <h1 style="font-size:32px;font-weight:900;color:#0f172a;letter-spacing:-0.03em;margin:0 0 12px;line-height:1.2;">
-                Kebijakan Privasi
-            </h1>
-            <p style="font-size:14px;color:#64748b;font-weight:500;margin:0;">
-                Terakhir diperbarui: {{ date('d F Y') }}
-            </p>
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+    <nav class="bg-white border-b border-slate-200 py-5 sticky top-0 z-50 backdrop-blur">
+        <div class="max-w-4xl mx-auto px-6 flex items-center justify-between">
+            <a href="{{ url('/') }}" class="flex items-center gap-2 font-black text-xl text-slate-900">
+                SmartRT Vision
+            </a>
+            <a href="{{ url('/') }}" class="text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                Kembali ke Beranda
+            </a>
         </div>
+    </nav>
 
-        <div style="font-size:15px;color:#334155;line-height:1.8;">
-            <p style="margin-bottom:24px;font-size:16px;">Privasi Anda sangat penting bagi kami. Kebijakan Privasi ini menjelaskan bagaimana SmartRT Vision mengumpulkan, menggunakan, dan melindungi informasi pribadi Anda.</p>
+    <main class="max-w-4xl mx-auto px-6 py-16">
+        <header class="mb-12">
+            <span class="inline-block bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-blue-100 mb-4">Legal</span>
+            <h1 class="text-4xl font-black text-slate-900 mb-4 tracking-tight">Kebijakan Privasi</h1>
+            <p class="text-slate-500 font-medium text-lg">Melindungi data warga Anda adalah prioritas utama kami di ekosistem SmartRT Vision.</p>
+        </header>
 
-            <h3 style="font-size:18px;font-weight:700;color:#0f172a;margin:32px 0 12px;">1. Informasi yang Kami Kumpulkan</h3>
-            <p style="margin-bottom:16px;">Kami mengumpulkan informasi yang Anda berikan langsung kepada kami, seperti saat Anda membuat akun, memasukkan data Kartu Keluarga (KK), memperbarui profil warga, atau menghubungi dukungan pelanggan kami. Ini termasuk nama, alamat email, nomor telepon, dan data demografi RT Anda.</p>
-
-            <h3 style="font-size:18px;font-weight:700;color:#0f172a;margin:32px 0 12px;">2. Penggunaan Informasi</h3>
-            <p style="margin-bottom:16px;">Informasi yang dikumpulkan digunakan semata-mata untuk mengoperasikan, memelihara, dan menyediakan fitur-fitur dari layanan SmartRT Vision. Kami tidak pernah menjual, menyewakan, atau memperdagangkan informasi identitas pribadi pengguna kepada pihak ketiga.</p>
-
-            <h3 style="font-size:18px;font-weight:700;color:#0f172a;margin:32px 0 12px;">3. Keamanan Data</h3>
-            <p style="margin-bottom:16px;">Kami menerapkan langkah-langkah keamanan teknis dan organisasi yang ketat (termasuk enkripsi AES-256) untuk melindungi data Anda dari akses, pengungkapan, perubahan, atau penghancuran yang tidak sah.</p>
-
-            <h3 style="font-size:18px;font-weight:700;color:#0f172a;margin:32px 0 12px;">4. Penggunaan Cookie</h3>
-            <p style="margin-bottom:16px;">Kami menggunakan "cookies" untuk menjaga sesi Anda tetap aman (seperti fitur "Ingat Saya") dan untuk memahami bagaimana Anda menggunakan layanan kami, sehingga kami dapat meningkatkan pengalaman Anda.</p>
-
-            <h3 style="font-size:18px;font-weight:700;color:#0f172a;margin:32px 0 12px;">5. Perubahan Kebijakan</h3>
-            <p style="margin-bottom:16px;">Kami berhak memperbarui Kebijakan Privasi ini kapan saja. Kami akan memberi tahu Anda tentang perubahan apa pun melalui email atau dengan memposting kebijakan privasi baru di halaman ini.</p>
-        </div>
-
-    </div>
-
-    <x-slot name="sidebar">
-        <div style="display:flex;flex-direction:column;gap:28px;">
-            <div class="fade-in-up">
-                <h2 style="font-size:32px;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1.15;margin:0 0 12px;">
-                    Privasi Anda,<br><span style="color:#60a5fa;">Prioritas Kami.</span>
-                </h2>
-                <p style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:500;line-height:1.7;margin:0;">
-                    Kami tidak akan pernah menjual atau menyalahgunakan data identitas warga RT Anda. Titik.
+        <div class="bg-white rounded-3xl p-8 lg:p-12 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 text-sm leading-relaxed text-slate-600 space-y-8">
+            
+            <div class="bg-blue-50 border border-blue-100 rounded-2xl p-6">
+                <p class="text-[12px] font-black text-blue-700 uppercase tracking-widest mb-1">Versi 1.0.0 | Diperbarui: 01 Januari 2026</p>
+                <p class="text-blue-800 font-medium">
+                    <strong>PT. Sekawan Putra Pratama</strong> ("Kami") berkomitmen untuk selalu menjunjung tinggi keamanan dan kerahasiaan data Anda dan seluruh warga lingkungan RT Anda sehubungan dengan penggunaan layanan Kami melalui Aplikasi SmartRT Vision.
                 </p>
             </div>
+
+            <section class="space-y-3">
+                <h3 class="text-lg font-black text-slate-900 border-b border-slate-100 pb-2">1. PENGUMPULAN DATA PRIBADI</h3>
+                <p>Kami mengumpulkan Data Pribadi termasuk namun tidak terbatas pada:</p>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li>Nama lengkap Pengurus RT (Ketua, Sekretaris, Bendahara) dan data Warga.</li>
+                    <li>Alamat lingkungan RT, nomor telepon, serta alamat email.</li>
+                    <li>Data Kartu Keluarga (KK), KTP, dan informasi kependudukan warga yang diunggah ke sistem.</li>
+                    <li>Riwayat iuran bulanan, catatan kas RT, transaksi keuangan, serta surat menyurat administratif.</li>
+                    <li>Log aktivitas pengguna (Pengurus & Warga) beserta cap waktu akses (timestamp).</li>
+                </ul>
+            </section>
+
+            <section class="space-y-3">
+                <h3 class="text-lg font-black text-slate-900 border-b border-slate-100 pb-2">2. PENGGUNAAN DATA PRIBADI</h3>
+                <p>Kami menggunakan data Anda untuk:</p>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li>Verifikasi identitas warga dan validasi pengurus RT.</li>
+                    <li>Menyediakan layanan administrasi kependudukan seperti pembuatan surat pengantar secara otomatis.</li>
+                    <li>Mencatat dan melaporkan transparansi iuran kas RT.</li>
+                    <li>Mengirimkan notifikasi penting seperti tagihan iuran, undangan rapat warga, atau peringatan keamanan.</li>
+                    <li>Meningkatkan layanan melalui penelitian dan pengembangan fitur baru secara anonim.</li>
+                </ul>
+            </section>
+
+            <section class="space-y-3">
+                <h3 class="text-lg font-black text-slate-900 border-b border-slate-100 pb-2">3. MASA PENYIMPANAN DATA</h3>
+                <p>Kami memiliki aturan retensi data yang transparan:</p>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li><strong>Akun Aktif:</strong> Data disimpan penuh selama masa penggunaan.</li>
+                    <li><strong>Masa Tenggang (30 Hari):</strong> Jika Anda memutuskan untuk berhenti menggunakan layanan, data tetap disimpan selama 30 hari sebagai backup apabila Anda berubah pikiran.</li>
+                    <li><strong>Penghapusan Permanen:</strong> Melewati 60 hari setelah akun dinonaktifkan, data kependudukan warga akan dihapus secara permanen demi keamanan privasi.</li>
+                </ul>
+            </section>
+
+            <section class="space-y-3">
+                <h3 class="text-lg font-black text-slate-900 border-b border-slate-100 pb-2">4. KEAMANAN DATA KEPENDUDUKAN</h3>
+                <p>Kami menyadari sensitivitas data KTP & KK, oleh karena itu kami menggunakan teknologi keamanan tingkat tinggi:</p>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li>Enkripsi data pribadi dan finansial di tingkat database server (AES-256).</li>
+                    <li>Koneksi aman melalui protokol HTTPS/TLS 1.3 untuk setiap pertukaran informasi.</li>
+                    <li>Sistem Autentikasi yang ketat dan pencadangan (backup) harian secara terotomatisasi di cloud.</li>
+                </ul>
+            </section>
+
+            <section class="space-y-3 pt-6 border-t border-slate-100">
+                <h3 class="text-lg font-black text-slate-900">Hubungi Tim Keamanan Kami</h3>
+                <p>Jika Anda memiliki pertanyaan atau kekhawatiran sehubungan dengan perlindungan data warga:</p>
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 mt-4">
+                    <p class="font-bold text-slate-900">SmartRT Vision Official Support</p>
+                    <p class="text-slate-500">Senin – Jumat, 08.00–17.00 WIB</p>
+                    <p class="mt-2 text-blue-600 font-bold">WhatsApp: +62 851-5641-2702</p>
+                    <p class="text-blue-600 font-bold">Email: support@smartrtvision.sekawanputrapratama.com</p>
+                </div>
+            </section>
         </div>
-    </x-slot>
-</x-guest-layout>
+    </main>
+
+    <footer class="py-12 text-center text-slate-400 text-xs font-medium">
+        <p>&copy; {{ date('Y') }} <strong>PT. Sekawan Putra Pratama</strong>. Seluruh Hak Cipta Dilindungi.</p>
+        <p class="mt-1 opacity-75">SmartRT Vision adalah platform sistem informasi administrasi rukun tetangga yang dikembangkan oleh PT. Sekawan Putra Pratama.</p>
+    </footer>
+</body>
+</html>
