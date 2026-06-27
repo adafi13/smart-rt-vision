@@ -667,6 +667,12 @@
             }
 
             showResult(resultBox, !!json.success, json.message || 'Data berhasil diproses.');
+            
+            if (json.whatsapp_url) {
+                setTimeout(() => {
+                    window.location.href = json.whatsapp_url;
+                }, 1500);
+            }
         }
 
         // Intersection Observer for scroll animations

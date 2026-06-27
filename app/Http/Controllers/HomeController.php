@@ -167,7 +167,8 @@ class HomeController extends Controller
 
     public function triggerPanic(\Illuminate\Http\Request $request)
     {
-        $tenantId = app('currentTenant')->id;
+        $tenant = app('currentTenant');
+        $tenantId = $tenant->id;
 
         $request->validate([
             'reporter_name' => 'required|string|max:255',
@@ -184,10 +185,30 @@ class HomeController extends Controller
             'type' => $request->type,
             'status' => 'active',
         ]);
+        
+        $rtPhone = $tenant->phone;
+        $waUrl = null;
+        
+        if ($rtPhone) {
+            $rtPhone = preg_replace('/[^0-9]/', '', $rtPhone);
+            if (str_starts_with($rtPhone, '0')) {
+                $rtPhone = '62' . substr($rtPhone, 1);
+            }
+            
+            $msg = "*🚨 DARURAT (PANIC BUTTON) 🚨*\n\n";
+            $msg .= "Telah dilaporkan kondisi darurat dari Portal Warga:\n";
+            $msg .= "👤 *Pelapor:* " . $request->reporter_name . " (" . $request->reporter_contact . ")\n";
+            $msg .= "📍 *Lokasi:* " . $request->location . "\n";
+            $msg .= "⚠️ *Kategori:* " . $request->type . "\n\n";
+            $msg .= "Mohon segera ditindaklanjuti!";
+            
+            $waUrl = "https://wa.me/" . $rtPhone . "?text=" . urlencode($msg);
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Laporan Darurat telah dikirim! Pengurus RT & Keamanan akan segera menindaklanjuti.',
+            'message' => 'Laporan Darurat telah dikirim! ' . ($waUrl ? 'Anda akan dialihkan ke WhatsApp pengurus...' : 'Pengurus RT akan segera menindaklanjuti.'),
+            'whatsapp_url' => $waUrl
         ]);
     }
 }
