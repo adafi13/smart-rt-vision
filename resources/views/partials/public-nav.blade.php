@@ -14,15 +14,15 @@
                 <a href="{{ route('home') }}#umkm" class="hover:text-white transition-colors">UMKM</a>
             </nav>
 
-            <div class="flex items-center gap-2 flex-shrink-0">
-                <a href="{{ route('login') }}" class="btn-ghost !py-2 !px-3 sm:!px-4 text-xs sm:text-sm whitespace-nowrap">
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <a href="{{ route('login') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition-colors whitespace-nowrap">
                     <span class="sm:hidden">Login</span>
                     <span class="hidden sm:inline">Login Pengurus</span>
                     <svg class="w-3.5 h-3.5 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                 </a>
-                <button type="button" @click="navOpen = !navOpen" class="md:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors">
+                <button type="button" @click="navOpen = !navOpen" class="md:hidden p-2 rounded-xl text-slate-300 bg-white/5 hover:text-white hover:bg-white/10 border border-white/10 transition-colors">
                     <svg x-show="!navOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                    <svg x-show="navOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <svg x-show="navOpen" class="w-5 h-5" style="display: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
         </div>

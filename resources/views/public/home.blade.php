@@ -237,14 +237,14 @@
             <p class="text-base text-slate-500 mt-4 font-medium">Bebas kecurigaan. Setiap rupiah kas yang masuk dan keluar dapat Anda pantau secara langsung.</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 reveal relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal relative z-10">
             <!-- Saldo Card (Credit Card Style) -->
-            <div class="col-span-1 lg:col-span-1 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl" style="background: linear-gradient(135deg, #0f172a, #334155);">
+            <div class="rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl flex flex-col h-full" style="background: linear-gradient(135deg, #0f172a, #334155);">
                 <div class="absolute top-0 right-0 p-6 opacity-20">
                     <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
                 </div>
-                <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Saldo Aktif RT</p>
-                <p class="text-4xl sm:text-5xl font-black text-white tracking-tight mb-8">Rp {{ number_format($saldo_kas, 0, ',', '.') }}</p>
+                <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Saldo Kas Aktif</p>
+                <p class="text-3xl sm:text-4xl font-black text-white tracking-tight mb-8">Rp {{ number_format($saldo_kas, 0, ',', '.') }}</p>
                 
                 <div class="flex items-center gap-2 mt-auto">
                     <span class="w-8 h-5 rounded bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center"><svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></span>
@@ -252,35 +252,35 @@
                 </div>
             </div>
 
-            <!-- Flow Cards -->
-            <div class="col-span-1 lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div class="premium-card p-8 flex flex-col justify-center border-l-4 border-l-emerald-500">
-                    <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    </div>
-                    <p class="text-sm font-bold text-slate-500 uppercase tracking-wide">Total Pemasukan</p>
-                    <p class="text-3xl font-black text-emerald-600 mt-2">Rp {{ number_format($total_masuk, 0, ',', '.') }}</p>
+            <!-- Pemasukan Card -->
+            <div class="premium-card p-8 flex flex-col justify-center border-t-4 border-t-emerald-500 h-full text-center">
+                <div class="w-14 h-14 mx-auto rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 mb-5">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 </div>
-                <div class="premium-card p-8 flex flex-col justify-center border-l-4 border-l-rose-500">
-                    <div class="w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center text-rose-600 mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
-                    </div>
-                    <p class="text-sm font-bold text-slate-500 uppercase tracking-wide">Total Pengeluaran</p>
-                    <p class="text-3xl font-black text-rose-600 mt-2">Rp {{ number_format($total_keluar, 0, ',', '.') }}</p>
-                </div>
-                
-                @if(count($chart_labels))
-                <div class="premium-card p-6 sm:col-span-2 flex flex-col sm:flex-row items-center gap-8">
-                    <div class="flex-1 w-full text-center sm:text-left">
-                        <h4 class="text-lg font-bold text-slate-900 mb-2">Analisis Pengeluaran</h4>
-                        <p class="text-sm text-slate-500 font-medium">Berdasarkan grafik di samping, warga dapat melihat sektor mana saja yang menggunakan dana kas RT terbanyak bulan ini.</p>
-                    </div>
-                    <div class="relative h-[180px] w-[180px] flex-shrink-0">
-                        <canvas id="expenseChart"></canvas>
-                    </div>
-                </div>
-                @endif
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Total Pemasukan</p>
+                <p class="text-2xl sm:text-3xl font-black text-emerald-600">Rp {{ number_format($total_masuk, 0, ',', '.') }}</p>
             </div>
+
+            <!-- Pengeluaran Card -->
+            <div class="premium-card p-8 flex flex-col justify-center border-t-4 border-t-rose-500 h-full text-center">
+                <div class="w-14 h-14 mx-auto rounded-full bg-rose-50 flex items-center justify-center text-rose-600 mb-5">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                </div>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Total Pengeluaran</p>
+                <p class="text-2xl sm:text-3xl font-black text-rose-600">Rp {{ number_format($total_keluar, 0, ',', '.') }}</p>
+            </div>
+            
+            @if(count($chart_labels))
+            <div class="premium-card p-6 md:col-span-3 flex flex-col sm:flex-row items-center gap-8 mt-2">
+                <div class="flex-1 w-full text-center sm:text-left">
+                    <h4 class="text-lg font-bold text-slate-900 mb-2">Analisis Pengeluaran</h4>
+                    <p class="text-sm text-slate-500 font-medium">Berdasarkan grafik di samping, warga dapat melihat sektor mana saja yang menggunakan dana kas RT terbanyak bulan ini.</p>
+                </div>
+                <div class="relative h-[200px] w-[200px] flex-shrink-0 mx-auto">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+            </div>
+            @endif
         </div>
     </section>
 
