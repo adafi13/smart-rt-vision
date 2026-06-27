@@ -98,23 +98,31 @@
             </p>
 
             @php 
-                $ketua = isset($rt_staffs) ? $rt_staffs->filter(function($s) { return stripos($s->position, 'ketua') !== false; })->first() : null;
+                // Ambil pimpinan: cari yg ada kata "ketua", kalau tidak ada ambil yg order_level paling kecil
+                $ketua = isset($rt_staffs) && $rt_staffs->count() > 0
+                    ? ($rt_staffs->filter(fn($s) => stripos($s->position, 'ketua') !== false)->first() 
+                       ?? $rt_staffs->sortBy('order_level')->first())
+                    : null;
             @endphp
-            @if($ketua)
-            <div class="mb-10 inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-dark border border-white/10 shadow-lg" title="Pimpinan / Ketua RT Saat Ini">
-                @if($ketua->photo)
+
+            {{-- Badge selalu tampil: nama ketua RT jika ada, atau fallback nama tenant --}}
+            <div class="mb-10 inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-dark border border-white/10 shadow-lg">
+                @if($ketua && $ketua->photo)
                     <img src="{{ asset('storage/'.$ketua->photo) }}" class="w-9 h-9 rounded-full object-cover border border-white/20" alt="{{ $ketua->name }}">
                 @else
                     <div class="w-9 h-9 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center font-bold text-sm border border-indigo-500/30">
-                        {{ substr($ketua->name, 0, 1) }}
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                     </div>
                 @endif
                 <div class="text-left">
-                    <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider leading-tight mb-0.5">{{ $ketua->position }}</p>
-                    <p class="text-sm text-white font-bold leading-tight">{{ $ketua->name }}</p>
+                    <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider leading-tight mb-0.5">
+                        {{ $ketua ? $ketua->position : 'Pimpinan RT' }}
+                    </p>
+                    <p class="text-sm text-white font-bold leading-tight">
+                        {{ $ketua ? $ketua->name : ($tenant->name ?? 'Belum diisi') }}
+                    </p>
                 </div>
             </div>
-            @endif
             
             <!-- Action Buttons -->
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
