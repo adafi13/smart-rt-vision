@@ -35,7 +35,7 @@
             <div class="icon-field">
                 <svg style="width:18px;height:18px;color:#94a3b8;" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                 <input id="tenant_name" name="tenant_name" type="text" value="{{ old('tenant_name') }}" required
-                       class="input-premium" placeholder="Contoh: RT 022 Sukaragam">
+                       class="auth-input" placeholder="Contoh: RT 022 Sukaragam">
             </div>
             @error('tenant_name') <p class="auth-error">{{ $message }}</p> @enderror
         </div>
@@ -46,7 +46,7 @@
             <div class="icon-field">
                 <svg style="width:18px;height:18px;color:#94a3b8;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                 <input id="name" name="name" type="text" value="{{ old('name') }}" required autofocus
-                       class="input-premium" placeholder="Nama pengurus RT">
+                       class="auth-input" placeholder="Nama pengurus RT">
             </div>
             @error('name') <p class="auth-error">{{ $message }}</p> @enderror
         </div>
@@ -57,7 +57,7 @@
             <div class="icon-field">
                 <svg style="width:18px;height:18px;color:#94a3b8;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 <input id="email" name="email" type="email" value="{{ old('email') }}" required
-                       class="input-premium" placeholder="nama@email.com">
+                       class="auth-input" placeholder="nama@email.com">
             </div>
             @error('email') <p class="auth-error">{{ $message }}</p> @enderror
         </div>
@@ -69,7 +69,7 @@
                 <div class="icon-field">
                     <svg style="width:18px;height:18px;color:#94a3b8;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                     <input id="password" name="password" type="password" required autocomplete="new-password"
-                           class="input-premium" placeholder="Min. 8 karakter">
+                           class="auth-input" placeholder="Min. 8 karakter">
                 </div>
                 @error('password') <p class="auth-error">{{ $message }}</p> @enderror
             </div>
@@ -78,14 +78,14 @@
                 <div class="icon-field">
                     <svg style="width:18px;height:18px;color:#94a3b8;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                     <input id="password_confirmation" name="password_confirmation" type="password" required
-                           class="input-premium" placeholder="Ulangi password">
+                           class="auth-input" placeholder="Ulangi password">
                 </div>
                 @error('password_confirmation') <p class="auth-error">{{ $message }}</p> @enderror
             </div>
         </div>
 
         <!-- Submit -->
-        <button type="submit" class="btn-premium" style="margin-top:4px;">
+        <button type="submit" class="auth-btn" style="margin-top:4px;">
             <span style="display:flex;align-items:center;justify-content:center;gap:8px;">
                 Buat Akun Gratis
                 <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>

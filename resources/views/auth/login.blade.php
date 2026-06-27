@@ -40,7 +40,7 @@
                 <input id="email" name="email" type="email"
                        value="{{ old('email', request()->cookie('remembered_email')) }}"
                        required autofocus
-                       class="input-premium"
+                       class="auth-input"
                        placeholder="nama@email.com">
             </div>
             @error('email') <p class="auth-error">{{ $message }}</p> @enderror
@@ -57,7 +57,7 @@
             <div class="icon-field">
                 <svg style="width:18px;height:18px;color:#94a3b8;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 <input id="password" name="password" type="password" required
-                       class="input-premium"
+                       class="auth-input"
                        style="padding-right:48px;"
                        placeholder="••••••••">
                 <button type="button" onclick="togglePassword('password', this)"
@@ -78,7 +78,7 @@
         </label>
 
         <!-- Submit -->
-        <button type="submit" id="loginBtn" class="btn-premium" style="margin-top:4px;">
+        <button type="submit" id="loginBtn" class="auth-btn" style="margin-top:4px;">
             <span id="btnText" style="display:flex;align-items:center;justify-content:center;gap:8px;">
                 Masuk Ke Sistem
                 <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -91,10 +91,10 @@
     </form>
 
     <!-- Divider -->
-    <div class="divider"><span>atau lanjutkan dengan</span></div>
+    <div class="auth-divider"><span>atau lanjutkan dengan</span></div>
 
     <!-- Google -->
-    <a href="{{ route('google.login') }}" class="btn-google">
+    <a href="{{ route('google.login') }}" class="auth-google-btn">
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:18px;height:18px;" alt="Google">
         <span>Lanjutkan dengan Google</span>
     </a>
