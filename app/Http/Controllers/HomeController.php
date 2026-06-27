@@ -37,9 +37,53 @@ class HomeController extends Controller
 
             'chart_labels' => $chartData->pluck('kategori'),
             'chart_values' => $chartData->pluck('total'),
+            
+            'inventories' => \App\Models\Inventory::where('tenant_id', app('currentTenant')->id)->get(),
+            
+            'ronda_schedules' => \App\Models\RondaSchedule::with(['member', 'attendance'])
+                ->where('tenant_id', app('currentTenant')->id)
+                ->where('date', now()->format('Y-m-d'))
+                ->get(),
+                
+            'rt_staffs' => \App\Models\RtStaff::where('tenant_id', app('currentTenant')->id)
+                ->where('is_active', true)
+                ->orderBy('order_level')
+                ->get(),
         ];
 
         return view('public.home', $stats);
+    }
+
+    public function pinjamInventaris(\Illuminate\Http\Request $request)
+    {
+        $tenant = app('currentTenant');
+        
+        $request->validate([
+            'inventory_id' => 'required|exists:inventories,id',
+            'borrower_name' => 'required|string|max:255',
+            'borrower_contact' => 'required|string|max:255',
+            'quantity' => 'required|integer|min:1',
+            'expected_return_date' => 'required|date|after_or_equal:today',
+        ]);
+
+        $inventory = \App\Models\Inventory::where('tenant_id', $tenant->id)->findOrFail($request->inventory_id);
+        
+        if ($inventory->available_quantity < $request->quantity) {
+            return back()->with('error', 'Maaf, sisa barang tidak mencukupi untuk jumlah yang Anda pinjam.');
+        }
+
+        \App\Models\InventoryBorrowing::create([
+            'tenant_id' => $tenant->id,
+            'inventory_id' => $inventory->id,
+            'borrower_name' => $request->borrower_name,
+            'borrower_contact' => $request->borrower_contact,
+            'quantity' => $request->quantity,
+            'borrow_date' => now(),
+            'expected_return_date' => $request->expected_return_date,
+            'status' => 'pending',
+        ]);
+
+        return back()->with('success', 'Pengajuan pinjam barang berhasil dikirim! Silakan hubungi pengurus RT untuk konfirmasi/pengambilan barang.');
     }
 
     public function cekNik(\Illuminate\Http\Request $request)
@@ -62,5 +106,62 @@ class HomeController extends Controller
     public function syarat()
     {
         return view('public.syarat', ['tenant' => app('currentTenant')]);
+    }
+
+    public function absenRonda(\Illuminate\Http\Request $request)
+    {
+        $tenantId = app('currentTenant')->id;
+        
+        $request->validate([
+            'nik' => 'required|numeric|exists:members,nik',
+            'location' => 'required|string',
+            'foto' => 'required|image|max:2048',
+        ], [
+            'nik.exists' => 'NIK tidak ditemukan di database warga.',
+            'foto.max' => 'Ukuran foto maksimal 2MB.',
+        ]);
+
+        $warga = Member::where('tenant_id', $tenantId)->where('nik', $request->nik)->first();
+        if (!$warga) {
+            return response()->json([
+                'success' => false,
+                'message' => 'NIK tidak terdaftar di RT ini.',
+            ]);
+        }
+
+        $schedule = \App\Models\RondaSchedule::where('tenant_id', $tenantId)
+            ->where('member_id', $warga->id)
+            ->where('date', now()->format('Y-m-d'))
+            ->first();
+
+        if (!$schedule) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Maaf, nama Anda tidak masuk dalam jadwal ronda untuk malam ini.',
+            ]);
+        }
+
+        if ($schedule->attendance) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda sudah melakukan absensi ronda untuk malam ini.',
+            ]);
+        }
+
+        $path = $request->file('foto')->store('ronda-attendances', 'public');
+
+        \App\Models\RondaAttendance::create([
+            'tenant_id' => $tenantId,
+            'ronda_schedule_id' => $schedule->id,
+            'member_id' => $warga->id,
+            'clock_in' => now(),
+            'location' => $request->location,
+            'photo_path' => $path,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Terima kasih, absen ronda berhasil dicatat. Selamat bertugas!',
+        ]);
     }
 }

@@ -1,74 +1,135 @@
 <x-guest-layout>
-    <div class="mb-7">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 mb-3">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            Trial 14 hari, tanpa kartu kredit
-        </span>
-        <h2 class="text-2xl font-bold text-gray-900">Daftarkan RT Anda</h2>
-        <p class="text-gray-500 text-sm mt-1">Buat workspace RT sendiri dan mulai kelola data warga dalam hitungan menit.</p>
+    @if ($errors->any())
+        <div style="margin-bottom:20px;padding:12px 16px;border-radius:12px;background:#fff1f2;border:1px solid #fecdd3;">
+            @foreach ($errors->all() as $error)
+                <p style="font-size:12px;color:#be123c;font-weight:600;margin:0 0 4px;">{{ $error }}</p>
+            @endforeach
+        </div>
+    @endif
+
+    <!-- Badge + Heading -->
+    <div style="margin-bottom:28px;">
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;background:#f0fdf4;border:1px solid #bbf7d0;margin-bottom:14px;">
+            <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;"></span>
+            <span style="font-size:11px;font-weight:700;color:#166534;letter-spacing:0.05em;text-transform:uppercase;">Trial 14 hari gratis</span>
+        </div>
+        <h1 style="font-size:28px;font-weight:900;color:#0f172a;letter-spacing:-0.03em;margin:0 0 6px;line-height:1.2;">Daftarkan RT Anda 🏘️</h1>
+        <p style="font-size:14px;color:#64748b;margin:0;font-weight:500;">Buat workspace RT dan mulai kelola data warga dalam hitungan menit.</p>
     </div>
 
     <!-- Tab switch -->
-    <div class="flex gap-1 p-1 rounded-xl mb-6 bg-gray-100">
-        <a href="{{ route('login') }}"
-           class="flex-1 py-2 rounded-lg text-center text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
-            Masuk
-        </a>
-        <a href="{{ route('register') }}"
-           class="flex-1 py-2 rounded-lg text-center text-sm font-semibold bg-white text-gray-900 shadow-sm">
-            Daftar
-        </a>
+    <div class="tab-wrap">
+        <a href="{{ route('login') }}" class="tab-item">Masuk</a>
+        <a href="{{ route('register') }}" class="tab-item active">Daftar</a>
     </div>
 
-    <form method="POST" action="{{ route('register') }}" class="space-y-4">
+    <!-- Form -->
+    <form method="POST" action="{{ route('register') }}" style="display:flex;flex-direction:column;gap:16px;">
         @csrf
 
+        <!-- Nama RT -->
         <div>
-            <label class="label" for="tenant_name">Nama RT / Lingkungan</label>
-            <input id="tenant_name" name="tenant_name" type="text" value="{{ old('tenant_name') }}" required
-                   class="input-auth" placeholder="Contoh: RT 022 Sukaragam">
-            @error('tenant_name') <p class="mt-1.5 text-xs text-red-500">{{ $message }}</p> @enderror
+            <label class="auth-label" for="tenant_name">Nama RT / Lingkungan</label>
+            <div class="icon-field">
+                <svg style="width:18px;height:18px;color:#94a3b8;" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <input id="tenant_name" name="tenant_name" type="text" value="{{ old('tenant_name') }}" required
+                       class="input-premium" placeholder="Contoh: RT 022 Sukaragam">
+            </div>
+            @error('tenant_name') <p class="auth-error">{{ $message }}</p> @enderror
         </div>
 
+        <!-- Nama -->
         <div>
-            <label class="label" for="name">Nama Lengkap Anda</label>
-            <input id="name" name="name" type="text" value="{{ old('name') }}" required autofocus
-                   class="input-auth" placeholder="Nama pengurus RT">
-            @error('name') <p class="mt-1.5 text-xs text-red-500">{{ $message }}</p> @enderror
+            <label class="auth-label" for="name">Nama Lengkap Anda</label>
+            <div class="icon-field">
+                <svg style="width:18px;height:18px;color:#94a3b8;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                <input id="name" name="name" type="text" value="{{ old('name') }}" required autofocus
+                       class="input-premium" placeholder="Nama pengurus RT">
+            </div>
+            @error('name') <p class="auth-error">{{ $message }}</p> @enderror
         </div>
 
+        <!-- Email -->
         <div>
-            <label class="label" for="email">Email</label>
-            <input id="email" name="email" type="email" value="{{ old('email') }}" required
-                   class="input-auth" placeholder="nama@email.com">
-            @error('email') <p class="mt-1.5 text-xs text-red-500">{{ $message }}</p> @enderror
+            <label class="auth-label" for="email">Alamat Email</label>
+            <div class="icon-field">
+                <svg style="width:18px;height:18px;color:#94a3b8;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <input id="email" name="email" type="email" value="{{ old('email') }}" required
+                       class="input-premium" placeholder="nama@email.com">
+            </div>
+            @error('email') <p class="auth-error">{{ $message }}</p> @enderror
         </div>
 
-        <div>
-            <label class="label" for="password">Password</label>
-            <input id="password" name="password" type="password" required autocomplete="new-password"
-                   class="input-auth" placeholder="Minimal 8 karakter">
-            @error('password') <p class="mt-1.5 text-xs text-red-500">{{ $message }}</p> @enderror
+        <!-- Password row -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+                <label class="auth-label" for="password">Password</label>
+                <div class="icon-field">
+                    <svg style="width:18px;height:18px;color:#94a3b8;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    <input id="password" name="password" type="password" required autocomplete="new-password"
+                           class="input-premium" placeholder="Min. 8 karakter">
+                </div>
+                @error('password') <p class="auth-error">{{ $message }}</p> @enderror
+            </div>
+            <div>
+                <label class="auth-label" for="password_confirmation">Konfirmasi</label>
+                <div class="icon-field">
+                    <svg style="width:18px;height:18px;color:#94a3b8;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <input id="password_confirmation" name="password_confirmation" type="password" required
+                           class="input-premium" placeholder="Ulangi password">
+                </div>
+                @error('password_confirmation') <p class="auth-error">{{ $message }}</p> @enderror
+            </div>
         </div>
 
-        <div>
-            <label class="label" for="password_confirmation">Konfirmasi Password</label>
-            <input id="password_confirmation" name="password_confirmation" type="password" required
-                   class="input-auth" placeholder="Ulangi password">
-            @error('password_confirmation') <p class="mt-1.5 text-xs text-red-500">{{ $message }}</p> @enderror
-        </div>
-
-        <button type="submit"
-                class="w-full py-2.5 px-4 rounded-xl text-sm font-semibold text-white transition-all"
-                style="background: #4f46e5;"
-                onmouseover="this.style.background='#4338ca'; this.style.boxShadow='0 4px 16px rgba(79,70,229,0.3)'"
-                onmouseout="this.style.background='#4f46e5'; this.style.boxShadow='none'">
-            Buat Akun
+        <!-- Submit -->
+        <button type="submit" class="btn-premium" style="margin-top:4px;">
+            <span style="display:flex;align-items:center;justify-content:center;gap:8px;">
+                Buat Akun Gratis
+                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </span>
         </button>
     </form>
 
-    <p class="text-center text-sm text-gray-500 mt-6">
-        Sudah punya akun?
-        <a href="{{ route('login') }}" class="font-semibold text-indigo-600 hover:text-indigo-500">Masuk di sini</a>
-    </p>
+    <div style="text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid #f1f5f9;">
+        <p style="font-size:13px;color:#64748b;font-weight:500;margin:0;">
+            Sudah punya akun?
+            <a href="{{ route('login') }}" style="color:#2563eb;font-weight:700;text-decoration:none;">Masuk di sini</a>
+        </p>
+    </div>
+
+    @push('sidebar')
+    <x-slot name="sidebar">
+        <div style="display:flex;flex-direction:column;gap:28px;">
+            <div class="fade-in-up">
+                <h2 style="font-size:36px;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1.15;margin:0 0 12px;">
+                    Mulai perjalanan<br><span style="color:#60a5fa;">digital RT Anda.</span>
+                </h2>
+                <p style="font-size:14px;color:rgba(255,255,255,0.5);font-weight:500;line-height:1.7;max-width:320px;margin:0;">
+                    Ratusan RT di seluruh Indonesia sudah membuktikan manfaatnya. Bergabunglah sekarang secara gratis.
+                </p>
+            </div>
+
+            <!-- Steps -->
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                @foreach([
+                    ['num' => '1', 'title' => 'Daftar Akun', 'desc' => 'Isi nama RT dan email Anda dalam 30 detik'],
+                    ['num' => '2', 'title' => 'Upload Data KK', 'desc' => 'AI kami otomatis membaca dan mengekstrak data'],
+                    ['num' => '3', 'title' => 'Aktifkan Portal', 'desc' => 'Warga bisa langsung mengakses layanan online'],
+                ] as $step)
+                <div class="glass-card fade-in-up" style="padding:14px 18px;border-radius:16px;display:flex;align-items:center;gap:14px;">
+                    <div style="width:32px;height:32px;border-radius:10px;background:rgba(96,165,250,0.2);border:1px solid rgba(96,165,250,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span style="font-size:13px;font-weight:900;color:#60a5fa;">{{ $step['num'] }}</span>
+                    </div>
+                    <div>
+                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 2px;">{{ $step['title'] }}</h4>
+                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;">{{ $step['desc'] }}</p>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </x-slot>
+    @endpush
+
 </x-guest-layout>

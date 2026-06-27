@@ -110,6 +110,10 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::delete('/{contribution}', [AdminContributionController::class, 'destroy'])->name('destroy');
     });
 
+    Route::prefix('admin/tunggakan')->name('admin.tunggakan.')->middleware('rt_role:owner,bendahara')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\TunggakanController::class, 'index'])->name('index');
+    });
+
     Route::prefix('admin/pengeluaran')->name('admin.pengeluaran.')->middleware('rt_role:owner,bendahara')->group(function () {
         Route::get('/', [AdminExpenseController::class, 'index'])->name('index');
         Route::post('/', [AdminExpenseController::class, 'store'])->name('store');
@@ -149,11 +153,35 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::delete('/{product}', [AdminProductController::class, 'destroy'])->name('destroy');
     });
 
+    Route::prefix('admin/inventaris')->name('admin.inventaris.')->middleware('rt_role:owner,sekretaris,bendahara')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\InventoryController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Admin\InventoryController::class, 'store'])->name('store');
+        Route::put('/{inventory}', [\App\Http\Controllers\Admin\InventoryController::class, 'update'])->name('update');
+        Route::delete('/{inventory}', [\App\Http\Controllers\Admin\InventoryController::class, 'destroy'])->name('destroy');
+        
+        Route::post('/borrowings/{borrowing}/approve', [\App\Http\Controllers\Admin\InventoryController::class, 'approve'])->name('borrowings.approve');
+        Route::post('/borrowings/{borrowing}/reject', [\App\Http\Controllers\Admin\InventoryController::class, 'reject'])->name('borrowings.reject');
+        Route::post('/borrowings/{borrowing}/return', [\App\Http\Controllers\Admin\InventoryController::class, 'returnItem'])->name('borrowings.return');
+    });
+
+    Route::prefix('admin/ronda')->name('admin.ronda.')->middleware('rt_role:owner,sekretaris')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\RondaController::class, 'index'])->name('index');
+        Route::post('/schedule', [\App\Http\Controllers\Admin\RondaController::class, 'storeSchedule'])->name('schedule.store');
+        Route::delete('/schedule/{schedule}', [\App\Http\Controllers\Admin\RondaController::class, 'destroySchedule'])->name('schedule.destroy');
+    });
+
     Route::prefix('admin/staff')->name('admin.staff.')->middleware('rt_role:owner')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\StaffController::class, 'index'])->name('index');
         Route::post('/', [\App\Http\Controllers\Admin\StaffController::class, 'store'])->name('store');
         Route::put('/{staff}', [\App\Http\Controllers\Admin\StaffController::class, 'update'])->name('update');
         Route::delete('/{staff}', [\App\Http\Controllers\Admin\StaffController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('admin/organisasi')->name('admin.organisasi.')->middleware('rt_role:owner,sekretaris')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\RtStaffController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Admin\RtStaffController::class, 'store'])->name('store');
+        Route::put('/{staff}', [\App\Http\Controllers\Admin\RtStaffController::class, 'update'])->name('update');
+        Route::delete('/{staff}', [\App\Http\Controllers\Admin\RtStaffController::class, 'destroy'])->name('destroy');
     });
 });
 
@@ -229,4 +257,6 @@ Route::middleware(['tenant.slug'])->prefix('/{tenant:slug}')->group(function () 
     Route::post('/kirim-laporan', [ReportController::class, 'store'])->name('kirim-laporan');
     Route::get('/cek-laporan', [ReportController::class, 'cekLaporan'])->name('cek-laporan');
     Route::post('/lapor-peristiwa', [LifeEventController::class, 'store'])->name('lapor-peristiwa');
+    Route::post('/pinjam-inventaris', [HomeController::class, 'pinjamInventaris'])->name('pinjam-inventaris');
+    Route::post('/absen-ronda', [HomeController::class, 'absenRonda'])->name('absen-ronda');
 });

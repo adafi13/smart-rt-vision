@@ -16,8 +16,7 @@ class PlanController extends Controller
 
     public function create()
     {
-        $plan = new Plan();
-        return view('super-admin.plans.form', compact('plan'));
+        return view('super-admin.plans.create');
     }
 
     public function store(Request $request)
@@ -30,12 +29,12 @@ class PlanController extends Controller
 
     public function edit(Plan $plan)
     {
-        return view('super-admin.plans.form', compact('plan'));
+        return view('super-admin.plans.edit', compact('plan'));
     }
 
     public function update(Request $request, Plan $plan)
     {
-        $data = $this->validatePlan($request);
+        $data = $this->validatePlan($request, $plan);
         $plan->update($data);
 
         return redirect()->route('super-admin.plans.index')->with('success', 'Paket berlangganan berhasil diperbarui.');
@@ -51,29 +50,39 @@ class PlanController extends Controller
         return redirect()->route('super-admin.plans.index')->with('success', 'Paket berlangganan berhasil dihapus.');
     }
 
-    private function validatePlan(Request $request)
+    private function validatePlan(Request $request, ?Plan $plan = null)
     {
+        $planId = $plan ? $plan->id : '';
+        
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:plans,slug,' . ($request->route('plan') ? $request->route('plan')->id : ''),
+            'slug' => 'required|string|max:255|unique:plans,slug,' . $planId,
             'description' => 'nullable|string',
             'price_monthly' => 'required|numeric|min:0',
             'price_yearly' => 'required|numeric|min:0',
             'max_kk' => 'nullable|integer|min:1',
             'max_ai_extractions_per_month' => 'nullable|integer|min:1',
-            'features' => 'nullable|string',
+            'features' => 'nullable|array',
             'is_popular' => 'boolean',
             'is_active' => 'boolean',
             'sort_order' => 'required|integer',
         ]);
 
-        // Convert features from newline-separated string back to array for storage
-        if (!empty($data['features'])) {
-            $data['features'] = array_map('trim', explode("\n", trim($data['features'])));
-            $data['features'] = array_filter($data['features']); // remove empty lines
-        } else {
-            $data['features'] = [];
+        $data['is_popular'] = $request->boolean('is_popular');
+        $data['is_active'] = $request->boolean('is_active');
+
+        // Ambil semua key fitur yang tersedia dari request features
+        $availableFeatures = [
+            'data_kk', 'data_warga', 'iuran_warga', 'pengeluaran_kas', 
+            'pengajuan_surat', 'laporan_warga', 'lapor_peristiwa', 'berita_pengumuman', 
+            'pasar_umkm', 'export_laporan'
+        ];
+
+        $features = [];
+        foreach ($availableFeatures as $feature) {
+            $features[$feature] = $request->boolean("features.$feature");
         }
+        $data['features'] = $features;
 
         return $data;
     }

@@ -67,6 +67,7 @@
                     'icon' => 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 8v2m9-4a9 9 0 11-18 0 9 9 0 0118 0z',
                     'items' => array_filter([
                         !$isSekretaris ? ['route' => 'admin.iuran.index', 'match' => 'admin.iuran.*', 'label' => 'Iuran Warga'] : null,
+                        !$isSekretaris ? ['route' => 'admin.tunggakan.index', 'match' => 'admin.tunggakan.*', 'label' => 'Rekap Tunggakan'] : null,
                         !$isSekretaris ? ['route' => 'admin.pengeluaran.index', 'match' => 'admin.pengeluaran.*', 'label' => 'Pengeluaran Kas'] : null,
                     ]),
                 ],
@@ -77,6 +78,8 @@
                         !$isBendahara ? ['route' => 'admin.pengajuan.index', 'match' => 'admin.pengajuan.*', 'label' => 'Pengajuan Surat'] : null,
                         !$isBendahara ? ['route' => 'admin.laporan.index', 'match' => 'admin.laporan.*', 'label' => 'Laporan Warga'] : null,
                         !$isBendahara ? ['route' => 'admin.peristiwa.index', 'match' => 'admin.peristiwa.*', 'label' => 'Lapor Peristiwa'] : null,
+                        ['route' => 'admin.inventaris.index', 'match' => 'admin.inventaris.*', 'label' => 'Inventaris & Aset'],
+                        !$isBendahara ? ['route' => 'admin.ronda.index', 'match' => 'admin.ronda.*', 'label' => 'Jadwal Ronda'] : null,
                     ]),
                 ],
                 [
@@ -99,7 +102,8 @@
                     'label' => 'Pengaturan',
                     'icon' => 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z',
                     'items' => array_filter([
-                        $isOwner ? ['route' => 'admin.staff.index', 'match' => 'admin.staff.*', 'label' => 'Manajemen Staff'] : null,
+                        ($isOwner || $isSekretaris) ? ['route' => 'admin.organisasi.index', 'match' => 'admin.organisasi.*', 'label' => 'Struktur Organisasi'] : null,
+                        $isOwner ? ['route' => 'admin.staff.index', 'match' => 'admin.staff.*', 'label' => 'Manajemen Staff (Akun)'] : null,
                         !$isSekretaris ? ['route' => 'billing.index', 'match' => 'billing.*', 'label' => 'Paket & Tagihan'] : null,
                     ]),
                 ],

@@ -4,13 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Report;
+use App\Models\ReportReply;
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Report::with('member')->latest();
+        $tenant = auth()->user()->tenant;
+        
+        $query = Report::with(['member', 'replies.user'])->where('tenant_id', $tenant->id)->latest();
 
         if ($status = $request->input('status')) {
             $query->where('status', $status);
@@ -23,20 +28,81 @@ class ReportController extends Controller
 
     public function update(Request $request, Report $report)
     {
+        if ($report->tenant_id !== auth()->user()->tenant_id) abort(403);
+
         $request->validate([
-            'status' => 'required|in:Menunggu,Proses,Selesai',
-            'tanggapan_rt' => 'nullable|string',
+            'status' => 'required|in:Menunggu,Proses,Selesai,Ditolak',
+            'message' => 'required|string',
         ]);
 
-        $report->update($request->only(['status', 'tanggapan_rt']));
+        try {
+            DB::transaction(function () use ($request, $report) {
+                $oldStatus = $report->status;
+                
+                // Save reply
+                $reply = ReportReply::create([
+                    'tenant_id' => $report->tenant_id,
+                    'report_id' => $report->id,
+                    'user_id' => auth()->id(),
+                    'message' => $request->message,
+                    'is_system' => false,
+                ]);
 
-        return back()->with('success', 'Status laporan diperbarui.');
+                // If status changed, log it
+                if ($oldStatus !== $request->status) {
+                    $report->update(['status' => $request->status]);
+                    
+                    ReportReply::create([
+                        'tenant_id' => $report->tenant_id,
+                        'report_id' => $report->id,
+                        'user_id' => auth()->id(),
+                        'message' => "Status diubah dari $oldStatus menjadi " . $request->status,
+                        'is_system' => true,
+                    ]);
+                }
+
+                AuditLog::create([
+                    'tenant_id' => app('currentTenant')->id,
+                    'user_id' => auth()->id(),
+                    'action' => 'reply_report',
+                    'model_type' => Report::class,
+                    'model_id' => $report->id,
+                    'old_values' => ['status' => $oldStatus],
+                    'new_values' => ['status' => $report->status, 'reply' => $request->message],
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                ]);
+            });
+
+            return back()->with('success', 'Tanggapan berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal memproses tanggapan: ' . $e->getMessage());
+        }
     }
 
     public function destroy(Report $report)
     {
-        $report->delete();
+        if ($report->tenant_id !== auth()->user()->tenant_id) abort(403);
+        
+        try {
+            DB::transaction(function () use ($report) {
+                $oldValues = $report->toArray();
+                $report->delete();
 
-        return back()->with('success', 'Laporan dihapus.');
+                AuditLog::create([
+                    'tenant_id' => app('currentTenant')->id,
+                    'user_id' => auth()->id(),
+                    'action' => 'delete_report',
+                    'model_type' => Report::class,
+                    'model_id' => $report->id,
+                    'old_values' => $oldValues,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                ]);
+            });
+            return back()->with('success', 'Laporan beserta riwayatnya dihapus.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal menghapus laporan: ' . $e->getMessage());
+        }
     }
 }

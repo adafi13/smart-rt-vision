@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\News;
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class NewsController extends Controller
@@ -33,21 +35,39 @@ class NewsController extends Controller
             'is_penting' => 'nullable|boolean',
         ]);
 
-        $path = null;
-        if ($request->hasFile('gambar')) {
-            $path = $request->file('gambar')->store('news', 'public');
+        try {
+            DB::transaction(function () use ($request) {
+                $path = null;
+                if ($request->hasFile('gambar')) {
+                    $path = $request->file('gambar')->store('news', 'public');
+                }
+
+                $news = News::create([
+                    'tenant_id' => auth()->user()->tenant_id,
+                    'judul' => $request->judul,
+                    'slug' => Str::slug($request->judul).'-'.uniqid(),
+                    'kategori' => $request->kategori,
+                    'isi' => $request->isi,
+                    'gambar' => $path,
+                    'is_penting' => $request->boolean('is_penting'),
+                ]);
+
+                AuditLog::create([
+                    'tenant_id' => auth()->user()->tenant_id,
+                    'user_id' => auth()->id(),
+                    'action' => 'create_news',
+                    'model_type' => News::class,
+                    'model_id' => $news->id,
+                    'new_values' => $news->toArray(),
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                ]);
+            });
+
+            return back()->with('success', 'Berita berhasil dipublikasikan.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal mempublikasikan berita: ' . $e->getMessage());
         }
-
-        News::create([
-            'judul' => $request->judul,
-            'slug' => Str::slug($request->judul).'-'.uniqid(),
-            'kategori' => $request->kategori,
-            'isi' => $request->isi,
-            'gambar' => $path,
-            'is_penting' => $request->boolean('is_penting'),
-        ]);
-
-        return back()->with('success', 'Berita berhasil dipublikasikan.');
     }
 
     public function update(Request $request, News $news)
@@ -60,29 +80,72 @@ class NewsController extends Controller
             'is_penting' => 'nullable|boolean',
         ]);
 
-        $path = $news->gambar;
-        if ($request->hasFile('gambar')) {
-            if ($path) {
-                Storage::disk('public')->delete($path);
-            }
-            $path = $request->file('gambar')->store('news', 'public');
+        try {
+            DB::transaction(function () use ($request, $news) {
+                $oldValues = $news->only('judul', 'kategori', 'isi', 'gambar', 'is_penting');
+                $path = $news->gambar;
+                
+                if ($request->hasFile('gambar')) {
+                    if ($path) {
+                        Storage::disk('public')->delete($path);
+                    }
+                    $path = $request->file('gambar')->store('news', 'public');
+                }
+
+                $news->update([
+                    'judul' => $request->judul,
+                    'kategori' => $request->kategori,
+                    'isi' => $request->isi,
+                    'gambar' => $path,
+                    'is_penting' => $request->boolean('is_penting'),
+                ]);
+
+                AuditLog::create([
+                    'tenant_id' => $news->tenant_id ?? auth()->user()->tenant_id,
+                    'user_id' => auth()->id(),
+                    'action' => 'update_news',
+                    'model_type' => News::class,
+                    'model_id' => $news->id,
+                    'old_values' => $oldValues,
+                    'new_values' => $news->only('judul', 'kategori', 'isi', 'gambar', 'is_penting'),
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                ]);
+            });
+
+            return back()->with('success', 'Berita berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal memperbarui berita: ' . $e->getMessage());
         }
-
-        $news->update([
-            'judul' => $request->judul,
-            'kategori' => $request->kategori,
-            'isi' => $request->isi,
-            'gambar' => $path,
-            'is_penting' => $request->boolean('is_penting'),
-        ]);
-
-        return back()->with('success', 'Berita berhasil diperbarui.');
     }
 
     public function destroy(News $news)
     {
-        $news->delete();
+        try {
+            DB::transaction(function () use ($news) {
+                $oldValues = $news->toArray();
+                
+                if ($news->gambar) {
+                    Storage::disk('public')->delete($news->gambar);
+                }
+                
+                $news->delete();
 
-        return back()->with('success', 'Berita dihapus.');
+                AuditLog::create([
+                    'tenant_id' => $news->tenant_id ?? auth()->user()->tenant_id,
+                    'user_id' => auth()->id(),
+                    'action' => 'delete_news',
+                    'model_type' => News::class,
+                    'model_id' => $news->id,
+                    'old_values' => $oldValues,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                ]);
+            });
+
+            return back()->with('success', 'Berita dihapus.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal menghapus berita: ' . $e->getMessage());
+        }
     }
 }

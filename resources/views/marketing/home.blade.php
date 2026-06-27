@@ -207,11 +207,42 @@
                 <p class="text-xs text-gray-400">/bulan</p>
 
                 <ul class="mt-5 space-y-2.5">
-                    @foreach($plan->features as $f)
+                    {{-- Batas KK --}}
                     <li class="flex items-start gap-2 text-sm text-gray-600">
                         <svg class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        {{ $f }}
+                        {{ $plan->isUnlimitedKk() ? 'Kartu Keluarga tanpa batas' : 'Hingga ' . number_format($plan->max_kk) . ' Kartu Keluarga' }}
                     </li>
+                    
+                    {{-- Batas AI --}}
+                    <li class="flex items-start gap-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        {{ $plan->isUnlimitedAi() ? 'Ekstraksi AI tanpa batas' : number_format($plan->max_ai_extractions_per_month) . ' ekstraksi foto KK dengan AI / bulan' }}
+                    </li>
+
+                    {{-- Fitur Modul --}}
+                    @php
+                        $featureLabels = [
+                            'data_kk' => 'Manajemen Data KK',
+                            'data_warga' => 'Manajemen Data Warga',
+                            'iuran_warga' => 'Pencatatan Iuran Warga',
+                            'pengeluaran_kas' => 'Pencatatan Pengeluaran Kas',
+                            'pengajuan_surat' => 'Layanan Pengajuan Surat',
+                            'laporan_warga' => 'Sistem Pelaporan Warga',
+                            'lapor_peristiwa' => 'Pencatatan Peristiwa Warga',
+                            'berita_pengumuman' => 'Portal Berita & Pengumuman',
+                            'pasar_umkm' => 'Pasar Warga (UMKM)',
+                            'export_laporan' => 'Ekspor Laporan (Excel & PDF)',
+                        ];
+                        $planFeatures = is_array($plan->features) ? $plan->features : [];
+                    @endphp
+
+                    @foreach($featureLabels as $key => $label)
+                        @if(!empty($planFeatures[$key]))
+                        <li class="flex items-start gap-2 text-sm text-gray-600">
+                            <svg class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            {{ $label }}
+                        </li>
+                        @endif
                     @endforeach
                 </ul>
 

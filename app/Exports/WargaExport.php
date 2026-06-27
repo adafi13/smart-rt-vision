@@ -8,15 +8,33 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithCustomStartCell;
+use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class WargaExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+class WargaExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles, WithEvents, WithCustomStartCell
 {
     private $rowNumber = 0;
+    private $tenantName;
+
+    public function __construct()
+    {
+        $this->tenantName = auth()->user()->tenant->name ?? 'Lingkungan RT/RW';
+    }
+
+    public function startCell(): string
+    {
+        return 'A4';
+    }
 
     public function collection()
     {
-        return Member::with('family')->orderBy('family_id')->get();
+        // Pastikan hanya mengambil member milik tenant saat ini
+        return Member::with('family')
+            ->where('tenant_id', auth()->user()->tenant_id)
+            ->orderBy('family_id')
+            ->get();
     }
 
     public function headings(): array
@@ -66,8 +84,8 @@ class WargaExport implements FromCollection, WithHeadings, WithMapping, ShouldAu
         $lastRow = $sheet->getHighestRow();
         $lastCol = $sheet->getHighestColumn();
 
-        // Header style (Beautiful Indigo)
-        $sheet->getStyle('A1:' . $lastCol . '1')->applyFromArray([
+        // Header Table Style
+        $sheet->getStyle('A4:' . $lastCol . '4')->applyFromArray([
             'font' => [
                 'bold' => true,
                 'color' => ['rgb' => 'FFFFFF'],
@@ -82,21 +100,59 @@ class WargaExport implements FromCollection, WithHeadings, WithMapping, ShouldAu
             ],
         ]);
 
-        // Standard body style with soft borders
-        $sheet->getStyle('A2:' . $lastCol . $lastRow)->applyFromArray([
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    'color' => ['rgb' => 'D1D5DB'], // Gray-300
+        // Table Body Border & Alignment
+        if ($lastRow > 4) {
+            $sheet->getStyle('A5:' . $lastCol . $lastRow)->applyFromArray([
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'color' => ['rgb' => '9CA3AF'], // Gray-400
+                    ],
                 ],
-            ],
-            'alignment' => [
-                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-            ],
-        ]);
+                'alignment' => [
+                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+            
+            // Center align numbering column
+            $sheet->getStyle('A5:A' . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        }
         
-        $sheet->getRowDimension(1)->setRowHeight(25);
+        $sheet->getRowDimension(4)->setRowHeight(25);
 
         return [];
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function(AfterSheet $event) {
+                $sheet = $event->sheet->getDelegate();
+
+                // Merge cells for Title
+                $sheet->mergeCells('A1:N1');
+                $sheet->mergeCells('A2:N2');
+
+                // Set Title Text
+                $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI DATA WARGA');
+                $sheet->setCellValue('A2', strtoupper($this->tenantName) . ' - DICETAK TANGGAL: ' . date('d M Y H:i'));
+
+                // Style Title
+                $sheet->getStyle('A1:A2')->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                        'size' => 14,
+                        'color' => ['rgb' => '111827'], // Gray-900
+                    ],
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    ],
+                ]);
+
+                // Freeze Pane at row 5 so headers are always visible when scrolling
+                $sheet->freezePane('A5');
+            },
+        ];
     }
 }
