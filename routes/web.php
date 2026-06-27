@@ -40,6 +40,14 @@ Route::post('/webhook/xendit', [BillingController::class, 'webhook'])->name('web
 // ===== HALAMAN JUALAN SAAS (marketing, publik) =====
 Route::get('/', [MarketingController::class, 'index'])->name('marketing.home');
 
+Route::get('/syarat-dan-ketentuan', function () {
+    return view('terms');
+})->name('terms');
+
+Route::get('/kebijakan-privasi', function () {
+    return view('privacy');
+})->name('privacy');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/suspended', function () {
         if (auth()->user()->tenant?->status !== 'suspended') {

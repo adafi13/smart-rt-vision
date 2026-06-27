@@ -181,8 +181,8 @@
                        style="margin-top:2px;width:16px;height:16px;border-radius:4px;border:1px solid #cbd5e1;accent-color:#2563eb;">
                 <span style="font-size:12px;color:#64748b;line-height:1.5;">
                     Saya setuju dengan 
-                    <a href="#" style="color:#2563eb;font-weight:600;text-decoration:none;">Syarat & Ketentuan</a> serta 
-                    <a href="#" style="color:#2563eb;font-weight:600;text-decoration:none;">Kebijakan Privasi</a> SmartRT Vision.
+                    <a href="{{ route('terms') }}" target="_blank" style="color:#2563eb;font-weight:600;text-decoration:none;">Syarat & Ketentuan</a> serta 
+                    <a href="{{ route('privacy') }}" target="_blank" style="color:#2563eb;font-weight:600;text-decoration:none;">Kebijakan Privasi</a> SmartRT Vision.
                 </span>
             </label>
             @error('terms') <p class="auth-error" style="margin-top:4px;">{{ $message }}</p> @enderror
