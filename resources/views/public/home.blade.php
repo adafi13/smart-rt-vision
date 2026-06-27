@@ -7,6 +7,9 @@
     <meta name="description" content="Portal resmi warga — statistik, transparansi kas, dan layanan mandiri RT.">
     <title>{{ ($tenant->name ?? config('app.name', 'SmartRT Vision')) }} · Portal Warga</title>
     <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="{{ asset('logo.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -580,6 +583,13 @@
             }
         });
         @endif
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js');
+            });
+        }
     </script>
 </body>
 </html>

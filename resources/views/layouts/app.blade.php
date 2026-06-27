@@ -7,7 +7,9 @@
     <meta name="description" content="SmartRT Vision - Sistem Pendataan Warga RT berbasis AI">
     <title>{{ isset($title) ? $title . ' · ' : '' }}{{ config('app.name', 'SmartRT Vision') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
-
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="{{ asset('logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -132,6 +134,13 @@
                 });
             });
         });
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js');
+            });
+        }
     </script>
 </body>
 </html>
