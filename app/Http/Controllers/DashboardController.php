@@ -36,9 +36,11 @@ class DashboardController extends Controller
         
         arsort($pendidikanStats);
 
+        $activePanicAlerts = \App\Models\PanicAlert::where('status', 'active')->latest()->get();
+
         return view('dashboard', compact(
             'totalKk', 'totalWarga', 'totalLakiLaki', 'totalPerempuan',
-            'ageGroups', 'pendidikanStats'
+            'ageGroups', 'pendidikanStats', 'activePanicAlerts'
         ));
     }
 }

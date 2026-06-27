@@ -195,6 +195,11 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::put('/{staff}', [\App\Http\Controllers\Admin\RtStaffController::class, 'update'])->name('update');
         Route::delete('/{staff}', [\App\Http\Controllers\Admin\RtStaffController::class, 'destroy'])->name('destroy');
     });
+
+    Route::prefix('admin/panic-alerts')->name('admin.panic.')->middleware('rt_role:owner,sekretaris')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\PanicAlertController::class, 'index'])->name('index');
+        Route::post('/{panicAlert}/resolve', [\App\Http\Controllers\Admin\PanicAlertController::class, 'resolve'])->name('resolve');
+    });
 });
 
 Route::middleware('auth')->group(function () {
@@ -271,4 +276,5 @@ Route::middleware(['tenant.slug'])->prefix('/{tenant:slug}')->group(function () 
     Route::post('/lapor-peristiwa', [LifeEventController::class, 'store'])->name('lapor-peristiwa');
     Route::post('/pinjam-inventaris', [HomeController::class, 'pinjamInventaris'])->name('pinjam-inventaris');
     Route::post('/absen-ronda', [HomeController::class, 'absenRonda'])->name('absen-ronda');
+    Route::post('/trigger-panic', [HomeController::class, 'triggerPanic'])->name('trigger-panic');
 });

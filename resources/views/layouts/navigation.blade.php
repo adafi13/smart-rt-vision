@@ -78,6 +78,7 @@
                         !$isBendahara ? ['route' => 'admin.pengajuan.index', 'match' => 'admin.pengajuan.*', 'label' => 'Pengajuan Surat'] : null,
                         !$isBendahara ? ['route' => 'admin.laporan.index', 'match' => 'admin.laporan.*', 'label' => 'Laporan Warga'] : null,
                         !$isBendahara ? ['route' => 'admin.peristiwa.index', 'match' => 'admin.peristiwa.*', 'label' => 'Lapor Peristiwa'] : null,
+                        !$isBendahara ? ['route' => 'admin.panic.index', 'match' => 'admin.panic.*', 'label' => 'Riwayat Darurat (Panic)'] : null,
                         ['route' => 'admin.inventaris.index', 'match' => 'admin.inventaris.*', 'label' => 'Inventaris & Aset'],
                         !$isBendahara ? ['route' => 'admin.ronda.index', 'match' => 'admin.ronda.*', 'label' => 'Jadwal Ronda'] : null,
                     ]),

@@ -164,4 +164,30 @@ class HomeController extends Controller
             'message' => 'Terima kasih, absen ronda berhasil dicatat. Selamat bertugas!',
         ]);
     }
+
+    public function triggerPanic(\Illuminate\Http\Request $request)
+    {
+        $tenantId = app('currentTenant')->id;
+
+        $request->validate([
+            'reporter_name' => 'required|string|max:255',
+            'reporter_contact' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'type' => 'required|string|max:100',
+        ]);
+
+        \App\Models\PanicAlert::create([
+            'tenant_id' => $tenantId,
+            'reporter_name' => $request->reporter_name,
+            'reporter_contact' => $request->reporter_contact,
+            'location' => $request->location,
+            'type' => $request->type,
+            'status' => 'active',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Laporan Darurat telah dikirim! Pengurus RT & Keamanan akan segera menindaklanjuti.',
+        ]);
+    }
 }
