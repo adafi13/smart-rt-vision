@@ -77,6 +77,12 @@
             <span style="font-size:13px;color:#64748b;font-weight:500;">Ingat sesi saya</span>
         </label>
 
+        <!-- Cloudflare Turnstile -->
+        <div style="margin-top:4px;">
+            <div class="cf-turnstile" data-sitekey="{{ env('TURNSTILE_SITE_KEY', '1x00000000000000000000AA') }}" data-theme="light"></div>
+            @error('cf-turnstile-response') <p class="auth-error" style="margin-top:4px;">{{ $message }}</p> @enderror
+        </div>
+
         <!-- Submit -->
         <button type="submit" id="loginBtn" class="auth-btn" style="margin-top:4px;">
             <span id="btnText" style="display:flex;align-items:center;justify-content:center;gap:8px;">
@@ -91,7 +97,13 @@
     </form>
 
     <!-- Divider -->
-    <div class="auth-divider"><span>atau lanjutkan dengan</span></div>
+    <div class="auth-divider"><span>atau opsi lain</span></div>
+
+    <!-- Magic Link -->
+    <a href="{{ route('magic-link.request') }}" class="auth-btn" style="background:#f8fafc;color:#0f172a;border:1px solid #e2e8f0;margin-bottom:12px;">
+        <svg style="width:18px;height:18px;color:#3b82f6;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <span>Masuk dengan Magic Link</span>
+    </a>
 
     <!-- Google -->
     <a href="{{ route('google.login') }}" class="auth-google-btn">

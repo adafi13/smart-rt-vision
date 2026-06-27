@@ -39,7 +39,24 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'terms' => ['accepted'],
+            'cf-turnstile-response' => ['required', 'string'],
+        ], [
+            'terms.accepted' => 'Anda harus menyetujui Syarat & Ketentuan.',
+            'cf-turnstile-response.required' => 'Mohon selesaikan verifikasi keamanan.'
         ]);
+
+        $turnstileResponse = \Illuminate\Support\Facades\Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+            'secret' => env('TURNSTILE_SECRET_KEY', '1x0000000000000000000000000000000AA'),
+            'response' => $request->input('cf-turnstile-response'),
+            'remoteip' => $request->ip(),
+        ]);
+
+        if (!$turnstileResponse->json('success')) {
+            throw ValidationException::withMessages([
+                'cf-turnstile-response' => 'Verifikasi keamanan gagal. Silakan coba lagi.'
+            ]);
+        }
 
         $user = DB::transaction(function () use ($request) {
             $tenant = Tenant::create([

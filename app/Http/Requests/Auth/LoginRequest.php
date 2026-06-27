@@ -30,6 +30,14 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'cf-turnstile-response' => ['required', 'string'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'cf-turnstile-response.required' => 'Mohon selesaikan verifikasi keamanan.'
         ];
     }
 
@@ -41,6 +49,19 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
+
+        $turnstileResponse = \Illuminate\Support\Facades\Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+            'secret' => env('TURNSTILE_SECRET_KEY', '1x0000000000000000000000000000000AA'),
+            'response' => $this->input('cf-turnstile-response'),
+            'remoteip' => $this->ip(),
+        ]);
+
+        if (!$turnstileResponse->json('success')) {
+            RateLimiter::hit($this->throttleKey());
+            throw ValidationException::withMessages([
+                'cf-turnstile-response' => 'Verifikasi keamanan gagal. Silakan coba lagi.'
+            ]);
+        }
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
