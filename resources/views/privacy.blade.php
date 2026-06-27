@@ -91,7 +91,7 @@
                     <p class="font-bold text-slate-900">SmartRT Vision Official Support</p>
                     <p class="text-slate-500">Senin – Jumat, 08.00–17.00 WIB</p>
                     <p class="mt-2 text-blue-600 font-bold">WhatsApp: +62 851-5641-2702</p>
-                    <p class="text-blue-600 font-bold">Email: support@smartrtvision.sekawanputrapratama.com</p>
+                    <p class="text-blue-600 font-bold">Email: sekawanputrapratama@gmail.com</p>
                 </div>
             </section>
         </div>
