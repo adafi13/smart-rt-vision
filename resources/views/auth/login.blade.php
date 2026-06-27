@@ -9,11 +9,12 @@
     @endif
 
     @php
-        $globalErrors = $errors->except(['email', 'password']);
+        $fieldErrors = array_merge($errors->get('email'), $errors->get('password'));
+        $globalErrorList = array_filter($errors->all(), fn($e) => !in_array($e, $fieldErrors));
     @endphp
-    @if ($globalErrors->any())
+    @if (count($globalErrorList) > 0)
         <div style="margin-bottom:20px;padding:12px 16px;border-radius:12px;background:#fff1f2;border:1px solid #fecdd3;">
-            @foreach ($globalErrors->all() as $error)
+            @foreach ($globalErrorList as $error)
                 <p style="font-size:12px;color:#be123c;font-weight:600;margin:0 0 4px;">{{ $error }}</p>
             @endforeach
         </div>
