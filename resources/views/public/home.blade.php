@@ -58,6 +58,13 @@
         /* Ambient Glows */
         .ambient-glow { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; z-index: 0; pointer-events: none; }
         
+        @keyframes emergency-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.7); }
+            70% { box-shadow: 0 0 0 25px rgba(225, 29, 72, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
+        }
+        .btn-panic { animation: emergency-pulse 1.5s infinite; }
+        
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f8fafc; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
@@ -558,11 +565,24 @@
         </div>
     </template>
 
-    <!-- FLOATING PANIC BUTTON -->
-    <button @click.prevent.stop="modal = 'trigger-panic'" class="fixed bottom-6 right-6 md:bottom-10 md:right-10 w-16 h-16 md:w-20 md:h-20 bg-rose-600 hover:bg-rose-700 text-white rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-110 z-40 animate-pulse border-4 border-rose-300/50 group" title="Tombol Darurat (Panic Button)">
-        <svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-        <span class="absolute -top-12 right-0 bg-rose-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Tombol Darurat</span>
-    </button>
+    <!-- FLOATING PANIC BUTTON (REDESIGNED FOR DANGER) -->
+    <div class="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-40 flex flex-col items-center gap-2">
+        <!-- Floating label -->
+        <div class="bg-rose-900 text-white text-[10px] md:text-xs font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg animate-bounce border border-rose-400">
+            Tekan Jika Darurat!
+        </div>
+        
+        <button @click.prevent.stop="modal = 'trigger-panic'" class="btn-panic w-20 h-20 md:w-24 md:h-24 bg-gradient-to-b from-rose-500 to-rose-700 hover:from-rose-600 hover:to-rose-800 text-white rounded-full flex flex-col items-center justify-center shadow-[0_10px_40px_rgba(225,29,72,0.6)] border-4 border-white transition-transform hover:scale-110 active:scale-95 group relative overflow-hidden" title="Tombol Darurat (Panic Button)">
+            
+            <!-- Diagonal hazard stripes effect inside button (subtle) -->
+            <div class="absolute inset-0 opacity-10" style="background: repeating-linear-gradient(45deg, transparent, transparent 10px, #000 10px, #000 20px);"></div>
+            
+            <svg class="w-8 h-8 md:w-10 md:h-10 mb-0.5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <span class="text-[11px] md:text-xs font-black uppercase tracking-widest relative z-10">SOS</span>
+        </button>
+    </div>
 
     <!-- FOOTER -->
     @include('partials.public-footer')
