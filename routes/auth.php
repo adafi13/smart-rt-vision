@@ -26,6 +26,13 @@ Route::middleware('guest')->group(function () {
     Route::get('auth/google', [\App\Http\Controllers\Auth\GoogleController::class, 'redirect'])->name('google.login');
     Route::get('auth/google/callback', [\App\Http\Controllers\Auth\GoogleController::class, 'callback'])->name('google.callback');
 
+    // Magic Link Routes
+    Route::get('magic-link', [\App\Http\Controllers\Auth\MagicLinkController::class, 'request'])->name('magic-link.request');
+    Route::post('magic-link', [\App\Http\Controllers\Auth\MagicLinkController::class, 'send'])->name('magic-link.send');
+    Route::get('magic-link/verify/{user}', [\App\Http\Controllers\Auth\MagicLinkController::class, 'verify'])
+        ->middleware('signed')
+        ->name('magic-link.verify');
+
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 
