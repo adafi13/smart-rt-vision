@@ -1,9 +1,19 @@
 <x-guest-layout>
 
     {{-- ═══════ DEFAULT SLOT (Form Panel) ═══════ --}}
-    @if ($errors->any())
+    @php
+        $fieldErrors = array_merge(
+            $errors->get('name'), 
+            $errors->get('email'), 
+            $errors->get('password'), 
+            $errors->get('tenant_name'), 
+            $errors->get('tenant_slug')
+        );
+        $globalErrorList = array_filter($errors->all(), fn($e) => !in_array($e, $fieldErrors));
+    @endphp
+    @if (count($globalErrorList) > 0)
         <div style="margin-bottom:20px;padding:12px 16px;border-radius:12px;background:#fff1f2;border:1px solid #fecdd3;">
-            @foreach ($errors->all() as $error)
+            @foreach ($globalErrorList as $error)
                 <p style="font-size:12px;color:#be123c;font-weight:600;margin:0 0 4px;">{{ $error }}</p>
             @endforeach
         </div>
