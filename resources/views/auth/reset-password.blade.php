@@ -14,10 +14,96 @@
             <div class="icon-field">
                 <svg style="width:18px;height:18px;color:#94a3b8;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 <input id="password" name="password" type="password" required autofocus autocomplete="new-password"
-                       class="auth-input" placeholder="Minimal 8 karakter">
+                       class="auth-input" placeholder="Minimal 8 karakter" onkeyup="checkPasswordStrength(this.value)">
             </div>
+            
+            <!-- Password Strength Meter -->
+            <div id="password-meter" style="margin-top: 8px; display: none;">
+                <div style="display: flex; gap: 4px; height: 4px; margin-bottom: 8px;">
+                    <div id="bar-1" style="flex: 1; background: #e2e8f0; border-radius: 4px; transition: all 0.3s ease;"></div>
+                    <div id="bar-2" style="flex: 1; background: #e2e8f0; border-radius: 4px; transition: all 0.3s ease;"></div>
+                    <div id="bar-3" style="flex: 1; background: #e2e8f0; border-radius: 4px; transition: all 0.3s ease;"></div>
+                    <div id="bar-4" style="flex: 1; background: #e2e8f0; border-radius: 4px; transition: all 0.3s ease;"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: #64748b; font-weight: 500;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <svg id="req-length" style="width:12px;height:12px;color:#94a3b8;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"/></svg>
+                        Minimal 8 karakter
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <svg id="req-number" style="width:12px;height:12px;color:#94a3b8;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"/></svg>
+                        Mengandung angka
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <svg id="req-special" style="width:12px;height:12px;color:#94a3b8;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"/></svg>
+                        Karakter spesial (!@#$%)
+                    </div>
+                </div>
+            </div>
+            
             @error('password') <p class="auth-error" style="margin-top:6px;">{{ $message }}</p> @enderror
         </div>
+
+        <script>
+        function checkPasswordStrength(val) {
+            const meter = document.getElementById('password-meter');
+            if (val.length > 0) {
+                meter.style.display = 'block';
+            } else {
+                meter.style.display = 'none';
+                return;
+            }
+            
+            let strength = 0;
+            const hasLength = val.length >= 8;
+            const hasNumber = /\d/.test(val);
+            const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(val);
+            
+            if (hasLength) strength += 1;
+            if (hasNumber) strength += 1;
+            if (hasSpecial) strength += 1;
+            if (val.length >= 12 && hasNumber && hasSpecial && /[A-Z]/.test(val)) strength += 1;
+            
+            const updateCheck = (id, isValid) => {
+                const el = document.getElementById(id);
+                const circle = el.querySelector('circle');
+                const check = el.querySelector('path');
+                
+                if (isValid) {
+                    el.style.color = '#10b981';
+                    circle.style.fill = '#10b981';
+                    circle.style.stroke = '#10b981';
+                    check.style.display = 'block';
+                    check.style.stroke = '#ffffff';
+                    el.parentElement.style.color = '#0f172a';
+                } else {
+                    el.style.color = '#94a3b8';
+                    circle.style.fill = 'none';
+                    circle.style.stroke = 'currentColor';
+                    check.style.display = 'none';
+                    el.parentElement.style.color = '#64748b';
+                }
+            };
+            
+            updateCheck('req-length', hasLength);
+            updateCheck('req-number', hasNumber);
+            updateCheck('req-special', hasSpecial);
+            
+            const bars = [
+                document.getElementById('bar-1'),
+                document.getElementById('bar-2'),
+                document.getElementById('bar-3'),
+                document.getElementById('bar-4')
+            ];
+            
+            bars.forEach(b => b.style.background = '#e2e8f0');
+            
+            const colors = ['#ef4444', '#f59e0b', '#10b981', '#059669'];
+            for (let i = 0; i < strength; i++) {
+                bars[i].style.background = colors[strength - 1] || '#10b981';
+            }
+        }
+        </script>
 
         <div>
             <label class="auth-label" for="password_confirmation">Konfirmasi Kata Sandi Baru</label>
