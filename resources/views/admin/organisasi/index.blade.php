@@ -106,8 +106,13 @@
                         </div>
 
                         <div>
-                            <x-input-label value="Jabatan (Contoh: Sekretaris, Seksi Keamanan)" class="font-bold" />
-                            <x-text-input name="position" type="text" class="mt-1 block w-full bg-gray-50 border-gray-200" value="{{ $staff->position }}" required />
+                            <x-input-label value="Jabatan" class="font-bold" />
+                            <select name="position" required class="mt-1 block w-full bg-gray-50 border-gray-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                @php $jabatanList = ['Ketua RT','Wakil Ketua RT','Sekretaris','Bendahara','Wakil Bendahara','Seksi Keamanan & Ketertiban','Seksi Kebersihan & Lingkungan','Seksi Kesehatan','Seksi Pendidikan & Kebudayaan','Seksi Sosial & Kemasyarakatan','Seksi Pemuda & Olahraga','Seksi Pemberdayaan Perempuan','Seksi Agama','Anggota']; @endphp
+                                @foreach($jabatanList as $j)
+                                    <option value="{{ $j }}" {{ $staff->position === $j ? 'selected' : '' }}>{{ $j }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
@@ -174,16 +179,33 @@
                     <x-text-input name="name" type="text" class="mt-1 block w-full bg-gray-50 border-gray-200" required />
                 </div>
 
-                <div>
-                    <x-input-label value="Jabatan (Contoh: Sekretaris, Seksi Keamanan)" class="font-bold" />
-                    <x-text-input name="position" type="text" class="mt-1 block w-full bg-gray-50 border-gray-200" required />
+                <div x-data="jabatanPicker()">
+                    <x-input-label value="Jabatan" class="font-bold" />
+                    <select name="position" required x-model="jabatan" @change="setOrder" class="mt-1 block w-full bg-gray-50 border-gray-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                        <option value="">-- Pilih Jabatan --</option>
+                        <option value="Ketua RT">Ketua RT</option>
+                        <option value="Wakil Ketua RT">Wakil Ketua RT</option>
+                        <option value="Sekretaris">Sekretaris</option>
+                        <option value="Bendahara">Bendahara</option>
+                        <option value="Wakil Bendahara">Wakil Bendahara</option>
+                        <option value="Seksi Keamanan & Ketertiban">Seksi Keamanan & Ketertiban</option>
+                        <option value="Seksi Kebersihan & Lingkungan">Seksi Kebersihan & Lingkungan</option>
+                        <option value="Seksi Kesehatan">Seksi Kesehatan</option>
+                        <option value="Seksi Pendidikan & Kebudayaan">Seksi Pendidikan & Kebudayaan</option>
+                        <option value="Seksi Sosial & Kemasyarakatan">Seksi Sosial & Kemasyarakatan</option>
+                        <option value="Seksi Pemuda & Olahraga">Seksi Pemuda & Olahraga</option>
+                        <option value="Seksi Pemberdayaan Perempuan">Seksi Pemberdayaan Perempuan</option>
+                        <option value="Seksi Agama">Seksi Agama</option>
+                        <option value="Anggota">Anggota</option>
+                    </select>
+                    <p class="text-[10px] text-gray-400 mt-1">Nomor urut hierarki akan terisi otomatis.</p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <x-input-label value="Nomor Urut (Hierarki)" class="font-bold" />
-                        <x-text-input name="order_level" type="number" min="1" value="99" class="mt-1 block w-full bg-gray-50 border-gray-200" required />
-                        <p class="text-[10px] text-gray-500 mt-1">1=Paling atas (Ketua)</p>
+                        <x-text-input name="order_level" type="number" min="1" x-ref="orderInput" value="99" class="mt-1 block w-full bg-gray-50 border-gray-200" required />
+                        <p class="text-[10px] text-gray-500 mt-1">Terisi otomatis sesuai jabatan</p>
                     </div>
                     <div>
                         <x-input-label value="Nomor HP/WA" class="font-bold" />
@@ -209,4 +231,25 @@
             </div>
         </form>
     </x-modal>
+
+<script>
+function jabatanPicker() {
+    const orders = {
+        'Ketua RT': 1, 'Wakil Ketua RT': 2, 'Sekretaris': 3, 'Bendahara': 4,
+        'Wakil Bendahara': 5, 'Seksi Keamanan & Ketertiban': 6,
+        'Seksi Kebersihan & Lingkungan': 7, 'Seksi Kesehatan': 8,
+        'Seksi Pendidikan & Kebudayaan': 9, 'Seksi Sosial & Kemasyarakatan': 10,
+        'Seksi Pemuda & Olahraga': 11, 'Seksi Pemberdayaan Perempuan': 12,
+        'Seksi Agama': 13, 'Anggota': 99
+    };
+    return {
+        jabatan: '',
+        setOrder() {
+            if (this.$refs.orderInput && orders[this.jabatan]) {
+                this.$refs.orderInput.value = orders[this.jabatan];
+            }
+        }
+    };
+}
+</script>
 </x-app-layout>
