@@ -449,6 +449,20 @@
             <p class="text-sm text-gray-500 mt-2">Semua paket sudah termasuk portal warga &amp; transparansi kas. Trial 14 hari di semua tier.</p>
         </div>
 
+        <!-- Toggle Bulanan / Tahunan -->
+        <div class="flex justify-center mb-8 reveal">
+            <div class="bg-slate-100 p-1.5 rounded-2xl inline-flex relative shadow-inner border border-slate-200/60">
+                <button type="button" @click="isYearly = false" class="relative z-10 px-6 py-2.5 text-sm font-bold rounded-xl transition-colors duration-300" :class="!isYearly ? 'text-indigo-700' : 'text-slate-500 hover:text-slate-800'">
+                    Bulanan
+                </button>
+                <button type="button" @click="isYearly = true" class="relative z-10 px-6 py-2.5 text-sm font-bold rounded-xl transition-colors duration-300 flex items-center gap-2" :class="isYearly ? 'text-indigo-700' : 'text-slate-500 hover:text-slate-800'">
+                    Tahunan
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-100 text-emerald-700">HEMAT 2 BULAN</span>
+                </button>
+                <div class="absolute top-1.5 bottom-1.5 left-1.5 w-[calc(50%-6px)] bg-white rounded-xl shadow-sm border border-slate-200 transition-transform duration-300 ease-out z-0" :class="isYearly ? 'translate-x-full w-[calc(50%+45px)]' : 'translate-x-0'"></div>
+            </div>
+        </div>
+
         <!-- Slider Kalkulator -->
         <div class="max-w-md mx-auto mb-12 reveal bg-white p-6 rounded-2xl border border-slate-200 shadow-lg shadow-slate-100">
             <label class="block text-sm font-bold text-gray-700 text-center mb-4">
@@ -471,8 +485,10 @@
                 <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[11px] font-bold text-white whitespace-nowrap" style="background: linear-gradient(135deg,#6366f1,#a855f7);">PALING POPULER</span>
                 @endif
                 <p class="text-sm font-bold text-gray-500 uppercase tracking-wide">{{ $plan->name }}</p>
-                <p class="text-3xl font-black text-gray-900 mt-2">Rp {{ number_format($plan->price_monthly, 0, ',', '.') }}</p>
-                <p class="text-xs text-gray-400">/bulan</p>
+                <p class="text-3xl font-black text-gray-900 mt-2" x-show="!isYearly">Rp {{ number_format($plan->price_monthly, 0, ',', '.') }}</p>
+                <p class="text-3xl font-black text-gray-900 mt-2" x-show="isYearly" style="display: none;">Rp {{ number_format($plan->price_yearly, 0, ',', '.') }}</p>
+                <p class="text-xs text-gray-400" x-show="!isYearly">/bulan</p>
+                <p class="text-xs text-gray-400" x-show="isYearly" style="display: none;">/tahun</p>
 
                 <ul class="mt-5 space-y-2.5">
                     {{-- Batas KK --}}
@@ -649,6 +665,7 @@
 
         function pricingSlider() {
             return {
+                isYearly: false,
                 kkCount: 150,
                 recommendedPlan: 'growth',
                 recommendedName: 'Growth',

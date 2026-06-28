@@ -91,8 +91,22 @@
         </div>
 
         <!-- 2. Pilihan Paket -->
-        <div class="pt-4">
-            <h2 class="text-sm font-black text-slate-900 uppercase tracking-[0.2em] mb-6 pl-2">Pilih Paket Langganan</h2>
+        <div class="pt-4" x-data="{ isYearly: false }">
+            <div class="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
+                <h2 class="text-sm font-black text-slate-900 uppercase tracking-[0.2em] pl-2">Pilih Paket Langganan</h2>
+                
+                <!-- Toggle Bulanan / Tahunan -->
+                <div class="bg-slate-100 p-1.5 rounded-2xl inline-flex relative shadow-inner border border-slate-200/60">
+                    <button type="button" @click="isYearly = false" class="relative z-10 px-6 py-2.5 text-sm font-bold rounded-xl transition-colors duration-300" :class="!isYearly ? 'text-indigo-700' : 'text-slate-500 hover:text-slate-800'">
+                        Bulanan
+                    </button>
+                    <button type="button" @click="isYearly = true" class="relative z-10 px-6 py-2.5 text-sm font-bold rounded-xl transition-colors duration-300 flex items-center gap-2" :class="isYearly ? 'text-indigo-700' : 'text-slate-500 hover:text-slate-800'">
+                        Tahunan
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-100 text-emerald-700">HEMAT 2 BULAN</span>
+                    </button>
+                    <div class="absolute top-1.5 bottom-1.5 left-1.5 w-[calc(50%-6px)] bg-white rounded-xl shadow-sm border border-slate-200 transition-transform duration-300 ease-out z-0" :class="isYearly ? 'translate-x-full w-[calc(50%+45px)]' : 'translate-x-0'"></div>
+                </div>
+            </div>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
                 @foreach($plans as $plan)
                 <div class="rounded-[2.5rem] border relative transition-all duration-300 flex flex-col {{ $plan->is_popular ? 'border-indigo-500 shadow-2xl shadow-indigo-200/50 scale-[1.03] bg-white z-10' : 'border-slate-200 shadow-lg shadow-slate-200/30 bg-white hover:-translate-y-1 hover:shadow-xl' }}">
@@ -106,9 +120,13 @@
                     
                     <div class="p-8 md:p-10 flex-1">
                         <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4">{{ $plan->name }}</p>
-                        <div class="flex items-baseline gap-1 mb-8">
+                        <div class="flex items-baseline gap-1 mb-8" x-show="!isYearly">
                             <span class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">Rp{{ number_format($plan->price_monthly, 0, ',', '.') }}</span>
                             <span class="text-sm font-bold text-slate-400">/bln</span>
+                        </div>
+                        <div class="flex items-baseline gap-1 mb-8" x-show="isYearly" style="display: none;">
+                            <span class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">Rp{{ number_format($plan->price_yearly, 0, ',', '.') }}</span>
+                            <span class="text-sm font-bold text-slate-400">/thn</span>
                         </div>
                         
                         <ul class="space-y-4 mb-8">
@@ -153,7 +171,7 @@
                                 Paket Saat Ini
                             </button>
                         @else
-                            <form action="{{ route('billing.checkout', $plan) }}" method="POST">
+                            <form :action="isYearly ? '{{ route('billing.checkout', $plan) }}?cycle=yearly' : '{{ route('billing.checkout', $plan) }}'" method="POST">
                                 @csrf
                                 <button type="submit" class="w-full relative group overflow-hidden py-4 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] transition-all shadow-sm {{ $plan->is_popular ? 'text-white' : 'text-slate-700 bg-slate-50 border border-slate-200 hover:bg-slate-100' }}" @if($plan->is_popular) style="background: linear-gradient(135deg, #4f46e5, #7c3aed);" @endif>
                                     <span class="relative z-10">

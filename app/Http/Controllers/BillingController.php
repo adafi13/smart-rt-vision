@@ -52,19 +52,23 @@ class BillingController extends Controller
 
         $externalId = 'SUB-'.$tenant->id.'-'.now()->format('YmdHis');
 
+        $cycle = $request->query('cycle', 'monthly');
+        $amount = $cycle === 'yearly' ? $plan->price_yearly : $plan->price_monthly;
+
         $subscription = Subscription::forceCreate([
             'tenant_id' => $tenant->id,
             'plan_id' => $plan->id,
             'status' => 'pending_payment',
+            'billing_cycle' => $cycle,
             'payment_external_id' => $externalId,
-            'amount' => $plan->price_monthly,
+            'amount' => $amount,
         ]);
 
         try {
             $result = $xendit->createInvoice(
                 $externalId,
-                $plan->price_monthly,
-                "Subscription {$plan->name} - {$tenant->name}",
+                $amount,
+                "Subscription {$plan->name} ({$cycle}) - {$tenant->name}",
                 ['email' => $user->email],
                 route('billing.success', ['subscription' => $subscription->id]),
                 route('billing.index')
@@ -136,12 +140,16 @@ class BillingController extends Controller
         $status = $payload['status'] ?? null;
 
         if ($status === 'PAID' || $status === 'SETTLED') {
+            $periodEnd = $subscription->billing_cycle === 'yearly' 
+                ? now()->addYears(1) 
+                : now()->addDays(30);
+
             $subscription->update([
                 'status' => 'active',
                 'payment_reference_id' => $payload['id'] ?? null,
-                'current_period_start' => now(),
-                'current_period_end' => now()->addDays(30),
                 'paid_at' => now(),
+                'current_period_start' => now(),
+                'current_period_end' => $periodEnd,
             ]);
 
             $subscription->tenant->update(['status' => 'active']);
