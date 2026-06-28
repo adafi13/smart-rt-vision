@@ -161,7 +161,7 @@
         }
     </script>
 
-    <!-- Developer Support Button -->
+    <!-- Customer Service Button -->
     <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end group" style="animation: float 3s ease-in-out infinite;">
         <style>
             @keyframes float {
@@ -171,10 +171,10 @@
             }
         </style>
         <div class="mb-3 px-3 py-1.5 bg-gray-900/90 backdrop-blur-sm text-white text-xs font-bold rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap border border-gray-700">
-            Chat Developer 🚀
+            Hubungi CS 🎧
         </div>
-        <a href="https://wa.me/6285156412702?text=Halo%20Developer,%20saya%20butuh%20bantuan%20terkait%20sistem%20SmartRT%20Vision." target="_blank" class="w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:shadow-[0_0_30px_rgba(79,70,229,0.6)] hover:scale-110 transition-all duration-300 border-2 border-indigo-500 overflow-hidden bg-white">
-            <img src="{{ asset('images/developer_mascot.jpg') }}" alt="Developer Mascot" class="w-full h-full object-cover">
+        <a href="https://wa.me/6285156412702?text=Halo%20Admin,%20saya%20butuh%20bantuan%20terkait%20penggunaan%20sistem%20SmartRT%20Vision." target="_blank" class="w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:shadow-[0_0_30px_rgba(79,70,229,0.6)] hover:scale-110 transition-all duration-300 border-2 border-indigo-500 overflow-hidden bg-white">
+            <img src="{{ asset('images/cs_profile.jpg') }}" alt="Customer Service" class="w-full h-full object-cover">
         </a>
     </div>
 </body>
