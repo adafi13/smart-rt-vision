@@ -458,28 +458,29 @@
         </div>
 
         <!-- Toggle Bulanan / Tahunan -->
-        <div class="flex justify-center mb-10 reveal">
-            <div style="display:inline-flex; align-items:center; background:#f8fafc; border:1px solid #e2e8f0; border-radius:999px; padding:5px;">
+        <div class="flex justify-center items-center gap-4 mb-10 reveal">
+            <span class="text-sm font-bold cursor-pointer transition-colors"
+                  :class="!isYearly ? 'text-slate-900' : 'text-slate-400'"
+                  @click="isYearly = false">
+                Bulanan
+            </span>
 
-                <button type="button" @click="isYearly = false"
-                    style="padding:10px 36px; border-radius:999px; border:none; cursor:pointer; font-size:14px; font-weight:700; transition:all .2s ease; outline:none; white-space:nowrap;"
-                    :style="!isYearly
-                        ? 'background:#fff; color:#0f172a; box-shadow:0 1px 4px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);'
-                        : 'background:transparent; color:#64748b;'">
-                    Bulanan
-                </button>
+            <button type="button" @click="isYearly = !isYearly"
+                    class="relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-300 focus:outline-none"
+                    :class="isYearly ? 'bg-emerald-500' : 'bg-slate-200'">
+                <span class="inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-300 shadow-sm"
+                      :class="isYearly ? 'translate-x-6' : 'translate-x-1'"></span>
+            </button>
 
-                <button type="button" @click="isYearly = true"
-                    style="padding:10px 24px 10px 32px; border-radius:999px; border:none; cursor:pointer; font-size:14px; font-weight:700; transition:all .2s ease; display:flex; align-items:center; gap:10px; outline:none; white-space:nowrap;"
-                    :style="isYearly
-                        ? 'background:#fff; color:#0f172a; box-shadow:0 1px 4px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);'
-                        : 'background:transparent; color:#64748b;'">
+            <div class="flex items-center gap-2 cursor-pointer" @click="isYearly = true">
+                <span class="text-sm font-bold transition-colors"
+                      :class="isYearly ? 'text-slate-900' : 'text-slate-400'">
                     Tahunan
-                    <span style="padding:4px 10px; border-radius:999px; font-size:10px; font-weight:800; background:#dcfce7; color:#15803d; letter-spacing:0.02em;">
-                        Hemat 1 Bulan
-                    </span>
-                </button>
-
+                </span>
+                <span class="px-2.5 py-1 rounded-full text-[9px] font-black tracking-widest bg-emerald-100 text-emerald-700 uppercase border border-emerald-200"
+                      style="letter-spacing: 0.05em;">
+                    Hemat 1 Bln
+                </span>
             </div>
         </div>
 
