@@ -110,7 +110,11 @@ class SuperAdminController extends Controller
         ])->withCount('families');
 
         if ($search = $request->input('search')) {
-            $query->where('name', 'like', "%{$search}%")->orWhere('slug', 'like', "%{$search}%");
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('slug', 'like', "%{$search}%")
+                  ->orWhereHas('users', fn($u) => $u->where('email', 'like', "%{$search}%"));
+            });
         }
 
         if ($status = $request->input('status')) {
@@ -119,7 +123,15 @@ class SuperAdminController extends Controller
 
         $tenants = $query->latest()->paginate(20)->withQueryString();
 
-        return view('super-admin.tenants', compact('tenants'));
+        $counts = [
+            'all'       => Tenant::count(),
+            'active'    => Tenant::where('status', 'active')->count(),
+            'trial'     => Tenant::where('status', 'trial')->count(),
+            'expired'   => Tenant::where('status', 'expired')->count(),
+            'suspended' => Tenant::where('status', 'suspended')->count(),
+        ];
+
+        return view('super-admin.tenants', compact('tenants', 'counts'));
     }
 
     public function show(Tenant $tenant)
