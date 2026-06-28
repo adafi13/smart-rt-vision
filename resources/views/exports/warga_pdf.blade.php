@@ -12,51 +12,29 @@
             margin: 0;
             padding: 10px 0;
         }
-        
         /* KOP SURAT (LETTERHEAD) */
-        .kop-surat {
-            border-bottom: 3px solid #111827;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
+        .header {
             text-align: center;
-            position: relative;
+            border-bottom: 3px solid black;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
-        .kop-surat .logo-placeholder {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 70px;
-            height: 70px;
-            background-color: #4f46e5;
-            color: #fff;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 24px;
-            line-height: 70px; /* Fallback for dompdf vertically center */
-        }
-        .kop-surat h1 {
-            font-size: 22px;
-            color: #111827;
-            margin: 0 0 5px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .kop-surat h2 {
-            font-size: 16px;
-            color: #4b5563;
-            margin: 0 0 5px 0;
-        }
-        .kop-surat p {
+        .header h3, .header h4, .header p {
             margin: 0;
-            color: #6b7280;
-            font-size: 11px;
+            padding: 0;
         }
-        .kop-surat .border-thin {
-            border-bottom: 1px solid #111827;
-            margin-top: 2px;
+        .header h3 {
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .header h4 {
+            font-size: 14pt;
+            font-weight: bold;
+        }
+        .header p {
+            font-size: 11pt;
+            color: #111827;
         }
 
         .document-title {
@@ -132,8 +110,15 @@
             margin-top: 40px;
             page-break-inside: avoid;
         }
-        .signature-box p { margin: 0 0 70px 0; font-size: 11px; }
-        .signature-box .name { font-weight: bold; text-decoration: underline; font-size: 12px; }
+        .signature-box p { margin: 0 0 5px 0; font-size: 11pt; }
+        .signature-img {
+            max-width: 150px;
+            max-height: 80px;
+            margin: 10px auto;
+            display: block;
+        }
+        .signature-box .name { font-weight: bold; text-decoration: underline; font-size: 12pt; }
+        .clear { clear: both; }
         
         /* FOOTER */
         .footer {
@@ -157,13 +142,10 @@
         Dicetak otomatis oleh Sistem Manajemen RT/RW (SmartRT Vision) pada {{ \Carbon\Carbon::now()->format('d F Y H:i:s') }} WIB | Halaman <span class="page-number"></span>
     </div>
 
-    <div class="kop-surat">
-        <!-- Text-based Logo -->
-        <div class="logo-placeholder">RT</div>
-        <h1>PENGURUS LINGKUNGAN RT/RW</h1>
-        <h2>{{ strtoupper($tenantName) }}</h2>
-        <p>Laporan Data Demografi Warga dan Susunan Anggota Keluarga (KK)</p>
-        <div class="border-thin"></div>
+    <div class="header">
+        <h3>RUKUN TETANGGA (RT) {{ substr($tenantName ?? '001', 0, 3) }}</h3>
+        <h4>RUKUN WARGA (RW) {{ substr($tenantName ?? '020', -3) }}</h4>
+        <p>PERUM. MEGA REGENCY BLOK G-3 NO. 38, JAWA BARAT 17334</p>
     </div>
 
     <div class="document-title">
@@ -236,9 +218,17 @@
     @endforelse
 
     <div class="signature-box">
-        <p>Ditetapkan di Tempat,<br>Pada Tanggal: {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
-        <div class="name">KETUA PENGURUS {{ strtoupper($tenantName) }}</div>
+        <p>Dikeluarkan pada tanggal: {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}<br><strong>Ketua RT {{ substr($tenantName ?? '001', 0, 3) }}</strong></p>
+        
+        @if(isset($rtSignature) && $rtSignature)
+            <img src="{{ $rtSignature }}" alt="Tanda Tangan RT" class="signature-img">
+        @else
+            <br><br><br>
+        @endif
+        
+        <p><strong>( {{ $rtName ?? '...........................' }} )</strong></p>
     </div>
+    <div class="clear"></div>
 
 </body>
 </html>

@@ -50,7 +50,19 @@ class ExportController extends Controller
             'user_agent' => request()->userAgent(),
         ]);
 
-        $pdf = Pdf::loadView('exports.warga_pdf', compact('families', 'tenantName'))->setPaper('a4', 'landscape');
+        $tenantId = $tenant->id;
+        $rtSignaturePath = \App\Models\Setting::get("tenant_{$tenantId}_rt_signature_path");
+        $rtSignature = $rtSignaturePath ? public_path('storage/' . $rtSignaturePath) : null;
+        
+        if ($rtSignature && file_exists($rtSignature)) {
+            $type = pathinfo($rtSignature, PATHINFO_EXTENSION);
+            $data = file_get_contents($rtSignature);
+            $rtSignature = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        }
+
+        $rtName = \App\Models\Setting::get("tenant_{$tenantId}_rt_name");
+
+        $pdf = Pdf::loadView('exports.warga_pdf', compact('families', 'tenantName', 'rtSignature', 'rtName'))->setPaper('a4', 'landscape');
         
         return $pdf->download('rekap_warga_' . date('Ymd_Hi') . '.pdf');
     }
