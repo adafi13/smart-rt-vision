@@ -476,10 +476,10 @@
                 Estimasi Jumlah Warga (KK) di RT Anda:<br>
                 <span class="text-indigo-600 text-3xl font-black block mt-2"><span x-text="kkCount"></span> <span class="text-lg">KK</span></span>
             </label>
-            <input type="range" min="10" max="300" step="5" x-model.number="kkCount" @input="updateRecommendation()" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 outline-none">
+            <input type="range" min="10" max="500" step="5" x-model.number="kkCount" @input="updateRecommendation()" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 outline-none">
             <div class="flex justify-between text-[10px] font-bold text-slate-400 mt-3 uppercase tracking-wider">
                 <span>10 KK</span>
-                <span>300+ KK</span>
+                <span>500+ KK</span>
             </div>
             <p class="text-xs text-center text-slate-500 mt-4 font-medium">Paket yang direkomendasikan: <strong class="text-indigo-600" x-text="recommendedName"></strong></p>
         </div>
@@ -495,10 +495,25 @@
                 <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[11px] font-bold text-white whitespace-nowrap" style="background: linear-gradient(135deg,#6366f1,#a855f7);">PALING POPULER</span>
                 @endif
                 <p class="text-sm font-bold text-gray-500 uppercase tracking-wide">{{ $plan->name }}</p>
-                <p class="text-3xl font-black text-gray-900 mt-2" x-show="!isYearly">Rp {{ number_format($plan->price_monthly, 0, ',', '.') }}</p>
-                <p class="text-3xl font-black text-gray-900 mt-2" x-show="isYearly" style="display: none;">Rp {{ number_format($plan->price_yearly, 0, ',', '.') }}</p>
-                <p class="text-xs text-gray-400" x-show="!isYearly">/bulan</p>
-                <p class="text-xs text-gray-400" x-show="isYearly" style="display: none;">/tahun</p>
+                {{-- HARGA --}}
+                {{-- Bulanan --}}
+                <div x-show="!isYearly">
+                    <p class="text-3xl font-black text-gray-900 mt-2">Rp {{ number_format($plan->price_monthly, 0, ',', '.') }}</p>
+                    <p class="text-xs text-gray-400">/bulan</p>
+                </div>
+
+                {{-- Tahunan (tampilkan harga coret + harga hemat) --}}
+                <div x-show="isYearly" style="display:none;">
+                    <div class="flex items-center gap-2 mt-2 flex-wrap">
+                        <p class="text-3xl font-black text-gray-900">Rp {{ number_format($plan->price_yearly, 0, ',', '.') }}</p>
+                        <span style="font-size:10px; font-weight:800; padding:2px 8px; border-radius:99px; background:#dcfce7; color:#16a34a; white-space:nowrap;">HEMAT Rp {{ number_format($plan->price_monthly, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <p class="text-xs text-gray-400">/tahun</p>
+                        <span class="text-xs line-through text-gray-300">Rp {{ number_format($plan->price_monthly * 12, 0, ',', '.') }}</span>
+                    </div>
+                    <p class="text-xs text-emerald-600 font-bold mt-1">≈ Rp {{ number_format(intdiv($plan->price_yearly, 12), 0, ',', '.') }}/bln</p>
+                </div>
 
                 <ul class="mt-5 space-y-2.5">
                     {{-- Batas KK --}}
