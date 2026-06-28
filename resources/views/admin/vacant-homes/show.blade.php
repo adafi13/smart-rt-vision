@@ -83,9 +83,9 @@
                 
                 @if($vacantHome->status === 'Aktif')
                 <div class="bg-indigo-50 rounded-2xl shadow-sm border border-indigo-100 p-5">
-                    <h3 class="font-bold text-indigo-900 mb-2">Instruksi Satpam</h3>
+                    <h3 class="font-bold text-indigo-900 mb-2">Pencatatan Log Patroli</h3>
                     <p class="text-xs text-indigo-700 leading-relaxed mb-1">
-                        Saat Anda sedang berpatroli, harap cek kondisi gembok pagar, jendela, dan pintu rumah ini. Jika aman, foto dari depan dan kirim log patroli melalui form <strong>Tambah Log Patroli Baru</strong> di bawah ini.
+                        Silakan rekap laporan kondisi rumah beserta foto bukti patroli harian yang dikirimkan oleh petugas keamanan / satpam melalui form <strong>Tambah Log Patroli Baru</strong> di bawah ini.
                     </p>
                 </div>
                 @endif
