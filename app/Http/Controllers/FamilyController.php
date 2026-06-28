@@ -25,6 +25,11 @@ class FamilyController extends Controller
         return view('kk.index', compact('families'));
     }
 
+    public function create()
+    {
+        return view('kk.create');
+    }
+
     public function upload()
     {
         return view('kk.upload');

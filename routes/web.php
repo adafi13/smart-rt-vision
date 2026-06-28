@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\LifeEventController as AdminLifeEventController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\VacantHomeController as AdminVacantHomeController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\ContributionController;
 use App\Http\Controllers\DashboardController;
@@ -76,6 +77,7 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
 
     Route::prefix('kk')->name('kk.')->middleware('rt_role:owner,sekretaris')->group(function () {
         Route::get('/', [FamilyController::class, 'index'])->name('index');
+        Route::get('/create', [FamilyController::class, 'create'])->name('create');
         Route::get('/upload', [FamilyController::class, 'upload'])->name('upload');
         Route::post('/extract', [FamilyController::class, 'extract'])->name('extract');
         Route::get('/verify', [FamilyController::class, 'verify'])->name('verify');
@@ -225,6 +227,14 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::delete('/{guestbook}', [\App\Http\Controllers\Admin\GuestbookController::class, 'destroy'])->name('destroy');
     });
 
+    Route::prefix('admin/vacant-homes')->name('admin.vacant-homes.')->middleware('rt_role:owner,sekretaris,keamanan')->group(function () {
+        Route::get('/', [AdminVacantHomeController::class, 'index'])->name('index');
+        Route::get('/{vacantHome}', [AdminVacantHomeController::class, 'show'])->name('show');
+        Route::post('/{vacantHome}/log', [AdminVacantHomeController::class, 'storeLog'])->name('log.store');
+        Route::put('/{vacantHome}/status', [AdminVacantHomeController::class, 'updateStatus'])->name('status.update');
+        Route::delete('/{vacantHome}', [AdminVacantHomeController::class, 'destroy'])->name('destroy');
+    });
+
     Route::prefix('admin/agenda')->name('admin.agendas.')->middleware('rt_role:owner,sekretaris,humas')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\AdminAgendaController::class, 'index'])->name('index');
         Route::post('/', [\App\Http\Controllers\Admin\AdminAgendaController::class, 'store'])->name('store');
@@ -328,4 +338,5 @@ Route::middleware(['tenant.slug'])->prefix('/{tenant:slug}')->group(function () 
     Route::post('/submit-vote', [HomeController::class, 'submitVote'])->name('submit-vote');
     Route::post('/submit-guestbook', [HomeController::class, 'submitGuestbook'])->name('submit-guestbook');
     Route::post('/lapor-kos', [HomeController::class, 'storeKos'])->name('lapor.kos');
+    Route::post('/titip-rumah', [HomeController::class, 'storeVacantHome'])->name('titip-rumah');
 });

@@ -12,3 +12,27 @@
         animation-delay: 4s;
     }
 }
+
+/* ================================================================
+   VALIDASI CUSTOM - Ganti popup jelek browser dengan inline error
+   ================================================================ */
+
+/* Border merah pada field yang error */
+.custom-input-error {
+    @apply border-red-400 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15) !important;
+}
+
+/* Animasi pesan error muncul */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Hilangkan tooltip/popup bawaan browser */
+input:invalid:not(:focus),
+select:invalid:not(:focus),
+textarea:invalid:not(:focus) {
+    box-shadow: none;
+}

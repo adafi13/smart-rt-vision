@@ -8,6 +8,8 @@ use App\Models\Family;
 use App\Models\Member;
 use App\Models\News;
 use App\Models\Product;
+use App\Models\VacantHome;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -391,5 +393,32 @@ class HomeController extends Controller
         ]);
 
         return back()->with('success', 'Laporan tamu menginap/kos berhasil dikirim! Silakan tunggu verifikasi pengurus RT.');
+    }
+
+    public function storeVacantHome(Request $request)
+    {
+        $tenantId = request()->route('tenant')->id;
+        
+        $request->validate([
+            'pelapor_nama' => 'required|string|max:255',
+            'alamat_rumah' => 'required|string|max:255',
+            'nomor_wa' => 'required|string|max:20',
+            'tanggal_pergi' => 'required|date',
+            'tanggal_pulang' => 'required|date|after_or_equal:tanggal_pergi',
+            'catatan_warga' => 'nullable|string',
+        ]);
+
+        VacantHome::create([
+            'tenant_id' => $tenantId,
+            'pelapor_nama' => $request->pelapor_nama,
+            'alamat_rumah' => $request->alamat_rumah,
+            'nomor_wa' => $request->nomor_wa,
+            'tanggal_pergi' => $request->tanggal_pergi,
+            'tanggal_pulang' => $request->tanggal_pulang,
+            'catatan_warga' => $request->catatan_warga,
+            'status' => 'Aktif',
+        ]);
+
+        return back()->with('success', 'Laporan rumah kosong berhasil dikirim. Pengurus/Keamanan akan memantau rumah Anda.');
     }
 }

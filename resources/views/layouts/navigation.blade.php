@@ -89,6 +89,7 @@
                         ($isOwner || $isSekretaris || $isBendahara || $isPembangunan) ? ['route' => 'admin.inventaris.index', 'match' => 'admin.inventaris.*', 'label' => 'Inventaris & Aset'] : null,
                         ($isOwner || $isSekretaris || $isHumas) ? ['route' => 'admin.polls.index', 'match' => 'admin.polls.*', 'label' => 'Musyawarah (E-Voting)'] : null,
                         ($isOwner || $isSekretaris || $isHumas) ? ['route' => 'admin.guestbooks.index', 'match' => 'admin.guestbooks.*', 'label' => 'Buku Tamu (Security)'] : null,
+                        ($isOwner || $isSekretaris || $isKeamanan) ? ['route' => 'admin.vacant-homes.index', 'match' => 'admin.vacant-homes.*', 'label' => 'Penjagaan Rumah Kosong'] : null,
                     ]),
                 ],
                 [

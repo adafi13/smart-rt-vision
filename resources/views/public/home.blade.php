@@ -232,6 +232,7 @@
                 ['modal'=>'cek-iuran','title'=>'Riwayat Pembayaran','desc'=>'Pantau riwayat pembayaran iuran kebersihan/keamanan Anda.','color'=>'#059669','bg'=>'bg-emerald-50','icon'=>'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 8v2'],
                 ['modal'=>'kirim-laporan','title'=>'Pusat Bantuan & Keluhan','desc'=>'Laporkan masalah infrastruktur, keamanan, atau kebersihan.','color'=>'#dc2626','bg'=>'bg-rose-50','icon'=>'M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z'],
                 ['modal'=>'cek-laporan','title'=>'Lacak Tiket Bantuan','desc'=>'Cek status penyelesaian laporan yang telah Anda kirimkan.','color'=>'#d97706','bg'=>'bg-amber-50','icon'=>'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'],
+                ['modal'=>'titip-rumah','title'=>'Penjagaan Rumah Kosong','desc'=>'Lapor titip pengawasan rumah kosong saat sedang mudik/dinas.','color'=>'#4f46e5','bg'=>'bg-indigo-50','icon'=>'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
                 ['modal'=>'lapor-peristiwa','title'=>'Catatan Sipil Warga','desc'=>'Laporkan peristiwa kelahiran, kematian, atau warga pindah.','color'=>'#7c3aed','bg'=>'bg-purple-50','icon'=>'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'],
             ]; @endphp
             
@@ -1079,6 +1080,44 @@
                         <button type="submit" class="btn-gradient w-full mt-6" style="background: linear-gradient(135deg, #d97706, #f59e0b);">Cek Status Penanganan</button>
                     </form>
                     <div id="cek-laporan-result" class="mt-4"></div>
+                </div>
+
+                <!-- FORM: Titip Rumah Kosong -->
+                <div x-show="modal === 'titip-rumah'">
+                    <form method="POST" action="{{ route('titip-rumah', ['tenant' => $tenant->slug]) }}" class="space-y-4">
+                        @csrf
+                        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-2">
+                            <p class="text-xs text-indigo-800 leading-relaxed font-medium">Laporkan rumah kosong saat Anda mudik atau dinas luar kota. Keamanan RT akan memantau keamanan rumah Anda secara rutin dan melapor ke aplikasi.</p>
+                        </div>
+                        
+                        <div>
+                            <label class="label">Nama Lengkap Pemilik/Pelapor</label>
+                            <input type="text" name="pelapor_nama" required class="input-field" placeholder="Nama Anda...">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2">
+                                <label class="label">Alamat / Blok Rumah</label>
+                                <input type="text" name="alamat_rumah" required class="input-field" placeholder="Contoh: Blok B No 12">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="label">Kontak Darurat (WhatsApp)</label>
+                                <input type="text" name="nomor_wa" required class="input-field" placeholder="08...">
+                            </div>
+                            <div>
+                                <label class="label">Tgl Pergi</label>
+                                <input type="date" name="tanggal_pergi" required class="input-field" min="{{ date('Y-m-d') }}">
+                            </div>
+                            <div>
+                                <label class="label">Rencana Pulang</label>
+                                <input type="date" name="tanggal_pulang" required class="input-field" min="{{ date('Y-m-d') }}">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="label">Catatan Tambahan (Opsional)</label>
+                            <textarea name="catatan_warga" rows="2" class="input-field" placeholder="Contoh: Kunci pagar titip ke Pak Satpam, dll..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-gradient w-full mt-2" style="background: linear-gradient(135deg, #4f46e5, #6366f1);">Kirim Laporan Titip Rumah</button>
+                    </form>
                 </div>
 
             </div>
