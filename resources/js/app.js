@@ -110,3 +110,91 @@ function getErrorMessage(field) {
 function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
+
+// ================================================================
+// GLOBAL SWEETALERT2 OVERRIDE UNTUK ONSUBMIT/ONCLICK CONFIRM
+// ================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    // Intercept all forms with onsubmit containing 'confirm'
+    document.querySelectorAll('form[onsubmit*="confirm"]').forEach(form => {
+        const onsubmitStr = form.getAttribute('onsubmit');
+        const match = onsubmitStr.match(/confirm\(['"](.*?)['"]\)/);
+        if (match) {
+            const message = match[1];
+            form.removeAttribute('onsubmit');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Konfirmasi',
+                        text: message,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#4f46e5',
+                        cancelButtonColor: '#e11d48',
+                        confirmButtonText: 'Ya, Lanjutkan',
+                        cancelButtonText: 'Batal',
+                        customClass: {
+                            popup: 'rounded-2xl shadow-sm border border-gray-100',
+                            title: 'font-bold text-gray-900',
+                            confirmButton: 'rounded-xl font-bold px-5 py-2.5 shadow-sm',
+                            cancelButton: 'rounded-xl font-bold px-5 py-2.5'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                } else {
+                    if (confirm(message)) form.submit();
+                }
+            });
+        }
+    });
+
+    // Intercept all buttons/links with onclick containing 'confirm'
+    document.querySelectorAll('[onclick*="confirm"]').forEach(el => {
+        const onclickStr = el.getAttribute('onclick');
+        const match = onclickStr.match(/confirm\(['"](.*?)['"]\)/);
+        if (match) {
+            const message = match[1];
+            el.removeAttribute('onclick');
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Konfirmasi',
+                        text: message,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#4f46e5',
+                        cancelButtonColor: '#e11d48',
+                        confirmButtonText: 'Ya, Lanjutkan',
+                        cancelButtonText: 'Batal',
+                        customClass: {
+                            popup: 'rounded-2xl shadow-sm border border-gray-100',
+                            title: 'font-bold text-gray-900',
+                            confirmButton: 'rounded-xl font-bold px-5 py-2.5 shadow-sm',
+                            cancelButton: 'rounded-xl font-bold px-5 py-2.5'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if (el.tagName === 'A') {
+                                window.location.href = el.href;
+                            } else if (el.tagName === 'BUTTON' && el.type === 'submit') {
+                                el.closest('form').submit();
+                            } else if (el.tagName === 'BUTTON') {
+                                if(el.closest('form')) el.closest('form').submit();
+                            }
+                        }
+                    });
+                } else {
+                    if (confirm(message)) {
+                        if(el.tagName === 'A') window.location.href = el.href;
+                        if(el.closest('form')) el.closest('form').submit();
+                    }
+                }
+            });
+        }
+    });
+});
