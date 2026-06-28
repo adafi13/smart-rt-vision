@@ -17,7 +17,7 @@ class SuperAdminController extends Controller
             'users' => fn($q) => $q->where('role', 'admin_rt')
                 ->where(fn($q2) => $q2->where('tenant_role', 'owner')->orWhereNull('tenant_role'))
                 ->limit(1),
-        ])->withCount('families')->latest()->limit(5)->get();
+        ])->withCount('families')->latest()->limit(8)->get();
 
         $activeTenantsStartOfMonth = Tenant::where('created_at', '<', now()->startOfMonth())->where('status', 'active')->count();
         $churnedThisMonth = Tenant::whereIn('status', ['expired', 'suspended'])
@@ -36,37 +36,68 @@ class SuperAdminController extends Controller
             })
             ->get();
 
+        // New tenants this month vs last month
+        $newTenantsThisMonth = Tenant::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count();
+        $newTenantsLastMonth = Tenant::whereMonth('created_at', now()->subMonth()->month)->whereYear('created_at', now()->subMonth()->year)->count();
+        $tenantGrowth = $newTenantsLastMonth > 0 ? round((($newTenantsThisMonth - $newTenantsLastMonth) / $newTenantsLastMonth) * 100, 1) : 0;
+
+        // Total members & families across all tenants (bypass tenant scope)
+        $totalMembers  = \App\Models\Member::withoutGlobalScope(\App\Models\Scopes\TenantScope::class)->count();
+        $totalFamilies = \App\Models\Family::withoutGlobalScope(\App\Models\Scopes\TenantScope::class)->count();
+
+        // Activity logs today
+        $logsToday = \App\Models\AuditLog::withoutGlobalScope(\App\Models\Scopes\TenantScope::class)
+            ->whereDate('created_at', today())->count();
+
+        // Revenue this month vs last month
+        $revenueThisMonth = Subscription::whereNotNull('paid_at')
+            ->whereMonth('paid_at', now()->month)->whereYear('paid_at', now()->year)->sum('amount');
+        $revenueLastMonth = Subscription::whereNotNull('paid_at')
+            ->whereMonth('paid_at', now()->subMonth()->month)->whereYear('paid_at', now()->subMonth()->year)->sum('amount');
+        $revenueGrowth = $revenueLastMonth > 0 ? round((($revenueThisMonth - $revenueLastMonth) / $revenueLastMonth) * 100, 1) : 0;
+
+        // Top 5 most active tenants (by family count)
+        $topTenants = Tenant::withCount('families')->where('status', 'active')->orderByDesc('families_count')->limit(5)->get();
+
+        // Tenant registrations per day last 14 days (for sparkline)
+        $registrationTrend = collect(range(13, 0))->map(fn($d) => [
+            'date'  => now()->subDays($d)->format('d M'),
+            'count' => Tenant::whereDate('created_at', now()->subDays($d))->count(),
+        ])->values();
+
         $stats = [
-            'total'             => Tenant::count(),
-            'trial'             => Tenant::where('status', 'trial')->count(),
-            'active'            => Tenant::where('status', 'active')->count(),
-            'expired'           => Tenant::whereIn('status', ['expired', 'suspended'])->count(),
-            'mrr'               => Subscription::where('status', 'active')
-                ->where('current_period_end', '>', now())
-                ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
-                ->sum('plans.price_monthly'),
-            'churn_rate'        => round($churnRate, 1),
-            'total_revenue'     => Subscription::whereNotNull('paid_at')->sum('amount'),
-            'revenue_this_month' => Subscription::whereNotNull('paid_at')
-                ->whereMonth('paid_at', now()->month)
-                ->whereYear('paid_at', now()->year)
-                ->sum('amount'),
+            'total'              => Tenant::count(),
+            'trial'              => Tenant::where('status', 'trial')->count(),
+            'active'             => Tenant::where('status', 'active')->count(),
+            'expired'            => Tenant::whereIn('status', ['expired', 'suspended'])->count(),
+            'mrr'                => Subscription::where('status', 'active')->where('current_period_end', '>', now())
+                ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')->sum('plans.price_monthly'),
+            'churn_rate'         => round($churnRate, 1),
+            'total_revenue'      => Subscription::whereNotNull('paid_at')->sum('amount'),
+            'revenue_this_month' => $revenueThisMonth,
+            'revenue_growth'     => $revenueGrowth,
+            'new_this_month'     => $newTenantsThisMonth,
+            'tenant_growth'      => $tenantGrowth,
+            'total_members'      => $totalMembers,
+            'total_families'     => $totalFamilies,
+            'logs_today'         => $logsToday,
         ];
 
-        // Build revenue chart data (last 6 months) — computed in controller to avoid Blade+PHP parse errors
+        // Build revenue chart data (last 6 months)
         $revenueChartData = [];
         for ($i = 5; $i >= 0; $i--) {
             $month = now()->subMonths($i);
             $revenueChartData[] = [
                 'label' => $month->translatedFormat('M Y'),
                 'total' => Subscription::whereNotNull('paid_at')
-                    ->whereMonth('paid_at', $month->month)
-                    ->whereYear('paid_at', $month->year)
-                    ->sum('amount'),
+                    ->whereMonth('paid_at', $month->month)->whereYear('paid_at', $month->year)->sum('amount'),
             ];
         }
 
-        return view('super-admin.index', compact('stats', 'tenants', 'revenueChartData', 'expiringTenants'));
+        return view('super-admin.index', compact(
+            'stats', 'tenants', 'revenueChartData', 'expiringTenants',
+            'topTenants', 'registrationTrend', 'newTenantsThisMonth'
+        ));
     }
 
     public function tenants(Request $request)
