@@ -40,6 +40,7 @@
 
         /* Pricing card: smooth transition for scale/opacity/shadow changes */
         .pricing-card { transition: transform 0.35s cubic-bezier(.2,.8,.2,1), opacity 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease; }
+        .pricing-card:hover { border-color: #818cf8 !important; box-shadow: 0 0 0 3px rgba(99,102,241,0.15), 0 6px 24px rgba(99,102,241,0.12) !important; opacity: 1 !important; transform: scale(1.01) !important; z-index: 5; }
 
         #hero3d-canvas { display: block; width: 100%; height: 100%; }
 
