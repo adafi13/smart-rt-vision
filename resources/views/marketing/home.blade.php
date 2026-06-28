@@ -669,21 +669,26 @@
                 kkCount: 150,
                 recommendedPlan: 'growth',
                 recommendedName: 'Growth',
-                updateRecommendation() {
-                    if (this.kkCount <= 50) {
-                        this.recommendedPlan = 'starter';
-                        this.recommendedName = 'Starter';
-                    } else if (this.kkCount <= 200) {
-                        this.recommendedPlan = 'growth';
-                        this.recommendedName = 'Growth';
-                    } else {
-                        this.recommendedPlan = 'premium';
-                        this.recommendedName = 'Premium';
-                    }
+                getRecommendation(count) {
+                    if (count <= 50)  return { plan: 'starter', name: 'Starter' };
+                    if (count <= 200) return { plan: 'growth',  name: 'Growth'  };
+                    return             { plan: 'premium', name: 'Premium' };
                 },
                 init() {
-                    this.updateRecommendation();
-                }
+                    const rec = this.getRecommendation(this.kkCount);
+                    this.recommendedPlan = rec.plan;
+                    this.recommendedName = rec.name;
+                    this.$watch('kkCount', (val) => {
+                        const r = this.getRecommendation(Number(val));
+                        this.recommendedPlan = r.plan;
+                        this.recommendedName = r.name;
+                    });
+                },
+                updateRecommendation() {
+                    const r = this.getRecommendation(Number(this.kkCount));
+                    this.recommendedPlan = r.plan;
+                    this.recommendedName = r.name;
+                },
             }
         }
     </script>
