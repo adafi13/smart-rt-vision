@@ -459,24 +459,24 @@
 
         <!-- Toggle Bulanan / Tahunan -->
         <div class="flex justify-center mb-10 reveal">
-            <div style="display:inline-flex; border-radius:14px; padding:4px; background:#f1f5f9; border:1px solid #e2e8f0; gap:4px;">
+            <div style="display:inline-flex; align-items:center; background:#f8fafc; border:1px solid #e2e8f0; border-radius:999px; padding:5px;">
 
                 <button type="button" @click="isYearly = false"
-                    style="padding:10px 28px; border-radius:10px; border:none; cursor:pointer; font-size:13px; font-weight:700; letter-spacing:.02em; transition:all .2s ease; white-space:nowrap;"
+                    style="padding:10px 36px; border-radius:999px; border:none; cursor:pointer; font-size:14px; font-weight:700; transition:all .2s ease; outline:none; white-space:nowrap;"
                     :style="!isYearly
-                        ? 'background:linear-gradient(135deg,#4f46e5,#6366f1); color:#fff; box-shadow:0 2px 8px rgba(79,70,229,.35);'
-                        : 'background:transparent; color:#94a3b8;'">
+                        ? 'background:#fff; color:#0f172a; box-shadow:0 1px 4px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);'
+                        : 'background:transparent; color:#64748b;'">
                     Bulanan
                 </button>
 
                 <button type="button" @click="isYearly = true"
-                    style="padding:10px 20px 10px 24px; border-radius:10px; border:none; cursor:pointer; font-size:13px; font-weight:700; letter-spacing:.02em; transition:all .2s ease; display:flex; align-items:center; gap:8px; white-space:nowrap;"
+                    style="padding:10px 24px 10px 32px; border-radius:999px; border:none; cursor:pointer; font-size:14px; font-weight:700; transition:all .2s ease; display:flex; align-items:center; gap:10px; outline:none; white-space:nowrap;"
                     :style="isYearly
-                        ? 'background:linear-gradient(135deg,#4f46e5,#6366f1); color:#fff; box-shadow:0 2px 8px rgba(79,70,229,.35);'
-                        : 'background:transparent; color:#94a3b8;'">
+                        ? 'background:#fff; color:#0f172a; box-shadow:0 1px 4px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);'
+                        : 'background:transparent; color:#64748b;'">
                     Tahunan
-                    <span style="padding:2px 7px; border-radius:99px; font-size:9px; font-weight:900; letter-spacing:.05em; background:#dcfce7; color:#16a34a; border:1px solid #86efac;">
-                        HEMAT 1 BLN
+                    <span style="padding:4px 10px; border-radius:999px; font-size:10px; font-weight:800; background:#dcfce7; color:#15803d; letter-spacing:0.02em;">
+                        Hemat 1 Bulan
                     </span>
                 </button>
 
