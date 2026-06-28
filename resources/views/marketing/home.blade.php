@@ -459,26 +459,25 @@
 
         <!-- Toggle Bulanan / Tahunan -->
         <div class="flex justify-center items-center gap-4 mb-10 reveal">
-            <span class="text-sm font-bold cursor-pointer transition-colors"
-                  :class="!isYearly ? 'text-slate-900' : 'text-slate-400'"
+            <span style="font-size:14px; font-weight:700; cursor:pointer; transition:color 0.2s;"
+                  :style="!isYearly ? 'color:#0f172a;' : 'color:#94a3b8;'"
                   @click="isYearly = false">
                 Bulanan
             </span>
 
             <button type="button" @click="isYearly = !isYearly"
-                    class="relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-300 focus:outline-none"
-                    :class="isYearly ? 'bg-emerald-500' : 'bg-slate-200'">
-                <span class="inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-300 shadow-sm"
-                      :class="isYearly ? 'translate-x-6' : 'translate-x-1'"></span>
+                    style="position:relative; display:inline-flex; align-items:center; width:48px; height:26px; border-radius:99px; border:none; cursor:pointer; transition:background-color 0.3s ease; outline:none; padding:3px;"
+                    :style="isYearly ? 'background-color:#10b981;' : 'background-color:#cbd5e1;'">
+                <span style="display:inline-block; width:20px; height:20px; background-color:#fff; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,0.15); transition:transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);"
+                      :style="isYearly ? 'transform:translateX(22px);' : 'transform:translateX(0);'"></span>
             </button>
 
-            <div class="flex items-center gap-2 cursor-pointer" @click="isYearly = true">
-                <span class="text-sm font-bold transition-colors"
-                      :class="isYearly ? 'text-slate-900' : 'text-slate-400'">
+            <div style="display:flex; align-items:center; gap:8px; cursor:pointer;" @click="isYearly = true">
+                <span style="font-size:14px; font-weight:700; transition:color 0.2s;"
+                      :style="isYearly ? 'color:#0f172a;' : 'color:#94a3b8;'">
                     Tahunan
                 </span>
-                <span class="px-2.5 py-1 rounded-full text-[9px] font-black tracking-widest bg-emerald-100 text-emerald-700 uppercase border border-emerald-200"
-                      style="letter-spacing: 0.05em;">
+                <span style="padding:3px 10px; border-radius:99px; font-size:10px; font-weight:900; background-color:#10b981; color:#fff; letter-spacing:0.04em; text-transform:uppercase; box-shadow:0 2px 6px rgba(16,185,129,0.25);">
                     Hemat 1 Bln
                 </span>
             </div>
