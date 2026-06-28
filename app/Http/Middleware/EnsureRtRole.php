@@ -27,13 +27,8 @@ class EnsureRtRole
         }
 
         // Check if user has any of the required roles
-        foreach ($roles as $role) {
-            if ($role === 'sekretaris' && $user->isRtSekretaris()) {
-                return $next($request);
-            }
-            if ($role === 'bendahara' && $user->isRtBendahara()) {
-                return $next($request);
-            }
+        if (in_array($user->tenant_role, $roles)) {
+            return $next($request);
         }
 
         abort(403, 'Akses ditolak. Anda tidak memiliki izin (Role) untuk mengakses halaman ini.');

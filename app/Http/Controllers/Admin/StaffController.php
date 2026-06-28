@@ -29,7 +29,7 @@ class StaffController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'tenant_role' => 'required|in:sekretaris,bendahara,owner',
+            'tenant_role' => 'required|in:sekretaris,bendahara,owner,wakil_ketua,keamanan,humas,pembangunan',
         ]);
 
         if (! app('currentTenant')->canAddMoreUsers()) {
@@ -73,7 +73,7 @@ class StaffController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($staff->id)],
-            'tenant_role' => 'required|in:sekretaris,bendahara,owner',
+            'tenant_role' => 'required|in:sekretaris,bendahara,owner,wakil_ketua,keamanan,humas,pembangunan',
         ]);
 
         $staff->name = $request->name;

@@ -139,33 +139,33 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::delete('/{letterRequest}', [AdminLetterRequestController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('admin/laporan-warga')->name('admin.laporan.')->middleware('rt_role:owner,sekretaris')->group(function () {
+    Route::prefix('admin/laporan-warga')->name('admin.laporan.')->middleware('rt_role:owner,sekretaris,keamanan,pembangunan')->group(function () {
         Route::get('/', [AdminReportController::class, 'index'])->name('index');
         Route::put('/{report}', [AdminReportController::class, 'update'])->name('update');
         Route::delete('/{report}', [AdminReportController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('admin/peristiwa')->name('admin.peristiwa.')->middleware('rt_role:owner,sekretaris')->group(function () {
+    Route::prefix('admin/peristiwa')->name('admin.peristiwa.')->middleware('rt_role:owner,sekretaris,humas')->group(function () {
         Route::get('/', [AdminLifeEventController::class, 'index'])->name('index');
         Route::put('/{lifeEvent}', [AdminLifeEventController::class, 'update'])->name('update');
         Route::delete('/{lifeEvent}', [AdminLifeEventController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('admin/berita')->name('admin.berita.')->group(function () {
+    Route::prefix('admin/berita')->name('admin.berita.')->middleware('rt_role:owner,sekretaris,humas')->group(function () {
         Route::get('/', [AdminNewsController::class, 'index'])->name('index');
         Route::post('/', [AdminNewsController::class, 'store'])->name('store');
         Route::put('/{news}', [AdminNewsController::class, 'update'])->name('update');
         Route::delete('/{news}', [AdminNewsController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('admin/umkm')->name('admin.umkm.')->group(function () {
+    Route::prefix('admin/umkm')->name('admin.umkm.')->middleware('rt_role:owner,sekretaris,humas')->group(function () {
         Route::get('/', [AdminProductController::class, 'index'])->name('index');
         Route::post('/', [AdminProductController::class, 'store'])->name('store');
         Route::put('/{product}', [AdminProductController::class, 'update'])->name('update');
         Route::delete('/{product}', [AdminProductController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('admin/inventaris')->name('admin.inventaris.')->middleware('rt_role:owner,sekretaris,bendahara')->group(function () {
+    Route::prefix('admin/inventaris')->name('admin.inventaris.')->middleware('rt_role:owner,sekretaris,bendahara,pembangunan')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\InventoryController::class, 'index'])->name('index');
         Route::post('/', [\App\Http\Controllers\Admin\InventoryController::class, 'store'])->name('store');
         Route::put('/{inventory}', [\App\Http\Controllers\Admin\InventoryController::class, 'update'])->name('update');
@@ -176,7 +176,7 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::post('/borrowings/{borrowing}/return', [\App\Http\Controllers\Admin\InventoryController::class, 'returnItem'])->name('borrowings.return');
     });
 
-    Route::prefix('admin/ronda')->name('admin.ronda.')->middleware('rt_role:owner,sekretaris')->group(function () {
+    Route::prefix('admin/ronda')->name('admin.ronda.')->middleware('rt_role:owner,sekretaris,keamanan')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\RondaController::class, 'index'])->name('index');
         Route::post('/schedule', [\App\Http\Controllers\Admin\RondaController::class, 'storeSchedule'])->name('schedule.store');
         Route::delete('/schedule/{schedule}', [\App\Http\Controllers\Admin\RondaController::class, 'destroySchedule'])->name('schedule.destroy');
@@ -197,19 +197,19 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::delete('/{staff}', [\App\Http\Controllers\Admin\RtStaffController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('admin/panic-alerts')->name('admin.panic.')->middleware('rt_role:owner,sekretaris')->group(function () {
+    Route::prefix('admin/panic-alerts')->name('admin.panic.')->middleware('rt_role:owner,sekretaris,keamanan')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\PanicAlertController::class, 'index'])->name('index');
         Route::post('/{panicAlert}/resolve', [\App\Http\Controllers\Admin\PanicAlertController::class, 'resolve'])->name('resolve');
     });
 
-    Route::prefix('admin/polls')->name('admin.polls.')->middleware('rt_role:owner,sekretaris')->group(function () {
+    Route::prefix('admin/polls')->name('admin.polls.')->middleware('rt_role:owner,sekretaris,humas')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\PollController::class, 'index'])->name('index');
         Route::post('/', [\App\Http\Controllers\Admin\PollController::class, 'store'])->name('store');
         Route::put('/{poll}', [\App\Http\Controllers\Admin\PollController::class, 'update'])->name('update');
         Route::delete('/{poll}', [\App\Http\Controllers\Admin\PollController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('admin/guestbooks')->name('admin.guestbooks.')->middleware('rt_role:owner,sekretaris')->group(function () {
+    Route::prefix('admin/guestbooks')->name('admin.guestbooks.')->middleware('rt_role:owner,sekretaris,humas')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\GuestbookController::class, 'index'])->name('index');
         Route::post('/{guestbook}/mark-left', [\App\Http\Controllers\Admin\GuestbookController::class, 'markAsLeft'])->name('mark-left');
         Route::delete('/{guestbook}', [\App\Http\Controllers\Admin\GuestbookController::class, 'destroy'])->name('destroy');

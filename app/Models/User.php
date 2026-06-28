@@ -57,7 +57,7 @@ class User extends Authenticatable
 
     public function isRtOwner(): bool
     {
-        return $this->isAdminRt() && ($this->tenant_role === 'owner' || empty($this->tenant_role));
+        return $this->isAdminRt() && (empty($this->tenant_role) || in_array($this->tenant_role, ['owner', 'wakil_ketua']));
     }
 
     public function isRtSekretaris(): bool

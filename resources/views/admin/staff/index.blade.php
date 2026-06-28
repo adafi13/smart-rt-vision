@@ -70,8 +70,16 @@
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-sky-100 text-sky-700">Sekretaris</span>
                                 @elseif($staff->tenant_role === 'bendahara')
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-700">Bendahara</span>
+                                @elseif($staff->tenant_role === 'wakil_ketua')
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-purple-100 text-purple-700">Wakil Ketua RT</span>
+                                @elseif($staff->tenant_role === 'keamanan')
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-700">Seksi Keamanan</span>
+                                @elseif($staff->tenant_role === 'humas')
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-700">Seksi Humas</span>
+                                @elseif($staff->tenant_role === 'pembangunan')
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-orange-100 text-orange-700">Seksi Pembangunan</span>
                                 @else
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-purple-100 text-purple-700">Ketua RT (Owner)</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-100 text-indigo-700">Ketua RT (Owner)</span>
                                 @endif
                             </td>
                             <td class="p-4 text-right flex items-center justify-end gap-2">
@@ -113,8 +121,12 @@
                                         <label class="label">Jabatan (Role)</label>
                                         <select name="tenant_role" class="input-field" required>
                                             <option value="owner" {{ (empty($staff->tenant_role) || $staff->tenant_role === 'owner') ? 'selected' : '' }}>Ketua RT (Owner)</option>
+                                            <option value="wakil_ketua" {{ $staff->tenant_role === 'wakil_ketua' ? 'selected' : '' }}>Wakil Ketua RT</option>
                                             <option value="sekretaris" {{ $staff->tenant_role === 'sekretaris' ? 'selected' : '' }}>Sekretaris</option>
                                             <option value="bendahara" {{ $staff->tenant_role === 'bendahara' ? 'selected' : '' }}>Bendahara</option>
+                                            <option value="keamanan" {{ $staff->tenant_role === 'keamanan' ? 'selected' : '' }}>Seksi Keamanan</option>
+                                            <option value="humas" {{ $staff->tenant_role === 'humas' ? 'selected' : '' }}>Seksi Humas</option>
+                                            <option value="pembangunan" {{ $staff->tenant_role === 'pembangunan' ? 'selected' : '' }}>Seksi Pembangunan</option>
                                         </select>
                                     </div>
                                     <div class="mt-6 flex justify-end gap-3">
@@ -205,9 +217,13 @@
                 <div>
                     <label class="label">Jabatan (Hak Akses)</label>
                     <select name="tenant_role" class="input-field" required>
-                        <option value="sekretaris">Sekretaris (Akses: Warga, Surat, Berita)</option>
-                        <option value="bendahara">Bendahara (Akses: Kas, Iuran)</option>
                         <option value="owner">Ketua RT (Akses Penuh)</option>
+                        <option value="wakil_ketua">Wakil Ketua RT (Akses Penuh)</option>
+                        <option value="sekretaris">Sekretaris (Warga, Surat, Berita, Organisasi)</option>
+                        <option value="bendahara">Bendahara (Kas, Iuran, Tunggakan)</option>
+                        <option value="keamanan">Seksi Keamanan (Ronda, Panic Alert, Laporan)</option>
+                        <option value="humas">Seksi Humas (Berita, Polling, Buku Tamu)</option>
+                        <option value="pembangunan">Seksi Pembangunan (Inventaris, Laporan)</option>
                     </select>
                 </div>
                 <div>
