@@ -126,10 +126,10 @@
                         </td>
                         <td class="px-6 py-4 text-right whitespace-nowrap">
                             <div class="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                                <a href="{{ route('cetak_surat', $member->id) }}" target="_blank" class="p-1.5 rounded-md text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors flex items-center gap-1 text-xs font-semibold" title="Cetak Surat">
+                                <button type="button" onclick="triggerPdfPreview('{{ route('cetak_surat', ['id' => $member->id, 'preview' => 1]) }}', '{{ route('cetak_surat', $member->id) }}')" class="p-1.5 rounded-md text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors flex items-center gap-1 text-xs font-semibold" title="Cetak Surat">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                                     Surat
-                                </a>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -167,10 +167,10 @@
                         </div>
                     </div>
 
-                    <a href="{{ route('cetak_surat', $member->id) }}" target="_blank" class="w-full flex items-center justify-center gap-2 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-semibold rounded-xl transition-colors shadow-sm">
+                    <button type="button" onclick="triggerPdfPreview('{{ route('cetak_surat', ['id' => $member->id, 'preview' => 1]) }}', '{{ route('cetak_surat', $member->id) }}')" class="w-full flex items-center justify-center gap-2 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-semibold rounded-xl transition-colors shadow-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                         Buat Surat Pengantar
-                    </a>
+                    </button>
                 </div>
             </div>
             @endforeach
@@ -192,4 +192,94 @@
         @endif
 
     </div>
+
+    <!-- PDF Preview & Printing Modal -->
+    <div x-data="{ openPdfModal: false, pdfUrl: '', downloadUrl: '', iframeLoading: true }" 
+         @open-pdf-modal.window="openPdfModal = true; iframeLoading = true; pdfUrl = $event.detail.url; downloadUrl = $event.detail.downloadUrl" 
+         class="relative z-50" 
+         x-cloak>
+        
+        <!-- Backdrop blur overlay -->
+        <div x-show="openPdfModal" 
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+             @click="openPdfModal = false; iframeLoading = true"></div>
+
+        <!-- Center modal body -->
+        <div x-show="openPdfModal" 
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-10">
+            
+            <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-5xl h-[85vh] flex flex-col overflow-hidden">
+                <!-- Modal Header -->
+                <div class="px-8 py-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                    <div>
+                        <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest">Pratinjau Cetak Surat Pengantar</h3>
+                        <p class="text-[9px] font-bold text-gray-400 uppercase mt-0.5 tracking-wider">Silakan tinjau surat sebelum mencetak atau mengunduh.</p>
+                    </div>
+                    <button type="button" @click="openPdfModal = false; iframeLoading = true" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Modal Content (Iframe with Loading State) -->
+                <div class="flex-1 bg-gray-100 relative">
+                    <!-- Loading Spinner -->
+                    <div x-show="iframeLoading" class="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 z-10 transition-all duration-300">
+                        <div class="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-4 animate-pulse">Menyiapkan Dokumen PDF...</p>
+                    </div>
+                    
+                    <iframe id="pdfPreviewIframe" :src="pdfUrl" @load="iframeLoading = false" class="w-full h-full border-none bg-white"></iframe>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="px-8 py-5 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <!-- Print Button -->
+                        <button type="button" onclick="printPdfIframe()" class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-3a2 2 0 00-2-2H9a2 2 0 00-2 2v3a2 2 0 002 2zm5-11V3m-4 0h8"></path></svg>
+                            <span>Cetak Surat</span>
+                        </button>
+
+                        <!-- Download Button -->
+                        <a :href="downloadUrl" class="flex-1 sm:flex-none bg-white hover:bg-gray-100 text-gray-800 px-6 py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest border border-gray-200">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            <span>Unduh PDF</span>
+                        </a>
+                    </div>
+
+                    <button type="button" @click="openPdfModal = false; iframeLoading = true" class="w-full sm:w-auto px-6 py-3 bg-white border border-gray-200 text-gray-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-gray-50 transition-colors shadow-sm">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function triggerPdfPreview(previewUrl, downloadUrl) {
+            window.dispatchEvent(new CustomEvent('open-pdf-modal', {
+                detail: { url: previewUrl, downloadUrl: downloadUrl }
+            }));
+        }
+
+        function printPdfIframe() {
+            const iframe = document.getElementById('pdfPreviewIframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            }
+        }
+    </script>
 </x-app-layout>

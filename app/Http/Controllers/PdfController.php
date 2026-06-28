@@ -47,7 +47,10 @@ class PdfController extends Controller
 
         $pdf = Pdf::loadView('pdf.surat_pengantar', $data);
 
-        return $pdf->stream('Surat_Pengantar_'.$member->nik.'.pdf');
+        if (request()->has('preview')) {
+            return $pdf->stream('Surat_Pengantar_'.$member->nik.'.pdf');
+        }
+        return $pdf->download('Surat_Pengantar_'.$member->nik.'.pdf');
     }
 
     public function cetakSuratPermohonan($id)
