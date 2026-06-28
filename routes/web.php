@@ -116,6 +116,7 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
     // ===== BILLING / SUBSCRIPTION =====
     Route::prefix('billing')->name('billing.')->middleware('rt_role:owner,bendahara')->group(function () {
         Route::get('/', [BillingController::class, 'index'])->name('index');
+        Route::get('/success/{subscription}', [BillingController::class, 'success'])->name('success');
         Route::post('/checkout/{plan}', [BillingController::class, 'checkout'])->name('checkout');
         Route::post('/cancel/{subscription}', [BillingController::class, 'cancel'])->name('cancel');
     });

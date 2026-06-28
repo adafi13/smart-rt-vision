@@ -65,7 +65,9 @@ class BillingController extends Controller
                 $externalId,
                 $plan->price_monthly,
                 "Subscription {$plan->name} - {$tenant->name}",
-                ['email' => $user->email]
+                ['email' => $user->email],
+                route('billing.success', ['subscription' => $subscription->id]),
+                route('billing.index')
             );
             
             // Save payment url to allow resuming
@@ -96,6 +98,18 @@ class BillingController extends Controller
         $subscription->update(['status' => 'cancelled']);
 
         return back()->with('success', 'Tagihan berhasil dibatalkan.');
+    }
+
+    public function success(Subscription $subscription)
+    {
+        if ($subscription->tenant_id !== app('currentTenant')->id) {
+            abort(403);
+        }
+
+        // We load the plan as well
+        $subscription->load('plan');
+
+        return view('billing.success', compact('subscription'));
     }
 
     /**

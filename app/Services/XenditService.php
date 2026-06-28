@@ -29,7 +29,7 @@ class XenditService
     /**
      * Buat invoice pembayaran dan kembalikan URL checkout hosted Xendit.
      */
-    public function createInvoice(string $externalId, int $amount, string $description, array $payer = []): array
+    public function createInvoice(string $externalId, int $amount, string $description, array $payer = [], ?string $successRedirect = null, ?string $failureRedirect = null): array
     {
         $response = Http::withBasicAuth($this->apiKey, '')
             ->withHeaders(['Accept' => 'application/json'])
@@ -38,8 +38,8 @@ class XenditService
                 'amount' => $amount,
                 'description' => $description,
                 'payer_email' => $payer['email'] ?? null,
-                'success_redirect_url' => route('billing.index'),
-                'failure_redirect_url' => route('billing.index'),
+                'success_redirect_url' => $successRedirect ?? route('billing.index'),
+                'failure_redirect_url' => $failureRedirect ?? route('billing.index'),
             ]);
 
         if ($response->failed()) {
