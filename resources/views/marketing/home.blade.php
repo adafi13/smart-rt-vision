@@ -476,10 +476,10 @@
                 Estimasi Jumlah Warga (KK) di RT Anda:<br>
                 <span class="text-indigo-600 text-3xl font-black block mt-2"><span x-text="kkCount"></span> <span class="text-lg">KK</span></span>
             </label>
-            <input type="range" min="10" max="500" step="5" x-model.number="kkCount" @input="updateRecommendation()" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 outline-none">
+            <input id="kk-slider" type="range" min="10" max="500" step="5" x-model.number="kkCount" @input="updateRecommendation()" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 outline-none">
             <div class="flex justify-between text-[10px] font-bold text-slate-400 mt-3 uppercase tracking-wider">
                 <span>10 KK</span>
-                <span>500+ KK</span>
+                <span id="kk-slider-max-label">500+ KK</span>
             </div>
             <p class="text-xs text-center text-slate-500 mt-4 font-medium">Paket yang direkomendasikan: <strong class="text-indigo-600" x-text="recommendedName"></strong></p>
         </div>
@@ -700,6 +700,14 @@
                 return a.max_kk - b.max_kk;
             });
 
+            // Compute slider max dynamically:
+            // highest limited plan max_kk + 30% buffer (so user can drag past it into unlimited tier)
+            const limitedPlans = sortedPlans.filter(p => p.max_kk);
+            const highestLimit = limitedPlans.length > 0
+                ? Math.max(...limitedPlans.map(p => p.max_kk))
+                : 500;
+            const sliderMax = Math.round(highestLimit * 1.3 / 10) * 10; // round to nearest 10
+
             return {
                 isYearly: false,
                 kkCount: 150,
@@ -707,13 +715,20 @@
                 recommendedName: sortedPlans[0]?.name ?? '',
 
                 getRecommendation(count) {
-                    // Find cheapest plan whose max_kk covers the count
-                    // (max_kk null/0 = unlimited)
-                    const match = sortedPlans.find(p => !p.max_kk || p.max_kk >= count);
-                    return match ?? sortedPlans[sortedPlans.length - 1];
+                    // Find cheapest LIMITED plan whose max_kk covers the count
+                    const limitedMatch = sortedPlans.find(p => p.max_kk && p.max_kk >= count);
+                    if (limitedMatch) return limitedMatch;
+                    // No limited plan covers it → recommend unlimited (highest tier)
+                    return sortedPlans[sortedPlans.length - 1];
                 },
 
                 init() {
+                    // Set slider max dynamically
+                    const slider = document.getElementById('kk-slider');
+                    const label  = document.getElementById('kk-slider-max-label');
+                    if (slider) slider.max = sliderMax;
+                    if (label)  label.textContent = sliderMax + '+ KK';
+
                     const rec = this.getRecommendation(this.kkCount);
                     this.recommendedPlan = rec.slug;
                     this.recommendedName = rec.name;
