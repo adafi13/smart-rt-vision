@@ -17,13 +17,50 @@
                 </p>
             </div>
             
-            <div class="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-3">
-                <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            @php
+                $statusBg = 'bg-white/10 border-white/20';
+                $statusIconBg = 'bg-white/20 text-white';
+                $statusLabelColor = 'text-indigo-200';
+                $statusTextColor = 'text-white';
+                $statusIcon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>';
+                $statusText = 'Berjalan Optimal';
+                $animationClass = '';
+
+                if (isset($activePanicAlerts) && count($activePanicAlerts) > 0) {
+                    // Priority 1: Darurat
+                    $statusBg = 'bg-red-500/30 border-red-400/50';
+                    $statusIconBg = 'bg-red-500 text-white animate-pulse';
+                    $statusLabelColor = 'text-red-200';
+                    $statusTextColor = 'text-white';
+                    $statusIcon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>';
+                    $statusText = 'KEADAAN DARURAT!';
+                    $animationClass = 'animate-pulse';
+                } elseif ($aiLimit > 0 && $aiPercentage <= 10) {
+                    // Priority 2: Kuota Kritis
+                    $statusBg = 'bg-orange-500/20 border-orange-400/30';
+                    $statusIconBg = 'bg-orange-500 text-white';
+                    $statusLabelColor = 'text-orange-200';
+                    $statusTextColor = 'text-orange-50';
+                    $statusIcon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>';
+                    $statusText = "Sisa Kuota AI: $aiRemaining";
+                } elseif ($pendingReports > 0) {
+                    // Priority 3: Perhatian
+                    $statusBg = 'bg-amber-400/20 border-amber-300/30';
+                    $statusIconBg = 'bg-amber-400 text-amber-900';
+                    $statusLabelColor = 'text-amber-200';
+                    $statusTextColor = 'text-white';
+                    $statusIcon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>';
+                    $statusText = "$pendingReports Menunggu diproses";
+                }
+            @endphp
+
+            <div class="flex items-center gap-3 backdrop-blur-md border rounded-full px-5 py-3 {{ $statusBg }} {{ $animationClass }} transition-colors duration-500">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center {{ $statusIconBg }}">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">{!! $statusIcon !!}</svg>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold text-indigo-200 uppercase tracking-widest leading-tight">STATUS SISTEM</p>
-                    <p class="text-sm font-bold text-white leading-tight">Berjalan Optimal</p>
+                    <p class="text-[10px] font-bold uppercase tracking-widest leading-tight {{ $statusLabelColor }}">STATUS SISTEM</p>
+                    <p class="text-sm font-bold leading-tight {{ $statusTextColor }}">{{ $statusText }}</p>
                 </div>
             </div>
         </div>

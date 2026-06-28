@@ -37,10 +37,31 @@ class DashboardController extends Controller
         arsort($pendidikanStats);
 
         $activePanicAlerts = \App\Models\PanicAlert::where('status', 'active')->latest()->get();
+        
+        $pendingReports = \App\Models\Report::where('status', 'menunggu')->count();
+        
+        // Cek Kuota AI
+        $tenant = auth()->user()->tenant;
+        $aiRemaining = 0;
+        $aiPercentage = 100; // Asumsi aman jika tidak ada limit
+        $aiLimit = 0;
+        
+        if ($tenant) {
+            $plan = $tenant->effectivePlan();
+            $aiUsed = $tenant->ai_extractions_used ?? 0;
+            if ($plan && $plan->max_ai_extractions_per_month > 0) {
+                $aiLimit = $plan->max_ai_extractions_per_month;
+                $aiRemaining = max(0, $aiLimit - $aiUsed);
+                $aiPercentage = ($aiRemaining / $aiLimit) * 100;
+            } else {
+                $aiRemaining = 'Unlimited';
+            }
+        }
 
         return view('dashboard', compact(
             'totalKk', 'totalWarga', 'totalLakiLaki', 'totalPerempuan',
-            'ageGroups', 'pendidikanStats', 'activePanicAlerts'
+            'ageGroups', 'pendidikanStats', 'activePanicAlerts',
+            'pendingReports', 'aiRemaining', 'aiPercentage', 'aiLimit'
         ));
     }
 }
