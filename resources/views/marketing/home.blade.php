@@ -460,7 +460,7 @@
                 </button>
                 <button type="button" @click="isYearly = true" class="relative z-10 px-6 py-2.5 text-sm font-bold rounded-xl transition-colors duration-300 flex items-center gap-2" :class="isYearly ? 'text-indigo-700' : 'text-slate-500 hover:text-slate-800'">
                     Tahunan
-                    <span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-100 text-emerald-700">HEMAT 2 BULAN</span>
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-100 text-emerald-700">HEMAT 1 BULAN</span>
                 </button>
                 <div class="absolute top-1.5 bottom-1.5 left-1.5 w-[calc(50%-6px)] bg-white rounded-xl shadow-sm border border-slate-200 transition-transform duration-300 ease-out z-0" :class="isYearly ? 'translate-x-full w-[calc(50%+45px)]' : 'translate-x-0'"></div>
             </div>

@@ -2,211 +2,270 @@
     <x-slot name="header">
         <div>
             <h1 class="text-base font-semibold text-slate-900">Paket &amp; Tagihan</h1>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Kelola langganan workspace SmartRT Vision Anda</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Kelola langganan SmartRT Vision Anda</p>
         </div>
     </x-slot>
 
-    <div class="max-w-5xl space-y-6 py-4 pb-10">
+    <style>
+        /* ── Premium Billing Page ─────────────────────────── */
+        .plan-card {
+            position: relative;
+            background: #fff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease, opacity .25s ease;
+        }
+        .plan-card.popular {
+            border-color: #6366f1;
+            background: linear-gradient(160deg, #f5f3ff 0%, #ffffff 60%);
+            box-shadow: 0 0 0 4px rgba(99,102,241,.12), 0 12px 40px rgba(99,102,241,.12);
+        }
+        /* cycle toggle */
+        .cycle-toggle { display:inline-flex; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:14px; padding:4px; gap:4px; }
+        .cycle-btn { padding:7px 20px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; border:none; background:transparent; color:#64748b; letter-spacing:.04em; transition:all .2s; }
+        .cycle-btn.active { background:#fff; color:#4f46e5; box-shadow:0 1px 6px rgba(0,0,0,.08); border:1px solid #e2e8f0; }
+        /* progress bar */
+        .progress-bar { height:6px; border-radius:99px; background:#f1f5f9; overflow:hidden; }
+        .progress-fill { height:100%; border-radius:99px; transition:width 1s ease; }
 
-        {{-- Flash messages --}}
+        /* Mobile stacked cards */
+        @media (max-width: 767px) {
+            .plan-card { margin-bottom: 0; }
+            .plans-grid { display:flex; flex-direction:column; gap:16px; }
+        }
+        @media (min-width: 768px) {
+            .plans-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:start; }
+            .plan-card.popular { transform: scale(1.03); }
+        }
+
+        /* History mobile cards */
+        .history-mobile-card { padding:16px; border-bottom:1px solid #f1f5f9; }
+        .history-mobile-card:last-child { border-bottom:none; }
+
+        /* Shine animation for popular badge */
+        @keyframes shine { 0%{background-position:-200%} 100%{background-position:200%} }
+    </style>
+
+    <div class="max-w-5xl space-y-6 py-4 pb-12">
+
+        {{-- ─── Flash ──────────────────────────────────────── --}}
         @if(session('success'))
-            <div class="flex items-center gap-3 px-5 py-4 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm font-semibold shadow-sm">
-                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                {{ session('success') }}
-            </div>
+        <div class="flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm font-semibold">
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            {{ session('success') }}
+        </div>
         @endif
         @if(session('error'))
-            <div class="flex items-center gap-3 px-5 py-4 rounded-2xl bg-rose-50 border border-rose-100 text-rose-700 text-sm font-semibold shadow-sm">
-                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                {{ session('error') }}
-            </div>
+        <div class="flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-rose-50 border border-rose-100 text-rose-700 text-sm font-semibold">
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            {{ session('error') }}
+        </div>
         @endif
 
-        {{-- ══════════════════════════════════════ --}}
-        {{-- 1. STATUS LANGGANAN                   --}}
-        {{-- ══════════════════════════════════════ --}}
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50">
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status Langganan</p>
+        {{-- ─── 1. STATUS CARD ─────────────────────────────── --}}
+        <div style="background:#fff; border:1.5px solid #e2e8f0; border-radius:20px; overflow:hidden;">
+
+            {{-- Header bar --}}
+            <div style="padding:14px 24px; border-bottom:1px solid #f1f5f9; background:#fafafa;">
+                <p style="font-size:10px; font-weight:800; color:#94a3b8; letter-spacing:.12em; text-transform:uppercase;">Status Langganan</p>
             </div>
-            <div class="p-6 md:p-8">
+
+            <div style="padding:24px;">
                 @if($tenant->onTrial())
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="relative flex h-4 w-4 flex-shrink-0">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-4 w-4 bg-amber-500"></span>
-                        </span>
-                        <p class="text-xl md:text-2xl font-black text-slate-900">Masa Percobaan (Trial)</p>
-                    </div>
-                    <p class="text-sm text-slate-500 mb-5 ml-7">Berakhir pada <span class="font-bold text-slate-900">{{ $tenant->trial_ends_at->translatedFormat('d F Y') }}</span></p>
                     @php
                         $totalTrial = config('kakaai.trial_days', 14);
                         $daysLeft   = max(0, (int) now()->diffInDays($tenant->trial_ends_at, false));
                         $percent    = max(0, min(100, ($daysLeft / $totalTrial) * 100));
                     @endphp
-                    <div class="max-w-lg ml-7">
-                        <div class="flex justify-between text-[11px] font-bold mb-1.5">
-                            <span class="text-amber-600">{{ $daysLeft }} hari tersisa</span>
-                            <span class="text-slate-400">{{ $totalTrial }} hari total</span>
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                        <span style="display:inline-flex; align-items:center; gap:6px; padding:4px 12px; background:#fef3c7; border:1px solid #fde68a; border-radius:99px; font-size:11px; font-weight:800; color:#d97706; letter-spacing:.05em; text-transform:uppercase;">
+                            <span style="width:7px;height:7px;border-radius:50%;background:#f59e0b;display:inline-block;animation:ping 1.5s ease infinite;"></span>
+                            Trial Aktif
+                        </span>
+                    </div>
+                    <p style="font-size:22px; font-weight:800; color:#0f172a; margin-bottom:4px;">Masa Percobaan Gratis</p>
+                    <p style="font-size:13px; color:#64748b; margin-bottom:18px;">Berakhir pada <strong style="color:#0f172a;">{{ $tenant->trial_ends_at->translatedFormat('d F Y') }}</strong></p>
+                    <div style="max-width:440px;">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; margin-bottom:8px;">
+                            <span style="color:#d97706;">{{ $daysLeft }} hari tersisa</span>
+                            <span style="color:#94a3b8;">{{ $totalTrial }} hari total</span>
                         </div>
-                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                            <div class="bg-amber-500 h-full rounded-full" style="width: {{ $percent }}%"></div>
-                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:{{ $percent }}%; background:linear-gradient(90deg,#f59e0b,#fbbf24);"></div></div>
                     </div>
 
                 @elseif($subscription && $subscription->isActive())
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="relative flex h-4 w-4 flex-shrink-0">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
-                        </span>
-                        <p class="text-xl md:text-2xl font-black text-slate-900">Aktif — Paket {{ $subscription->plan->name }}</p>
-                    </div>
-                    <p class="text-sm text-slate-500 mb-5 ml-7">Berlaku hingga <span class="font-bold text-slate-900">{{ $subscription->current_period_end->translatedFormat('d F Y') }}</span></p>
                     @php
                         $totalDays = (int) $subscription->current_period_start->diffInDays($subscription->current_period_end);
                         $daysLeft  = max(0, (int) now()->diffInDays($subscription->current_period_end, false));
                         $percent   = max(0, min(100, ($daysLeft / max(1, $totalDays)) * 100));
                     @endphp
-                    <div class="max-w-lg ml-7">
-                        <div class="flex justify-between text-[11px] font-bold mb-1.5">
-                            <span class="text-emerald-600">{{ $daysLeft }} hari tersisa</span>
-                            <span class="text-slate-400">Siklus {{ $totalDays }} hari</span>
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                        <span style="display:inline-flex; align-items:center; gap:6px; padding:4px 12px; background:#d1fae5; border:1px solid #6ee7b7; border-radius:99px; font-size:11px; font-weight:800; color:#059669; letter-spacing:.05em; text-transform:uppercase;">
+                            <span style="width:7px;height:7px;border-radius:50%;background:#10b981;display:inline-block;"></span>
+                            Aktif
+                        </span>
+                        <span style="font-size:11px; color:#94a3b8; font-weight:600;">Paket {{ $subscription->plan->name }}</span>
+                    </div>
+                    <p style="font-size:22px; font-weight:800; color:#0f172a; margin-bottom:4px;">Langganan Berjalan</p>
+                    <p style="font-size:13px; color:#64748b; margin-bottom:18px;">Berlaku hingga <strong style="color:#0f172a;">{{ $subscription->current_period_end->translatedFormat('d F Y') }}</strong></p>
+                    <div style="max-width:440px;">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; margin-bottom:8px;">
+                            <span style="color:#059669;">{{ $daysLeft }} hari tersisa</span>
+                            <span style="color:#94a3b8;">Siklus {{ $totalDays }} hari</span>
                         </div>
-                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                            <div class="bg-emerald-500 h-full rounded-full" style="width: {{ $percent }}%"></div>
-                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:{{ $percent }}%; background:linear-gradient(90deg,#10b981,#34d399);"></div></div>
                     </div>
 
                 @else
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="relative flex h-4 w-4 flex-shrink-0">
-                            <span class="relative inline-flex rounded-full h-4 w-4 bg-rose-500"></span>
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                        <span style="display:inline-flex; align-items:center; gap:6px; padding:4px 12px; background:#fee2e2; border:1px solid #fca5a5; border-radius:99px; font-size:11px; font-weight:800; color:#dc2626; letter-spacing:.05em; text-transform:uppercase;">
+                            <span style="width:7px;height:7px;border-radius:50%;background:#ef4444;display:inline-block;"></span>
+                            Tidak Aktif
                         </span>
-                        <p class="text-xl md:text-2xl font-black text-slate-900">Belum Berlangganan</p>
                     </div>
-                    <p class="text-sm text-slate-500 ml-7">Pilih paket di bawah untuk mulai menggunakan semua fitur.</p>
+                    <p style="font-size:22px; font-weight:800; color:#0f172a; margin-bottom:4px;">Belum Berlangganan</p>
+                    <p style="font-size:13px; color:#64748b;">Pilih paket di bawah untuk mengaktifkan semua fitur SmartRT Vision.</p>
                 @endif
             </div>
         </div>
 
-        {{-- ══════════════════════════════════════ --}}
-        {{-- 2. PILIHAN PAKET                      --}}
-        {{-- ══════════════════════════════════════ --}}
+        {{-- ─── 2. PAKET ───────────────────────────────────── --}}
         <div x-data="{ isYearly: false }">
 
-            {{-- Header + Toggle --}}
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-                <h2 class="text-sm font-black text-slate-900 uppercase tracking-widest">Pilih Paket Langganan</h2>
+            {{-- Section header + Toggle --}}
+            <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; margin-bottom:20px;">
+                <div>
+                    <p style="font-size:10px; font-weight:800; color:#94a3b8; letter-spacing:.12em; text-transform:uppercase; margin-bottom:4px;">Pilihan Paket</p>
+                    <h2 style="font-size:17px; font-weight:800; color:#0f172a;">Pilih Paket Langganan</h2>
+                </div>
 
-                {{-- Toggle Bulanan / Tahunan --}}
-                <div class="inline-flex items-center self-start sm:self-auto bg-slate-100 border border-slate-200 rounded-xl p-1 gap-1 shadow-inner">
-                    <button type="button" @click="isYearly = false"
-                        class="px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200"
-                        :class="!isYearly ? 'bg-white text-indigo-700 shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-800'">
-                        Bulanan
-                    </button>
-                    <button type="button" @click="isYearly = true"
-                        class="px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5"
-                        :class="isYearly ? 'bg-white text-indigo-700 shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-800'">
-                        Tahunan
-                        <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-emerald-100 text-emerald-700 tracking-wide">HEMAT</span>
+                {{-- Toggle --}}
+                <div class="cycle-toggle">
+                    <button class="cycle-btn" :class="!isYearly ? 'active' : ''" @click="isYearly = false" type="button">Bulanan</button>
+                    <button class="cycle-btn" :class="isYearly ? 'active' : ''" @click="isYearly = true" type="button">
+                        Tahunan &nbsp;<span style="background:#dcfce7; color:#16a34a; border-radius:5px; padding:1px 6px; font-size:9px; font-weight:900; letter-spacing:.04em;">HEMAT 1 BLN</span>
                     </button>
                 </div>
             </div>
 
-            {{-- Plan Cards --}}
-            {{-- Mobile: vertical stack | Desktop: 3-column grid --}}
-            <div class="flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-5 md:items-start">
+            {{-- Cards --}}
+            <div class="plans-grid">
                 @foreach($plans as $plan)
-                <div class="relative bg-white rounded-2xl border flex flex-col transition-all duration-300
-                    {{ $plan->is_popular
-                        ? 'border-indigo-400 ring-2 ring-indigo-400/30 shadow-lg shadow-indigo-100/60'
-                        : 'border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5' }}">
+                <div class="plan-card {{ $plan->is_popular ? 'popular' : '' }}">
 
                     {{-- Popular badge --}}
                     @if($plan->is_popular)
-                    <div class="absolute -top-3.5 inset-x-0 flex justify-center">
-                        <span class="px-4 py-1 rounded-full text-[10px] font-black text-white tracking-widest uppercase"
-                              style="background: linear-gradient(135deg, #4f46e5, #7c3aed);">
-                            PALING POPULER
+                    <div style="position:absolute; top:-14px; left:50%; transform:translateX(-50%); z-index:10;">
+                        <span style="display:inline-flex; align-items:center; gap:5px; padding:5px 16px; border-radius:99px; font-size:10px; font-weight:900; color:#fff; letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; background:linear-gradient(135deg,#4f46e5,#7c3aed); box-shadow:0 4px 12px rgba(99,102,241,.4);">
+                            ✦ PALING POPULER
                         </span>
                     </div>
                     @endif
 
-                    {{-- Card body --}}
-                    <div class="p-5 md:p-6 flex-1 {{ $plan->is_popular ? 'pt-7' : '' }}">
+                    {{-- Card inner --}}
+                    <div style="padding:28px 24px 20px; flex:1; {{ $plan->is_popular ? 'padding-top:36px;' : '' }}">
 
-                        {{-- Plan name --}}
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
-                            Paket {{ $plan->name }}
+                        {{-- Plan label --}}
+                        <p style="font-size:10px; font-weight:800; color:{{ $plan->is_popular ? '#6366f1' : '#94a3b8' }}; letter-spacing:.12em; text-transform:uppercase; margin-bottom:12px;">
+                            {{ $plan->name }}
                         </p>
 
-                        {{-- Price - monthly --}}
-                        <div x-show="!isYearly" class="mb-1">
-                            <div class="flex items-end gap-1 flex-wrap">
-                                <span class="text-2xl md:text-3xl font-black text-slate-900 leading-none">
+                        {{-- Price monthly --}}
+                        <div x-show="!isYearly">
+                            <div style="display:flex; align-items:baseline; gap:4px; margin-bottom:2px; flex-wrap:wrap;">
+                                <span style="font-size:28px; font-weight:900; color:#0f172a; letter-spacing:-.02em; line-height:1;">
                                     Rp {{ number_format($plan->price_monthly, 0, ',', '.') }}
                                 </span>
-                                <span class="text-xs font-bold text-slate-400 mb-0.5">/bulan</span>
+                                <span style="font-size:12px; font-weight:600; color:#94a3b8;">/bulan</span>
                             </div>
+                            <p style="font-size:11px; color:#cbd5e1; font-weight:500; margin-bottom:20px;">Tagihan bulanan</p>
                         </div>
 
-                        {{-- Price - yearly --}}
-                        <div x-show="isYearly" style="display:none;" class="mb-1">
-                            <div class="flex items-end gap-1 flex-wrap">
-                                <span class="text-2xl md:text-3xl font-black text-slate-900 leading-none">
+                        {{-- Price yearly --}}
+                        <div x-show="isYearly" style="display:none;">
+                            <div style="display:flex; align-items:baseline; gap:4px; margin-bottom:2px; flex-wrap:wrap;">
+                                <span style="font-size:28px; font-weight:900; color:#0f172a; letter-spacing:-.02em; line-height:1;">
                                     Rp {{ number_format($plan->price_yearly, 0, ',', '.') }}
                                 </span>
-                                <span class="text-xs font-bold text-slate-400 mb-0.5">/tahun</span>
+                                <span style="font-size:12px; font-weight:600; color:#94a3b8;">/tahun</span>
                             </div>
-                            <p class="text-[10px] text-emerald-600 font-bold mt-1">
-                                ≈ Rp {{ number_format(intdiv($plan->price_yearly, 12), 0, ',', '.') }}/bln · hemat 2 bulan
+                            <p style="font-size:11px; color:#16a34a; font-weight:700; margin-bottom:20px;">
+                                ≈ Rp {{ number_format(intdiv($plan->price_yearly, 12), 0, ',', '.') }}/bln · 1 bulan gratis
                             </p>
                         </div>
 
-                        <hr class="my-4 border-slate-100">
+                        {{-- Divider --}}
+                        <div style="height:1px; background:#f1f5f9; margin-bottom:18px;"></div>
 
                         {{-- Features --}}
-                        <ul class="space-y-2.5">
-                            <li class="flex items-start gap-2.5 text-sm text-slate-700">
-                                <svg class="w-4 h-4 text-indigo-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                                Maks. <b class="ml-1">{{ $plan->max_kk ? number_format($plan->max_kk) : 'Unlimited' }}</b>&nbsp;KK
+                        <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px;">
+                            <li style="display:flex; align-items:center; gap:10px; font-size:13px; color:#334155;">
+                                <span style="width:18px; height:18px; border-radius:50%; background:{{ $plan->is_popular ? '#ede9fe' : '#f0fdf4' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="{{ $plan->is_popular ? '#6366f1' : '#22c55e' }}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                                </span>
+                                @if($plan->max_kk)
+                                    Maks. <strong style="margin-left:3px;">{{ number_format($plan->max_kk) }}</strong>&nbsp;Kartu Keluarga
+                                @else
+                                    <strong>Kartu Keluarga</strong>&nbsp;tanpa batas
+                                @endif
                             </li>
-                            <li class="flex items-start gap-2.5 text-sm text-slate-700">
-                                <svg class="w-4 h-4 text-indigo-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                                Maks. <b class="ml-1">{{ $plan->max_users ?: 'Unlimited' }}</b>&nbsp;Akun Pengurus
+                            <li style="display:flex; align-items:center; gap:10px; font-size:13px; color:#334155;">
+                                <span style="width:18px; height:18px; border-radius:50%; background:{{ $plan->is_popular ? '#ede9fe' : '#f0fdf4' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="{{ $plan->is_popular ? '#6366f1' : '#22c55e' }}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                                </span>
+                                @if($plan->max_users)
+                                    Maks. <strong style="margin-left:3px;">{{ $plan->max_users }}</strong>&nbsp;Akun Pengurus
+                                @else
+                                    <strong>Akun Pengurus</strong>&nbsp;tanpa batas
+                                @endif
                             </li>
-                            <li class="flex items-start gap-2.5 text-sm text-slate-700">
-                                <svg class="w-4 h-4 text-indigo-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                                <b>{{ $plan->max_ai_extractions_per_month ?: 'Unlimited' }}x</b>&nbsp;Scan KTP/KK per Bln
+                            <li style="display:flex; align-items:center; gap:10px; font-size:13px; color:#334155;">
+                                <span style="width:18px; height:18px; border-radius:50%; background:{{ $plan->is_popular ? '#ede9fe' : '#f0fdf4' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="{{ $plan->is_popular ? '#6366f1' : '#22c55e' }}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                                </span>
+                                @if($plan->max_ai_extractions_per_month)
+                                    <strong>{{ number_format($plan->max_ai_extractions_per_month) }}x</strong>&nbsp;Scan KTP/KK per Bulan
+                                @else
+                                    <strong>Scan KTP/KK</strong>&nbsp;tanpa batas
+                                @endif
                             </li>
-                            <li class="flex items-start gap-2.5 text-sm text-slate-700">
-                                <svg class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                                <b>Akses Penuh</b>&nbsp;Seluruh Modul
+                            <li style="display:flex; align-items:center; gap:10px; font-size:13px; color:#334155;">
+                                <span style="width:18px; height:18px; border-radius:50%; background:#f0fdf4; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                                </span>
+                                <strong>Akses Penuh</strong>&nbsp;Seluruh Modul
                             </li>
                         </ul>
                     </div>
 
-                    {{-- CTA button --}}
-                    <div class="p-5 md:p-6 pt-0">
+                    {{-- CTA --}}
+                    <div style="padding:0 24px 24px;">
                         @if($subscription && $subscription->plan_id === $plan->id && $subscription->isActive())
-                            <div class="w-full py-3 rounded-xl text-[11px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-700 border border-emerald-200 text-center cursor-not-allowed select-none">
-                                ✓ Paket Saat Ini
+                            <div style="width:100%; padding:12px; border-radius:12px; text-align:center; background:#f0fdf4; border:1.5px solid #bbf7d0; color:#16a34a; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;">
+                                ✓ &nbsp;Paket Aktif Saat Ini
                             </div>
                         @else
                             <form :action="isYearly ? '{{ route('billing.checkout', $plan) }}?cycle=yearly' : '{{ route('billing.checkout', $plan) }}'" method="POST">
                                 @csrf
-                                <button type="submit"
-                                    class="w-full py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-200 relative overflow-hidden group
-                                    {{ $plan->is_popular ? 'text-white shadow-md hover:shadow-lg hover:opacity-90' : 'text-slate-700 bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:border-slate-300' }}"
-                                    @if($plan->is_popular) style="background: linear-gradient(135deg, #4f46e5, #7c3aed);" @endif>
+                                @if($plan->is_popular)
+                                <button type="submit" style="width:100%; padding:13px; border-radius:12px; border:none; cursor:pointer; font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#fff; background:linear-gradient(135deg,#4f46e5,#7c3aed); box-shadow:0 4px 16px rgba(99,102,241,.35); transition:opacity .2s;" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
                                     @if($subscription && $subscription->isActive())
                                         Ganti ke {{ $plan->name }}
                                     @else
-                                        Pilih Paket {{ $plan->name }}
+                                        Mulai Paket {{ $plan->name }}
                                     @endif
                                 </button>
+                                @else
+                                <button type="submit" style="width:100%; padding:13px; border-radius:12px; border:1.5px solid #e2e8f0; cursor:pointer; font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#475569; background:#f8fafc; transition:background .2s, border-color .2s;" onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#cbd5e1';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0';">
+                                    @if($subscription && $subscription->isActive())
+                                        Ganti ke {{ $plan->name }}
+                                    @else
+                                        Mulai Paket {{ $plan->name }}
+                                    @endif
+                                </button>
+                                @endif
                             </form>
                         @endif
                     </div>
@@ -214,88 +273,88 @@
                 @endforeach
             </div>
 
-            {{-- Xendit badge --}}
-            <div class="mt-6 flex justify-center">
-                <p class="inline-flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-full border border-slate-200 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                    <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                    Pembayaran aman via Xendit
-                </p>
+            {{-- Xendit secure badge --}}
+            <div style="text-align:center; margin-top:20px;">
+                <span style="display:inline-flex; align-items:center; gap:6px; font-size:10px; font-weight:700; color:#94a3b8; letter-spacing:.06em; text-transform:uppercase;">
+                    <svg width="12" height="12" fill="none" stroke="#94a3b8" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    Pembayaran diproses aman melalui Xendit
+                </span>
             </div>
         </div>
 
-        {{-- ══════════════════════════════════════ --}}
-        {{-- 3. RIWAYAT TRANSAKSI                  --}}
-        {{-- ══════════════════════════════════════ --}}
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50">
-                <h2 class="text-sm font-black text-slate-900 uppercase tracking-widest">Riwayat Transaksi</h2>
+        {{-- ─── 3. RIWAYAT TRANSAKSI ───────────────────────── --}}
+        <div style="background:#fff; border:1.5px solid #e2e8f0; border-radius:20px; overflow:hidden;">
+
+            <div style="padding:14px 24px; border-bottom:1px solid #f1f5f9; background:#fafafa;">
+                <p style="font-size:10px; font-weight:800; color:#94a3b8; letter-spacing:.12em; text-transform:uppercase;">Riwayat Transaksi</p>
             </div>
 
-            {{-- Desktop table --}}
-            <div class="hidden md:block overflow-x-auto">
-                <table class="w-full text-left text-sm">
+            {{-- ── Desktop table ── --}}
+            <div class="hidden md:block" style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse;">
                     <thead>
-                        <tr class="border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/30">
-                            <th class="px-6 py-4">Tanggal</th>
-                            <th class="px-6 py-4">Paket</th>
-                            <th class="px-6 py-4">Nominal</th>
-                            <th class="px-6 py-4">Siklus</th>
-                            <th class="px-6 py-4">Status</th>
-                            <th class="px-6 py-4 text-right">Aksi</th>
+                        <tr style="border-bottom:1px solid #f1f5f9;">
+                            <th style="padding:12px 20px; text-align:left; font-size:10px; font-weight:800; color:#94a3b8; letter-spacing:.1em; text-transform:uppercase; white-space:nowrap;">Tanggal</th>
+                            <th style="padding:12px 20px; text-align:left; font-size:10px; font-weight:800; color:#94a3b8; letter-spacing:.1em; text-transform:uppercase;">Paket</th>
+                            <th style="padding:12px 20px; text-align:left; font-size:10px; font-weight:800; color:#94a3b8; letter-spacing:.1em; text-transform:uppercase;">Nominal</th>
+                            <th style="padding:12px 20px; text-align:left; font-size:10px; font-weight:800; color:#94a3b8; letter-spacing:.1em; text-transform:uppercase;">Siklus</th>
+                            <th style="padding:12px 20px; text-align:left; font-size:10px; font-weight:800; color:#94a3b8; letter-spacing:.1em; text-transform:uppercase;">Status</th>
+                            <th style="padding:12px 20px; text-align:right; font-size:10px; font-weight:800; color:#94a3b8; letter-spacing:.1em; text-transform:uppercase;">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-50">
+                    <tbody>
                         @forelse($histories as $history)
-                        <tr class="hover:bg-slate-50/40 transition-colors">
-                            <td class="px-6 py-4 text-slate-500 text-xs whitespace-nowrap">{{ $history->created_at->translatedFormat('d M Y, H:i') }}</td>
-                            <td class="px-6 py-4 font-bold text-slate-900 whitespace-nowrap">{{ $history->plan?->name ?? '-' }}</td>
-                            <td class="px-6 py-4 font-mono text-slate-700 whitespace-nowrap">Rp{{ number_format($history->amount, 0, ',', '.') }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-[10px] font-bold text-slate-500">
-                                    {{ $history->billing_cycle === 'yearly' ? '📅 Tahunan' : '🗓 Bulanan' }}
+                        <tr style="border-bottom:1px solid #f8fafc; transition:background .15s;" onmouseover="this.style.background='#fafafa'" onmouseout="this.style.background='transparent'">
+                            <td style="padding:14px 20px; font-size:12px; color:#64748b; white-space:nowrap;">{{ $history->created_at->translatedFormat('d M Y, H:i') }}</td>
+                            <td style="padding:14px 20px; font-size:13px; font-weight:700; color:#0f172a; white-space:nowrap;">{{ $history->plan?->name ?? '—' }}</td>
+                            <td style="padding:14px 20px; font-size:13px; font-weight:700; color:#0f172a; font-variant-numeric:tabular-nums; white-space:nowrap;">Rp {{ number_format($history->amount, 0, ',', '.') }}</td>
+                            <td style="padding:14px 20px; white-space:nowrap;">
+                                <span style="font-size:11px; font-weight:700; color:#64748b;">
+                                    {{ $history->billing_cycle === 'yearly' ? '📅 Tahunan' : '🗓️ Bulanan' }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td style="padding:14px 20px; white-space:nowrap;">
                                 @if($history->status === 'active')
-                                    <span class="px-2.5 py-1 text-[10px] font-black uppercase rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">Lunas</span>
+                                    <span style="padding:3px 10px; border-radius:99px; font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; background:#d1fae5; color:#059669; border:1px solid #6ee7b7;">Lunas</span>
                                 @elseif($history->status === 'pending_payment')
-                                    <span class="px-2.5 py-1 text-[10px] font-black uppercase rounded-full bg-amber-50 text-amber-600 border border-amber-100">Menunggu</span>
+                                    <span style="padding:3px 10px; border-radius:99px; font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; background:#fef3c7; color:#d97706; border:1px solid #fde68a;">Menunggu</span>
                                 @elseif($history->status === 'cancelled')
-                                    <span class="px-2.5 py-1 text-[10px] font-black uppercase rounded-full bg-rose-50 text-rose-600 border border-rose-100">Dibatalkan</span>
+                                    <span style="padding:3px 10px; border-radius:99px; font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; background:#fee2e2; color:#dc2626; border:1px solid #fca5a5;">Dibatalkan</span>
                                 @else
-                                    <span class="px-2.5 py-1 text-[10px] font-black uppercase rounded-full bg-slate-100 text-slate-500">{{ ucfirst($history->status) }}</span>
+                                    <span style="padding:3px 10px; border-radius:99px; font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; background:#f1f5f9; color:#64748b;">{{ ucfirst($history->status) }}</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 text-right whitespace-nowrap">
+                            <td style="padding:14px 20px; text-align:right; white-space:nowrap;">
                                 @if($history->status === 'pending_payment')
-                                    <div class="flex items-center justify-end gap-3">
+                                    <div style="display:flex; align-items:center; justify-content:flex-end; gap:12px;">
                                         <form action="{{ route('billing.cancel', $history) }}" method="POST" onsubmit="return confirm('Batalkan tagihan ini?');">
                                             @csrf
-                                            <button type="submit" class="text-[10px] font-black uppercase text-slate-400 hover:text-rose-500 transition-colors underline underline-offset-4">Batalkan</button>
+                                            <button type="submit" style="font-size:11px; font-weight:700; color:#94a3b8; background:none; border:none; cursor:pointer; text-decoration:underline; text-underline-offset:3px;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#94a3b8'">Batalkan</button>
                                         </form>
                                         @if($history->payment_url)
                                         <a href="{{ $history->payment_url }}" target="_blank"
-                                           class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-black uppercase bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg transition-all shadow-sm">
+                                           style="display:inline-flex; align-items:center; gap:5px; padding:6px 14px; border-radius:8px; font-size:11px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:#fff; background:#4f46e5; text-decoration:none; box-shadow:0 2px 8px rgba(79,70,229,.3); transition:opacity .2s;"
+                                           onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
                                             Bayar
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                            <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                                         </a>
                                         @endif
                                     </div>
                                 @elseif($history->status === 'active')
-                                    <span class="text-[10px] font-black uppercase text-emerald-500">✓ Selesai</span>
+                                    <span style="font-size:11px; font-weight:800; color:#10b981;">✓ Selesai</span>
                                 @else
-                                    <span class="text-xs text-slate-300">—</span>
+                                    <span style="color:#e2e8f0;">—</span>
                                 @endif
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-16 text-center">
-                                <div class="flex flex-col items-center gap-3">
-                                    <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center">
-                                        <svg class="w-7 h-7 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            <td colspan="6" style="padding:60px 20px; text-align:center;">
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+                                    <div style="width:48px; height:48px; border-radius:14px; background:#f8fafc; border:1.5px solid #e2e8f0; display:flex; align-items:center; justify-content:center;">
+                                        <svg width="22" height="22" fill="none" stroke="#cbd5e1" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                                     </div>
-                                    <p class="text-[11px] font-black uppercase tracking-widest text-slate-400">Belum ada riwayat transaksi</p>
+                                    <p style="font-size:11px; font-weight:800; color:#cbd5e1; letter-spacing:.1em; text-transform:uppercase;">Belum ada riwayat transaksi</p>
                                 </div>
                             </td>
                         </tr>
@@ -304,39 +363,39 @@
                 </table>
             </div>
 
-            {{-- Mobile card list --}}
-            <div class="md:hidden divide-y divide-slate-100">
+            {{-- ── Mobile list ── --}}
+            <div class="md:hidden">
                 @forelse($histories as $history)
-                <div class="p-5 space-y-3">
-                    <div class="flex items-start justify-between gap-2">
+                <div class="history-mobile-card">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
                         <div>
-                            <p class="font-bold text-slate-900 text-sm">{{ $history->plan?->name ?? '-' }}</p>
-                            <p class="text-xs text-slate-400 mt-0.5">{{ $history->created_at->translatedFormat('d M Y, H:i') }}</p>
+                            <p style="font-size:14px; font-weight:800; color:#0f172a;">{{ $history->plan?->name ?? '—' }}</p>
+                            <p style="font-size:11px; color:#94a3b8; margin-top:2px;">{{ $history->created_at->translatedFormat('d M Y, H:i') }}</p>
                         </div>
                         @if($history->status === 'active')
-                            <span class="px-2.5 py-1 text-[10px] font-black uppercase rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 flex-shrink-0">Lunas</span>
+                            <span style="padding:3px 10px; border-radius:99px; font-size:10px; font-weight:800; text-transform:uppercase; background:#d1fae5; color:#059669; border:1px solid #6ee7b7; flex-shrink:0;">Lunas</span>
                         @elseif($history->status === 'pending_payment')
-                            <span class="px-2.5 py-1 text-[10px] font-black uppercase rounded-full bg-amber-50 text-amber-600 border border-amber-100 flex-shrink-0">Menunggu</span>
+                            <span style="padding:3px 10px; border-radius:99px; font-size:10px; font-weight:800; text-transform:uppercase; background:#fef3c7; color:#d97706; border:1px solid #fde68a; flex-shrink:0;">Menunggu</span>
                         @elseif($history->status === 'cancelled')
-                            <span class="px-2.5 py-1 text-[10px] font-black uppercase rounded-full bg-rose-50 text-rose-600 border border-rose-100 flex-shrink-0">Dibatalkan</span>
+                            <span style="padding:3px 10px; border-radius:99px; font-size:10px; font-weight:800; text-transform:uppercase; background:#fee2e2; color:#dc2626; border:1px solid #fca5a5; flex-shrink:0;">Batal</span>
                         @else
-                            <span class="px-2.5 py-1 text-[10px] font-black uppercase rounded-full bg-slate-100 text-slate-500 flex-shrink-0">{{ ucfirst($history->status) }}</span>
+                            <span style="padding:3px 10px; border-radius:99px; font-size:10px; font-weight:800; text-transform:uppercase; background:#f1f5f9; color:#64748b; flex-shrink:0;">{{ ucfirst($history->status) }}</span>
                         @endif
                     </div>
-                    <div class="flex items-center justify-between">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div>
-                            <p class="font-mono font-bold text-slate-800 text-sm">Rp{{ number_format($history->amount, 0, ',', '.') }}</p>
-                            <p class="text-[10px] text-slate-400 mt-0.5">{{ $history->billing_cycle === 'yearly' ? '📅 Tahunan' : '🗓 Bulanan' }}</p>
+                            <p style="font-size:15px; font-weight:800; color:#0f172a;">Rp {{ number_format($history->amount, 0, ',', '.') }}</p>
+                            <p style="font-size:11px; color:#94a3b8; margin-top:2px;">{{ $history->billing_cycle === 'yearly' ? '📅 Tahunan' : '🗓️ Bulanan' }}</p>
                         </div>
                         @if($history->status === 'pending_payment')
-                        <div class="flex items-center gap-2">
+                        <div style="display:flex; gap:8px; align-items:center;">
                             <form action="{{ route('billing.cancel', $history) }}" method="POST" onsubmit="return confirm('Batalkan tagihan ini?');">
                                 @csrf
-                                <button type="submit" class="text-[10px] font-black uppercase text-slate-400 hover:text-rose-500 transition-colors underline underline-offset-4">Batalkan</button>
+                                <button type="submit" style="font-size:11px; font-weight:700; color:#94a3b8; background:none; border:none; cursor:pointer; text-decoration:underline;">Batalkan</button>
                             </form>
                             @if($history->payment_url)
                             <a href="{{ $history->payment_url }}" target="_blank"
-                               class="inline-flex items-center gap-1 px-3 py-1.5 text-[10px] font-black uppercase bg-indigo-600 text-white rounded-lg shadow-sm">
+                               style="padding:7px 14px; border-radius:8px; font-size:11px; font-weight:800; color:#fff; background:#4f46e5; text-decoration:none;">
                                 Bayar →
                             </a>
                             @endif
@@ -345,17 +404,13 @@
                     </div>
                 </div>
                 @empty
-                <div class="py-16 text-center px-6">
-                    <div class="flex flex-col items-center gap-3">
-                        <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center">
-                            <svg class="w-7 h-7 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                        </div>
-                        <p class="text-[11px] font-black uppercase tracking-widest text-slate-400">Belum ada riwayat transaksi</p>
-                    </div>
+                <div style="padding:60px 20px; text-align:center;">
+                    <p style="font-size:11px; font-weight:800; color:#cbd5e1; letter-spacing:.1em; text-transform:uppercase;">Belum ada riwayat transaksi</p>
                 </div>
                 @endforelse
             </div>
-        </div>
 
-    </div>
+        </div>{{-- /riwayat --}}
+
+    </div>{{-- /max-w-5xl --}}
 </x-app-layout>
