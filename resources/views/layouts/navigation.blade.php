@@ -42,9 +42,13 @@
     <nav class="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-1 relative" style="scrollbar-width: thin;">
         @php
             $user = auth()->user();
-            $isOwner = $user->isRtOwner();
-            $isSekretaris = $user->isRtSekretaris();
-            $isBendahara = $user->isRtBendahara();
+            $role = $user->tenant_role;
+            $isOwner = empty($role) || $role === 'owner' || $role === 'wakil_ketua';
+            $isSekretaris = $role === 'sekretaris';
+            $isBendahara = $role === 'bendahara';
+            $isKeamanan = $role === 'keamanan';
+            $isHumas = $role === 'humas';
+            $isPembangunan = $role === 'pembangunan';
 
             $menuGroups = [
                 [
@@ -58,39 +62,42 @@
                     'label' => 'Kependudukan',
                     'icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
                     'items' => array_filter([
-                        !$isBendahara ? ['route' => 'kk.index', 'match' => 'kk.*', 'label' => 'Data KK'] : null,
-                        !$isBendahara ? ['route' => 'warga.index', 'match' => 'warga.*', 'label' => 'Data Warga'] : null,
+                        ($isOwner || $isSekretaris) ? ['route' => 'kk.index', 'match' => 'kk.*', 'label' => 'Data KK'] : null,
+                        ($isOwner || $isSekretaris) ? ['route' => 'warga.index', 'match' => 'warga.*', 'label' => 'Data Warga'] : null,
                     ]),
                 ],
                 [
                     'label' => 'Keuangan Kas',
                     'icon' => 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 8v2m9-4a9 9 0 11-18 0 9 9 0 0118 0z',
                     'items' => array_filter([
-                        !$isSekretaris ? ['route' => 'admin.iuran.index', 'match' => 'admin.iuran.*', 'label' => 'Iuran Warga'] : null,
-                        !$isSekretaris ? ['route' => 'admin.tunggakan.index', 'match' => 'admin.tunggakan.*', 'label' => 'Rekap Tunggakan'] : null,
-                        !$isSekretaris ? ['route' => 'admin.pengeluaran.index', 'match' => 'admin.pengeluaran.*', 'label' => 'Pengeluaran Kas'] : null,
+                        ($isOwner || $isBendahara) ? ['route' => 'admin.iuran.index', 'match' => 'admin.iuran.*', 'label' => 'Iuran Warga'] : null,
+                        ($isOwner || $isBendahara) ? ['route' => 'admin.tunggakan.index', 'match' => 'admin.tunggakan.*', 'label' => 'Rekap Tunggakan'] : null,
+                        ($isOwner || $isBendahara) ? ['route' => 'admin.pengeluaran.index', 'match' => 'admin.pengeluaran.*', 'label' => 'Pengeluaran Kas'] : null,
                     ]),
                 ],
                 [
                     'label' => 'Layanan & Surat',
                     'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
                     'items' => array_filter([
-                        !$isBendahara ? ['route' => 'admin.pengajuan.index', 'match' => 'admin.pengajuan.*', 'label' => 'Pengajuan Surat'] : null,
-                        !$isBendahara ? ['route' => 'admin.laporan.index', 'match' => 'admin.laporan.*', 'label' => 'Laporan Warga'] : null,
-                        !$isBendahara ? ['route' => 'admin.peristiwa.index', 'match' => 'admin.peristiwa.*', 'label' => 'Lapor Peristiwa'] : null,
-                        !$isBendahara ? ['route' => 'admin.panic.index', 'match' => 'admin.panic.*', 'label' => 'Riwayat Darurat (Panic)'] : null,
-                        !$isBendahara ? ['route' => 'admin.polls.index', 'match' => 'admin.polls.*', 'label' => 'Musyawarah (E-Voting)'] : null,
-                        !$isBendahara ? ['route' => 'admin.guestbooks.index', 'match' => 'admin.guestbooks.*', 'label' => 'Buku Tamu (Security)'] : null,
-                        ['route' => 'admin.inventaris.index', 'match' => 'admin.inventaris.*', 'label' => 'Inventaris & Aset'],
-                        !$isBendahara ? ['route' => 'admin.ronda.index', 'match' => 'admin.ronda.*', 'label' => 'Jadwal Ronda'] : null,
+                        ($isOwner || $isSekretaris) ? ['route' => 'admin.pengajuan.index', 'match' => 'admin.pengajuan.*', 'label' => 'Pengajuan Surat'] : null,
+                        ($isOwner || $isSekretaris) ? ['route' => 'admin.documents.index', 'match' => 'admin.documents.*', 'label' => 'Brankas Digital'] : null,
+                        ($isOwner || $isSekretaris || $isKeamanan || $isPembangunan) ? ['route' => 'admin.laporan.index', 'match' => 'admin.laporan.*', 'label' => 'Laporan Warga'] : null,
+                        ($isOwner || $isSekretaris || $isKeamanan) ? ['route' => 'admin.panic.index', 'match' => 'admin.panic.*', 'label' => 'Riwayat Darurat (Panic)'] : null,
+                        ($isOwner || $isKeamanan) ? ['route' => 'admin.cctvs.index', 'match' => 'admin.cctvs.*', 'label' => 'CCTV Lingkungan'] : null,
+                        ($isOwner || $isSekretaris || $isKeamanan) ? ['route' => 'admin.ronda.index', 'match' => 'admin.ronda.*', 'label' => 'Jadwal Ronda'] : null,
+                        ($isOwner || $isSekretaris || $isBendahara || $isPembangunan) ? ['route' => 'admin.inventaris.index', 'match' => 'admin.inventaris.*', 'label' => 'Inventaris & Aset'] : null,
+                        ($isOwner || $isSekretaris || $isHumas) ? ['route' => 'admin.polls.index', 'match' => 'admin.polls.*', 'label' => 'Musyawarah (E-Voting)'] : null,
+                        ($isOwner || $isSekretaris || $isHumas) ? ['route' => 'admin.guestbooks.index', 'match' => 'admin.guestbooks.*', 'label' => 'Buku Tamu (Security)'] : null,
                     ]),
                 ],
                 [
                     'label' => 'Informasi & UMKM',
                     'icon' => 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 11h6v-3H7v3z',
                     'items' => array_filter([
-                        !$isBendahara ? ['route' => 'admin.berita.index', 'match' => 'admin.berita.*', 'label' => 'Berita & Pengumuman'] : null,
-                        ['route' => 'admin.umkm.index', 'match' => 'admin.umkm.*', 'label' => 'Pasar Warga (UMKM)'],
+                        ($isOwner || $isSekretaris || $isHumas) ? ['route' => 'admin.agendas.index', 'match' => 'admin.agendas.*', 'label' => 'Kalender Agenda'] : null,
+                        ($isOwner || $isSekretaris || $isHumas) ? ['route' => 'admin.berita.index', 'match' => 'admin.berita.*', 'label' => 'Berita & Pengumuman'] : null,
+                        ($isOwner || $isSekretaris || $isHumas) ? ['route' => 'admin.peristiwa.index', 'match' => 'admin.peristiwa.*', 'label' => 'Lapor Peristiwa'] : null,
+                        ($isOwner || $isSekretaris || $isHumas) ? ['route' => 'admin.umkm.index', 'match' => 'admin.umkm.*', 'label' => 'Pasar Warga (UMKM)'] : null,
                     ]),
                 ],
                 [
@@ -107,7 +114,7 @@
                     'items' => array_filter([
                         ($isOwner || $isSekretaris) ? ['route' => 'admin.organisasi.index', 'match' => 'admin.organisasi.*', 'label' => 'Struktur Organisasi'] : null,
                         $isOwner ? ['route' => 'admin.staff.index', 'match' => 'admin.staff.*', 'label' => 'Manajemen Staff (Akun)'] : null,
-                        !$isSekretaris ? ['route' => 'billing.index', 'match' => 'billing.*', 'label' => 'Paket & Tagihan'] : null,
+                        ($isOwner || $isBendahara) ? ['route' => 'billing.index', 'match' => 'billing.*', 'label' => 'Paket & Tagihan'] : null,
                     ]),
                 ],
             ];

@@ -214,6 +214,28 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::post('/{guestbook}/mark-left', [\App\Http\Controllers\Admin\GuestbookController::class, 'markAsLeft'])->name('mark-left');
         Route::delete('/{guestbook}', [\App\Http\Controllers\Admin\GuestbookController::class, 'destroy'])->name('destroy');
     });
+
+    Route::prefix('admin/agenda')->name('admin.agendas.')->middleware('rt_role:owner,sekretaris,humas')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AdminAgendaController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Admin\AdminAgendaController::class, 'store'])->name('store');
+        Route::put('/{agenda}', [\App\Http\Controllers\Admin\AdminAgendaController::class, 'update'])->name('update');
+        Route::delete('/{agenda}', [\App\Http\Controllers\Admin\AdminAgendaController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('admin/dokumen')->name('admin.documents.')->middleware('rt_role:owner,sekretaris')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'store'])->name('store');
+        Route::put('/{document}', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'update'])->name('update');
+        Route::delete('/{document}', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'destroy'])->name('destroy');
+        Route::get('/{document}/download', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'download'])->name('download');
+    });
+
+    Route::prefix('admin/cctv')->name('admin.cctvs.')->middleware('rt_role:owner,keamanan')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AdminCctvController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Admin\AdminCctvController::class, 'store'])->name('store');
+        Route::put('/{cctv}', [\App\Http\Controllers\Admin\AdminCctvController::class, 'update'])->name('update');
+        Route::delete('/{cctv}', [\App\Http\Controllers\Admin\AdminCctvController::class, 'destroy'])->name('destroy');
+    });
 });
 
 Route::middleware('auth')->group(function () {

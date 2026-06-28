@@ -54,6 +54,22 @@ class HomeController extends Controller
                 ->where('tenant_id', app('currentTenant')->id)
                 ->get()
                 ->filter(function($poll) { return $poll->is_active; }),
+                
+            'agendas' => \App\Models\Agenda::where('tenant_id', app('currentTenant')->id)
+                ->where('start_time', '>=', now())
+                ->orderBy('start_time', 'asc')
+                ->take(5)
+                ->get(),
+                
+            'public_documents' => \App\Models\Document::where('tenant_id', app('currentTenant')->id)
+                ->where('is_public', true)
+                ->latest()
+                ->take(10)
+                ->get(),
+                
+            'active_cctvs' => \App\Models\Cctv::where('tenant_id', app('currentTenant')->id)
+                ->where('status', 'active')
+                ->get(),
         ];
 
         return view('public.home', $stats);

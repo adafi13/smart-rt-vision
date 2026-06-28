@@ -347,6 +347,142 @@
         </div>
     </section>
 
+    <!-- ===================== KALENDER AGENDA ===================== -->
+    @if(isset($agendas) && $agendas->count() > 0)
+    <section id="agenda" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60 bg-white">
+        <div class="text-center mb-16">
+            <h2 class="text-sm font-black tracking-[0.2em] text-indigo-600 uppercase mb-3">Kegiatan Lingkungan</h2>
+            <h3 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-6">Agenda Mendatang</h3>
+            <p class="text-lg text-slate-500 max-w-2xl mx-auto font-medium">Jadwal kegiatan RT/RW, dari rapat, kerja bakti, hingga posyandu.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($agendas as $agenda)
+            <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-12 h-12 bg-white rounded-xl flex flex-col items-center justify-center border border-slate-200 shadow-sm font-bold text-slate-700">
+                        <span class="text-xs uppercase text-slate-400">{{ $agenda->start_time->format('M') }}</span>
+                        <span class="text-lg leading-none">{{ $agenda->start_time->format('d') }}</span>
+                    </div>
+                    @if($agenda->type === 'rapat')
+                        <span class="px-2.5 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-md">Rapat</span>
+                    @elseif($agenda->type === 'kerjabakti')
+                        <span class="px-2.5 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-md">Kerja Bakti</span>
+                    @elseif($agenda->type === 'posyandu')
+                        <span class="px-2.5 py-1 bg-pink-100 text-pink-700 text-xs font-bold rounded-md">Posyandu</span>
+                    @else
+                        <span class="px-2.5 py-1 bg-gray-200 text-gray-700 text-xs font-bold rounded-md">Umum</span>
+                    @endif
+                </div>
+                <h4 class="text-xl font-bold text-slate-900 mb-2">{{ $agenda->title }}</h4>
+                @if($agenda->description)
+                    <p class="text-sm text-slate-500 mb-4 line-clamp-2">{{ $agenda->description }}</p>
+                @endif
+                <div class="flex flex-col gap-2 mt-auto">
+                    <div class="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        {{ $agenda->start_time->format('H:i') }} {{ $agenda->end_time ? ' - ' . $agenda->end_time->format('H:i') : ' - Selesai' }}
+                    </div>
+                    @if($agenda->location)
+                    <div class="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        {{ $agenda->location }}
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+
+    <!-- ===================== BRANKAS DIGITAL ===================== -->
+    @if(isset($public_documents) && $public_documents->count() > 0)
+    <section id="dokumen" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60 bg-slate-50">
+        <div class="text-center mb-16">
+            <h2 class="text-sm font-black tracking-[0.2em] text-indigo-600 uppercase mb-3">Transparansi Informasi</h2>
+            <h3 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-6">Brankas Digital</h3>
+            <p class="text-lg text-slate-500 max-w-2xl mx-auto font-medium">Arsip dokumen publik RT seperti SK, Laporan Keuangan, dan Notulen Rapat.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($public_documents as $doc)
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col hover:border-indigo-300 transition-colors shadow-sm">
+                <div class="flex gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center flex-shrink-0 text-indigo-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-slate-900 truncate mb-1" title="{{ $doc->title }}">{{ $doc->title }}</h4>
+                        <p class="text-xs text-indigo-600 font-bold uppercase tracking-wider mb-2">{{ str_replace('_', ' ', $doc->category) }}</p>
+                        @if($doc->description)
+                            <p class="text-sm text-slate-500 line-clamp-2 mb-3">{{ $doc->description }}</p>
+                        @endif
+                        <div class="flex justify-between items-center mt-3">
+                            <span class="text-xs text-slate-400">{{ $doc->created_at->format('d M Y') }}</span>
+                            <a href="{{ asset('storage/'.$doc->file_path) }}" target="_blank" class="text-sm font-bold text-indigo-600 hover:text-indigo-700 hover:underline flex items-center gap-1">
+                                Download <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+
+    <!-- ===================== CCTV LINGKUNGAN ===================== -->
+    @if(isset($active_cctvs) && $active_cctvs->count() > 0)
+    <section id="cctv" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60 bg-slate-900 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/20 to-rose-900/10 mix-blend-overlay"></div>
+        <div class="text-center mb-16 relative z-10">
+            <h2 class="text-sm font-black tracking-[0.2em] text-rose-400 uppercase mb-3 flex items-center justify-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                Live Monitoring
+            </h2>
+            <h3 class="text-3xl md:text-5xl font-black text-white tracking-tight mb-6">CCTV Lingkungan</h3>
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto font-medium">Pantau keamanan area publik RT kita secara langsung dari mana saja.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
+            @foreach($active_cctvs as $cctv)
+            <div class="bg-black/50 border border-slate-800 rounded-3xl overflow-hidden backdrop-blur-md shadow-2xl">
+                <div class="aspect-video w-full bg-black relative">
+                    @if(str_contains($cctv->stream_url, '<iframe'))
+                        <div class="w-full h-full [&>iframe]:w-full [&>iframe]:h-full border-none">
+                            {!! $cctv->stream_url !!}
+                        </div>
+                    @else
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 bg-slate-900/50">
+                            <svg class="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                            <a href="{{ $cctv->stream_url }}" target="_blank" class="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full font-bold text-sm transition-colors shadow-lg shadow-rose-500/30">
+                                Buka Stream RTSP/HLS
+                            </a>
+                        </div>
+                    @endif
+                    <div class="absolute top-4 left-4">
+                        <span class="px-3 py-1 bg-black/60 backdrop-blur-sm border border-white/10 text-white text-xs font-bold rounded-lg shadow-sm">
+                            {{ $cctv->name }}
+                        </span>
+                    </div>
+                </div>
+                <div class="p-5 flex justify-between items-center bg-slate-900/80">
+                    <div class="flex items-center gap-2 text-slate-300 text-sm font-medium">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        {{ $cctv->location ?? 'Lokasi tidak disebutkan' }}
+                    </div>
+                    <span class="flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-rose-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+                    </span>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+
     <!-- ===================== E-VOTING / MUSYAWARAH ===================== -->
     @if(isset($active_polls) && $active_polls->count() > 0)
     <section id="evoting" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60 bg-slate-50">
