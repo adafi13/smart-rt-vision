@@ -86,7 +86,7 @@ class BillingController extends Controller
 
     public function cancel(Subscription $subscription, XenditService $xendit)
     {
-        if ($subscription->tenant_id !== app('currentTenant')->id) {
+        if ($subscription->tenant_id != app('currentTenant')->id) {
             abort(403);
         }
 
@@ -102,7 +102,7 @@ class BillingController extends Controller
 
     public function success(Subscription $subscription)
     {
-        if ($subscription->tenant_id !== app('currentTenant')->id) {
+        if ($subscription->tenant_id != app('currentTenant')->id) {
             abort(403);
         }
 
