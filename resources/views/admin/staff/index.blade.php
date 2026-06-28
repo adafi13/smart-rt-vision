@@ -74,11 +74,22 @@
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-purple-100 text-purple-700">Ketua RT (Owner)</span>
                                 @endif
                             </td>
-                            <td class="p-4 text-right">
-                                <button @click="$dispatch('open-modal', 'edit-staff-{{ $staff->id }}')" class="text-indigo-600 hover:text-indigo-900 font-semibold text-xs bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors inline-block mr-2">Edit</button>
+                            <td class="p-4 text-right flex items-center justify-end gap-2">
+                                <button @click="$dispatch('open-modal', 'edit-staff-{{ $staff->id }}')" class="text-indigo-600 hover:text-indigo-900 font-semibold text-xs bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                    Edit
+                                </button>
+                                
+                                <button @click="$dispatch('open-modal', 'reset-password-{{ $staff->id }}')" class="text-amber-600 hover:text-amber-900 font-semibold text-xs bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                                    Ubah Sandi
+                                </button>
                                 
                                 @if($staff->id !== auth()->id())
-                                <button @click="$dispatch('open-modal', 'delete-staff-{{ $staff->id }}')" class="text-rose-600 hover:text-rose-900 font-semibold text-xs bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-lg transition-colors inline-block">Hapus</button>
+                                <button @click="$dispatch('open-modal', 'delete-staff-{{ $staff->id }}')" class="text-rose-600 hover:text-rose-900 font-semibold text-xs bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    Hapus
+                                </button>
                                 @endif
                             </td>
                         </tr>
@@ -106,13 +117,32 @@
                                             <option value="bendahara" {{ $staff->tenant_role === 'bendahara' ? 'selected' : '' }}>Bendahara</option>
                                         </select>
                                     </div>
-                                    <div>
-                                        <label class="label">Password Baru (Opsional)</label>
-                                        <input type="text" name="password" class="input-field" placeholder="Kosongkan jika tidak ingin mengubah password">
-                                    </div>
                                     <div class="mt-6 flex justify-end gap-3">
                                         <button type="button" @click="$dispatch('close')" class="px-4 py-2 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
                                         <button type="submit" class="btn-primary">Simpan Perubahan</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </x-modal>
+
+                        <!-- Reset Password Modal -->
+                        <x-modal name="reset-password-{{ $staff->id }}" :show="false" maxWidth="sm">
+                            <div class="p-6">
+                                <h2 class="text-lg font-bold text-gray-900 mb-1">Ubah Sandi</h2>
+                                <p class="text-xs text-gray-500 mb-5">Atur password baru untuk <strong>{{ $staff->name }}</strong>.</p>
+                                <form action="{{ route('admin.staff.reset_password', $staff) }}" method="POST" class="space-y-4">
+                                    @csrf
+                                    <div>
+                                        <label class="label">Password Baru</label>
+                                        <input type="password" name="new_password" class="input-field" required placeholder="Minimal 8 karakter">
+                                    </div>
+                                    <div>
+                                        <label class="label">Konfirmasi Password</label>
+                                        <input type="password" name="new_password_confirmation" class="input-field" required placeholder="Ketik ulang password baru">
+                                    </div>
+                                    <div class="mt-6 flex justify-end gap-3">
+                                        <button type="button" @click="$dispatch('close')" class="px-4 py-2 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
+                                        <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-xl transition-colors">Ubah Sandi</button>
                                     </div>
                                 </form>
                             </div>

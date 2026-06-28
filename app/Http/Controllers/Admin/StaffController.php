@@ -73,7 +73,6 @@ class StaffController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($staff->id)],
-            'password' => 'nullable|string|min:8',
             'tenant_role' => 'required|in:sekretaris,bendahara,owner',
         ]);
 
@@ -81,13 +80,25 @@ class StaffController extends Controller
         $staff->email = $request->email;
         $staff->tenant_role = $request->tenant_role;
         
-        if ($request->filled('password')) {
-            $staff->password = Hash::make($request->password);
-        }
-        
         $staff->save();
 
         return back()->with('success', 'Data pengurus berhasil diperbarui.');
+    }
+
+    public function resetPassword(Request $request, User $staff)
+    {
+        if ($staff->tenant_id !== auth()->user()->tenant_id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $staff->password = Hash::make($request->new_password);
+        $staff->save();
+
+        return back()->with('success', 'Password pengurus berhasil direset.');
     }
 
     public function destroy(User $staff)
