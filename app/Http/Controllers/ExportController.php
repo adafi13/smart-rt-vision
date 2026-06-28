@@ -64,6 +64,9 @@ class ExportController extends Controller
 
         $pdf = Pdf::loadView('exports.warga_pdf', compact('families', 'tenantName', 'rtSignature', 'rtName'))->setPaper('a4', 'landscape');
         
+        if (request()->has('preview')) {
+            return $pdf->stream('rekap_warga_' . date('Ymd_Hi') . '.pdf');
+        }
         return $pdf->download('rekap_warga_' . date('Ymd_Hi') . '.pdf');
     }
 }
