@@ -109,7 +109,7 @@
 
                         // Days remaining
                         $expDate = $sub?->current_period_end ?? $tenant->trial_ends_at;
-                        $daysLeft = $expDate ? now()->diffInDays($expDate, false) : null;
+                        $daysLeft = $expDate ? (int) now()->diffInDays($expDate, false) : null;
                         $isExpiring = $daysLeft !== null && $daysLeft >= 0 && $daysLeft <= 7;
                     @endphp
                     <tr class="hover:bg-gray-50/40 transition-colors group">

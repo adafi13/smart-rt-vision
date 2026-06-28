@@ -40,12 +40,12 @@
                         
                         @php
                             $totalTrial = config('kakaai.trial_days', 14);
-                            $daysLeft = max(0, now()->diffInDays($tenant->trial_ends_at, false));
+                            $daysLeft = max(0, (int) now()->diffInDays($tenant->trial_ends_at, false));
                             $percent = max(0, min(100, ($daysLeft / $totalTrial) * 100));
                         @endphp
                         <div class="w-full max-w-lg">
                             <div class="flex justify-between items-end mb-2">
-                                <span class="text-[11px] font-black text-amber-600 uppercase tracking-widest">{{ floor($daysLeft) }} Hari Tersisa</span>
+                                <span class="text-[11px] font-black text-amber-600 uppercase tracking-widest">{{ $daysLeft }} Hari Tersisa</span>
                                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total {{ $totalTrial }} Hari</span>
                             </div>
                             <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
@@ -64,13 +64,13 @@
                         <p class="text-sm font-medium text-slate-500 mb-6">Layanan Anda aktif dan berlaku hingga <span class="font-bold text-slate-900">{{ $subscription->current_period_end->translatedFormat('d F Y') }}</span>.</p>
                         
                         @php
-                            $totalDays = $subscription->current_period_start->diffInDays($subscription->current_period_end);
-                            $daysLeft = max(0, now()->diffInDays($subscription->current_period_end, false));
+                            $totalDays = (int) $subscription->current_period_start->diffInDays($subscription->current_period_end);
+                            $daysLeft = max(0, (int) now()->diffInDays($subscription->current_period_end, false));
                             $percent = max(0, min(100, ($daysLeft / max(1, $totalDays)) * 100));
                         @endphp
                         <div class="w-full max-w-lg">
                             <div class="flex justify-between items-end mb-2">
-                                <span class="text-[11px] font-black text-emerald-600 uppercase tracking-widest">{{ floor($daysLeft) }} Hari Tersisa</span>
+                                <span class="text-[11px] font-black text-emerald-600 uppercase tracking-widest">{{ $daysLeft }} Hari Tersisa</span>
                                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Siklus {{ $totalDays }} Hari</span>
                             </div>
                             <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">

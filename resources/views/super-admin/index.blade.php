@@ -180,7 +180,7 @@
                     @foreach($expiringTenants->take(5) as $exp)
                     @php
                         $expDate = $exp->trial_ends_at ?? $exp->activeSubscription()?->current_period_end;
-                        $daysLeft = $expDate ? now()->diffInDays($expDate, false) : 0;
+                        $daysLeft = $expDate ? (int) now()->diffInDays($expDate, false) : 0;
                     @endphp
                     <div class="flex items-center justify-between">
                         <div class="min-w-0 flex-1">

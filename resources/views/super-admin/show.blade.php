@@ -263,8 +263,8 @@
                     @php
                         $expDate = $activeSub?->current_period_end ?? $tenant->trial_ends_at;
                         $startDate = $activeSub?->current_period_start ?? $tenant->created_at;
-                        $daysLeft = $expDate ? now()->diffInDays($expDate, false) : null;
-                        $totalDays = ($expDate && $startDate) ? max(1, $startDate->diffInDays($expDate)) : 1;
+                        $daysLeft = $expDate ? (int) now()->diffInDays($expDate, false) : null;
+                        $totalDays = ($expDate && $startDate) ? max(1, (int) $startDate->diffInDays($expDate)) : 1;
                         $progress = $daysLeft !== null ? max(0, min(100, round(($daysLeft / $totalDays) * 100))) : 0;
                     @endphp
 
