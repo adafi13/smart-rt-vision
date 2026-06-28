@@ -445,7 +445,8 @@
     </section>
 
     <!-- ===================== HARGA ===================== -->
-    <section id="harga" class="max-w-6xl mx-auto px-4 sm:px-6 py-4 pb-20 sm:pb-24" x-data="pricingSlider()">
+    <section id="harga" class="max-w-6xl mx-auto px-4 sm:px-6 py-4 pb-20 sm:pb-24"
+             x-data="pricingSlider(@json($plans->map(fn($p) => ['slug' => $p->slug, 'name' => $p->name, 'max_kk' => $p->max_kk])->values()))">
         <div class="text-center max-w-xl mx-auto mb-8 reveal">
             <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Harga</span>
             <h2 class="text-2xl sm:text-3xl font-black text-gray-900 mt-2">Paket Sesuai Kebutuhan RT Anda</h2>
@@ -669,33 +670,45 @@
             }
         }
 
-        function pricingSlider() {
+        function pricingSlider(plansData) {
+            // Sort plans ascending by max_kk (null/0 = unlimited, always last)
+            const sortedPlans = [...plansData].sort((a, b) => {
+                if (!a.max_kk && !b.max_kk) return 0;
+                if (!a.max_kk) return 1;   // unlimited → last (highest tier)
+                if (!b.max_kk) return -1;
+                return a.max_kk - b.max_kk;
+            });
+
             return {
                 isYearly: false,
                 kkCount: 150,
-                recommendedPlan: 'growth',
-                recommendedName: 'Growth',
+                recommendedPlan: sortedPlans[0]?.slug ?? '',
+                recommendedName: sortedPlans[0]?.name ?? '',
+
                 getRecommendation(count) {
-                    if (count <= 50)  return { plan: 'starter', name: 'Starter' };
-                    if (count <= 200) return { plan: 'growth',  name: 'Growth'  };
-                    return             { plan: 'premium', name: 'Premium' };
+                    // Find cheapest plan whose max_kk covers the count
+                    // (max_kk null/0 = unlimited)
+                    const match = sortedPlans.find(p => !p.max_kk || p.max_kk >= count);
+                    return match ?? sortedPlans[sortedPlans.length - 1];
                 },
+
                 init() {
                     const rec = this.getRecommendation(this.kkCount);
-                    this.recommendedPlan = rec.plan;
+                    this.recommendedPlan = rec.slug;
                     this.recommendedName = rec.name;
                     this.$watch('kkCount', (val) => {
                         const r = this.getRecommendation(Number(val));
-                        this.recommendedPlan = r.plan;
+                        this.recommendedPlan = r.slug;
                         this.recommendedName = r.name;
                     });
                 },
+
                 updateRecommendation() {
                     const r = this.getRecommendation(Number(this.kkCount));
-                    this.recommendedPlan = r.plan;
+                    this.recommendedPlan = r.slug;
                     this.recommendedName = r.name;
                 },
-            }
+            };
         }
     </script>
 
