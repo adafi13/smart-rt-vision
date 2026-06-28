@@ -39,6 +39,26 @@ class DashboardController extends Controller
         $activePanicAlerts = \App\Models\PanicAlert::where('status', 'active')->latest()->get();
         
         $pendingReports = \App\Models\Report::where('status', 'menunggu')->count();
+        $pendingReportsList = \App\Models\Report::where('status', 'menunggu')->latest()->take(5)->get();
+        
+        $pendingLetterRequests = \App\Models\LetterRequest::where('status', 'menunggu')->count();
+        $pendingLetterRequestsList = \App\Models\LetterRequest::where('status', 'menunggu')->latest()->take(5)->get();
+        
+        // Data Keuangan Kas RT
+        $totalPemasukan = \App\Models\Contribution::sum('jumlah');
+        $totalPengeluaran = \App\Models\Expense::sum('jumlah');
+        $saldoKas = $totalPemasukan - $totalPengeluaran;
+        
+        $pemasukanBulanIni = \App\Models\Contribution::whereMonth('tanggal_bayar', now()->month)
+                                                     ->whereYear('tanggal_bayar', now()->year)
+                                                     ->sum('jumlah');
+                                                     
+        $pengeluaranBulanIni = \App\Models\Expense::whereMonth('tanggal_keluar', now()->month)
+                                                  ->whereYear('tanggal_keluar', now()->year)
+                                                  ->sum('jumlah');
+                                                  
+        // Log Aktivitas Terbaru
+        $latestActivities = \App\Models\AuditLog::with('user')->latest()->take(8)->get();
         
         // Cek Kuota AI
         $tenant = auth()->user()->tenant;
@@ -61,7 +81,10 @@ class DashboardController extends Controller
         return view('dashboard', compact(
             'totalKk', 'totalWarga', 'totalLakiLaki', 'totalPerempuan',
             'ageGroups', 'pendidikanStats', 'activePanicAlerts',
-            'pendingReports', 'aiRemaining', 'aiPercentage', 'aiLimit'
+            'pendingReports', 'pendingReportsList', 'pendingLetterRequests', 'pendingLetterRequestsList',
+            'saldoKas', 'pemasukanBulanIni', 'pengeluaranBulanIni',
+            'latestActivities',
+            'aiRemaining', 'aiPercentage', 'aiLimit'
         ));
     }
 }

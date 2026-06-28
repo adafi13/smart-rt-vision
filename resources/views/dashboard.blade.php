@@ -93,6 +93,57 @@
             @endforeach
         </div>
 
+        <!-- Finance Cards Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-4 sm:mt-6">
+            <!-- Saldo -->
+            <div class="ent-card p-5 sm:p-6 flex flex-col justify-between h-full bg-gradient-to-br from-indigo-500 to-indigo-700 text-white border-transparent">
+                <div class="flex items-center justify-between mb-4">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-indigo-200">Saldo Kas RT</p>
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-white/20 text-white">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-2xl sm:text-3xl font-bold">Rp {{ number_format($saldoKas ?? 0, 0, ',', '.') }}</span>
+                    </div>
+                    <p class="text-xs text-indigo-200 font-medium mt-1">Total Dana Tersedia</p>
+                </div>
+            </div>
+
+            <!-- Pemasukan -->
+            <div class="ent-card p-5 sm:p-6 flex flex-col justify-between h-full border-l-4 border-l-emerald-500">
+                <div class="flex items-center justify-between mb-4">
+                    <p class="ent-label text-emerald-600">Pemasukan (Bulan Ini)</p>
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-emerald-50 text-emerald-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-2xl sm:text-3xl font-bold text-slate-800">+ Rp {{ number_format($pemasukanBulanIni ?? 0, 0, ',', '.') }}</span>
+                    </div>
+                    <p class="text-xs text-slate-400 font-medium mt-1">Dari Iuran Warga</p>
+                </div>
+            </div>
+
+            <!-- Pengeluaran -->
+            <div class="ent-card p-5 sm:p-6 flex flex-col justify-between h-full border-l-4 border-l-rose-500">
+                <div class="flex items-center justify-between mb-4">
+                    <p class="ent-label text-rose-600">Pengeluaran (Bulan Ini)</p>
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-rose-50 text-rose-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/></svg>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-2xl sm:text-3xl font-bold text-slate-800">- Rp {{ number_format($pengeluaranBulanIni ?? 0, 0, ',', '.') }}</span>
+                    </div>
+                    <p class="text-xs text-slate-400 font-medium mt-1">Kegiatan Operasional RT</p>
+                </div>
+            </div>
+        </div>
+
         <!-- PANIC ALERTS SECTION -->
         @if(isset($activePanicAlerts) && count($activePanicAlerts) > 0)
         <div class="mt-6 mb-2">
@@ -262,6 +313,114 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- Bottom Section: Action Center & Timeline -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+            
+            <!-- Pusat Tindakan (Action Center) -->
+            <div class="lg:col-span-2 ent-card p-6 flex flex-col">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="ent-label text-amber-600">ACTION CENTER</p>
+                        <h2 class="text-lg font-bold text-slate-800 mt-1">To-Do List Admin</h2>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3">
+                    @if(count($pendingReportsList ?? []) == 0 && count($pendingLetterRequestsList ?? []) == 0)
+                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-8 text-center flex-1 flex flex-col items-center justify-center">
+                            <svg class="w-12 h-12 text-slate-300 mb-3 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <h3 class="text-slate-600 font-bold text-lg">Semua Tugas Selesai!</h3>
+                            <p class="text-sm text-slate-400 mt-1">Tidak ada pengajuan atau keluhan warga yang tertunda.</p>
+                        </div>
+                    @else
+                        <!-- List Laporan Warga -->
+                        @foreach($pendingReportsList ?? [] as $report)
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 hover:border-amber-300 transition-colors shadow-sm flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-500 flex-shrink-0 mt-1">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-xs font-bold text-red-600 uppercase tracking-widest">Keluhan Warga</span>
+                                    <span class="text-xs text-slate-400 font-medium">{{ $report->created_at->diffForHumans() }}</span>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-800">{{ $report->judul }}</h4>
+                                <p class="text-xs text-slate-500 line-clamp-1 mb-2">{{ $report->deskripsi }}</p>
+                                <a href="{{ route('admin.reports.index') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1">Tindak Lanjuti &rarr;</a>
+                            </div>
+                        </div>
+                        @endforeach
+
+                        <!-- List Surat Pengantar -->
+                        @foreach($pendingLetterRequestsList ?? [] as $letter)
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 hover:border-amber-300 transition-colors shadow-sm flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 flex-shrink-0 mt-1">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">Pengajuan Surat</span>
+                                    <span class="text-xs text-slate-400 font-medium">{{ $letter->created_at->diffForHumans() }}</span>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-800">{{ $letter->jenis_surat }}</h4>
+                                <p class="text-xs text-slate-500 mb-2">Dari: <span class="font-bold">{{ $letter->family->kepala_keluarga ?? 'Warga' }}</span></p>
+                                <a href="#" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1">Tindak Lanjuti &rarr;</a>
+                            </div>
+                        </div>
+                        @endforeach
+                    @endif
+                </div>
+            </div>
+
+            <!-- Timeline Aktivitas -->
+            <div class="lg:col-span-1 ent-card p-6 flex flex-col relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50 rounded-bl-full -mr-2 -mt-2"></div>
+                <div class="mb-5 relative z-10">
+                    <p class="ent-label text-indigo-600">LIVE TIMELINE</p>
+                    <h2 class="text-lg font-bold text-slate-800 mt-1">Aktivitas Terbaru</h2>
+                </div>
+
+                <div class="relative flex-1">
+                    @if(count($latestActivities ?? []) > 0)
+                        <div class="absolute left-[15px] top-2 bottom-0 w-[2px] bg-indigo-50"></div>
+                        <ul class="space-y-6 relative z-10">
+                            @foreach($latestActivities as $log)
+                            <li class="flex gap-4 relative group">
+                                <div class="w-8 h-8 rounded-full bg-white border-2 border-indigo-100 flex items-center justify-center flex-shrink-0 z-10 shadow-sm group-hover:border-indigo-400 group-hover:scale-110 transition-all">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 group-hover:bg-indigo-600 transition-colors"></div>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">{{ $log->created_at->diffForHumans() }}</p>
+                                    <p class="text-sm text-slate-700 leading-snug">
+                                        <span class="font-bold text-slate-900">{{ $log->user->name ?? 'Sistem' }}</span> 
+                                        @if($log->action == 'created')
+                                            menambahkan
+                                        @elseif($log->action == 'updated')
+                                            memperbarui
+                                        @elseif($log->action == 'deleted')
+                                            menghapus
+                                        @else
+                                            {{ $log->action }}
+                                        @endif
+                                        <span class="font-medium text-indigo-600">{{ class_basename($log->model_type) }}</span>
+                                    </p>
+                                </div>
+                            </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <div class="text-center py-10 bg-slate-50 rounded-xl border border-slate-100">
+                            <p class="text-sm text-slate-400">Belum ada aktivitas tercatat.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+            
         </div>
 
     </div>
