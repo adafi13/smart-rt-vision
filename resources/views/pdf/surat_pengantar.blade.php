@@ -1,127 +1,175 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <meta charset="utf-8">
-    <title>Surat Pengantar - {{ $member->nama }}</title>
+    <meta charset="UTF-8">
+    <title>Surat Pengantar RT</title>
     <style>
-        @page { size: A4; margin: 2cm 2.5cm 2cm 3cm; }
-
         body {
             font-family: 'Times New Roman', Times, serif;
             font-size: 12pt;
-            line-height: 1.3;
-            color: #000;
+            line-height: 1.5;
+            margin: 0;
+            padding: 20px;
         }
-
-        .header { text-align: center; }
-        .header h4 { font-size: 12pt; margin: 0; font-weight: normal; }
-        .header h2 { font-size: 14pt; margin: 2px 0; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-        .header p { font-size: 10pt; margin: 0; font-style: italic; }
-
-        .line-thick { border-bottom: 3px solid #000; margin-top: 5px; }
-        .line-thin { border-bottom: 1px solid #000; margin-top: 2px; margin-bottom: 25px; }
-
-        .judul-container { text-align: center; margin-bottom: 30px; }
-        .judul-text {
-            font-size: 14pt; font-weight: bold; text-transform: uppercase;
-            text-decoration: underline; letter-spacing: 1.5px;
-        }
-        .nomor-surat { font-size: 12pt; margin-top: 5px; }
-
-        .text-justify { text-align: justify; text-indent: 40px; margin-bottom: 10px; }
-
-        .data-table { width: 100%; margin-left: 20px; margin-bottom: 15px; border-collapse: collapse; }
-        .data-table td { vertical-align: top; padding: 3px 0; }
-        .col-label { width: 170px; }
-        .col-sep { width: 20px; text-align: center; }
-        .col-val { font-weight: bold; }
-
-        .keperluan-box {
-            text-align: center; border: 2px solid #000; padding: 10px;
-            margin: 15px 40px; font-weight: bold; text-transform: uppercase;
-            background-color: #f9f9f9;
-        }
-
-        .signature-wrapper {
-            width: 100%;
-            margin-top: 40px;
-            display: table;
-            border-collapse: collapse;
-        }
-        .sign-col {
-            display: table-cell;
-            width: 50%;
+        .header {
             text-align: center;
-            vertical-align: top;
+            border-bottom: 3px solid black;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
-        .sign-left { padding-top: 25px; }
-        .sign-col p { margin: 0; }
-        .ttd-title { margin-bottom: 5px; }
-        .ttd-space { height: 110px; }
-        .ttd-name { font-weight: bold; text-decoration: underline; margin-top: 5px; }
+        .header h3, .header h4, .header p {
+            margin: 0;
+            padding: 0;
+        }
+        .header h3 {
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .header h4 {
+            font-size: 14pt;
+            font-weight: bold;
+        }
+        .header p {
+            font-size: 11pt;
+        }
+        .title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .title h4 {
+            margin: 0;
+            text-decoration: underline;
+            font-size: 14pt;
+            text-transform: uppercase;
+        }
+        .title p {
+            margin: 0;
+        }
+        .content {
+            margin-bottom: 30px;
+            text-align: justify;
+        }
+        .table-data {
+            width: 100%;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        .table-data td {
+            vertical-align: top;
+            padding: 2px 0;
+        }
+        .table-data td:nth-child(1) {
+            width: 30%;
+        }
+        .table-data td:nth-child(2) {
+            width: 2%;
+        }
+        .signature-section {
+            width: 100%;
+            margin-top: 50px;
+        }
+        .signature-box {
+            width: 40%;
+            text-align: center;
+            float: right;
+        }
+        .signature-box-left {
+            width: 40%;
+            text-align: center;
+            float: left;
+        }
+        .signature-img {
+            max-width: 150px;
+            max-height: 80px;
+            margin: 5px auto;
+        }
+        .clear {
+            clear: both;
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h4>RUKUN TETANGGA (RT) {{ $member->family->rt }} RUKUN WARGA (RW) {{ $member->family->rw }}</h4>
-        <h2>{{ $member->family->desa_kelurahan ?: $member->family->kelurahan ?? 'KELURAHAN' }}</h2>
-        <h4>{{ $member->family->kecamatan }} - {{ $member->family->kabupaten_kota }}</h4>
-        <p>{{ $member->family->alamat }}, {{ $member->family->provinsi }} {{ $member->family->kode_pos }}</p>
-    </div>
-    <div class="line-thick"></div>
-    <div class="line-thin"></div>
-
-    <div class="judul-container">
-        <div class="judul-text">{{ $jenis_surat ?? 'SURAT PENGANTAR' }}</div>
-        <div class="nomor-surat">
-            Nomor: {{ str_pad($nomor_surat, 3, '0', STR_PAD_LEFT) }} / RT.{{ $member->family->rt }} - RW.{{ $member->family->rw }} / {{ date('m') }} / {{ date('Y') }}
-        </div>
+        <h3>RUKUN TETANGGA (RT) {{ substr(app('currentTenant')->name ?? '001', 0, 3) }}</h3>
+        <h4>RUKUN WARGA (RW) {{ substr(app('currentTenant')->name ?? '020', -3) }}</h4>
+        <p>PERUM. MEGA REGENCY BLOK G-3 NO. 38, JAWA BARAT 17334</p>
     </div>
 
-    <p class="text-justify">
-        Yang bertanda tangan di bawah ini, Ketua RT {{ $member->family->rt }} RW {{ $member->family->rw }}, menerangkan dengan sebenarnya bahwa:
-    </p>
-
-    <table class="data-table">
-        <tr><td class="col-label">Nama Lengkap</td><td class="col-sep">:</td><td class="col-val">{{ strtoupper($member->nama) }}</td></tr>
-        <tr><td class="col-label">NIK / No. KTP</td><td class="col-sep">:</td><td>{{ $member->nik }}</td></tr>
-        <tr><td class="col-label">Tempat, Tgl Lahir</td><td class="col-sep">:</td><td>{{ $member->tempat_lahir }}@if($member->tanggal_lahir), {{ \Carbon\Carbon::parse($member->tanggal_lahir)->translatedFormat('d F Y') }}@endif</td></tr>
-        <tr><td class="col-label">Jenis Kelamin</td><td class="col-sep">:</td><td>{{ $member->jenis_kelamin }}</td></tr>
-        <tr><td class="col-label">Agama</td><td class="col-sep">:</td><td>{{ $member->agama ?? '-' }}</td></tr>
-        <tr><td class="col-label">Pekerjaan</td><td class="col-sep">:</td><td>{{ $member->pekerjaan ?? '-' }}</td></tr>
-        <tr><td class="col-label">Alamat Domisili</td><td class="col-sep">:</td><td>{{ $member->family->alamat }}</td></tr>
-    </table>
-
-    <p class="text-justify">
-        Orang tersebut di atas adalah benar-benar warga kami yang berdomisili di lingkungan RT {{ $member->family->rt }} RW {{ $member->family->rw }}. Surat ini diberikan untuk keperluan:
-    </p>
-
-    <div class="keperluan-box">
-        {{ $keperluan ?? 'PENGURUSAN ADMINISTRASI KEPENDUDUKAN' }}
+    <div class="title">
+        <h4>SURAT PENGANTAR RT</h4>
+        <p>Nomor: {{ sprintf("%03d", $nomor_surat) }} / RT-{{ substr(app('currentTenant')->name ?? '001', 0, 3) }} / {{ date('m') }} / {{ date('Y') }}</p>
     </div>
 
-    <p class="text-justify">
-        Surat ini berlaku selama <strong>30 (tiga puluh) hari</strong> sejak tanggal dikeluarkan. Demikian surat ini dibuat untuk dapat dipergunakan sebagaimana mestinya.
-    </p>
+    <div class="content">
+        <p>Yang bertanda tangan di bawah ini Ketua RT {{ substr(app('currentTenant')->name ?? '001', 0, 3) }} / RW {{ substr(app('currentTenant')->name ?? '020', -3) }}, dengan ini menerangkan bahwa:</p>
+        
+        <table class="table-data">
+            <tr>
+                <td>Nama Lengkap</td>
+                <td>:</td>
+                <td><strong>{{ $member->nama }}</strong></td>
+            </tr>
+            <tr>
+                <td>Tempat, Tanggal Lahir</td>
+                <td>:</td>
+                <td>{{ $member->tempat_lahir }}, {{ $member->tanggal_lahir ? \Carbon\Carbon::parse($member->tanggal_lahir)->translatedFormat('d F Y') : '-' }}</td>
+            </tr>
+            <tr>
+                <td>Jenis Kelamin</td>
+                <td>:</td>
+                <td>{{ $member->jenis_kelamin }}</td>
+            </tr>
+            <tr>
+                <td>Agama</td>
+                <td>:</td>
+                <td>{{ $member->agama }}</td>
+            </tr>
+            <tr>
+                <td>Pekerjaan</td>
+                <td>:</td>
+                <td>{{ $member->pekerjaan ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td>Nomor KTP (NIK)</td>
+                <td>:</td>
+                <td>{{ $member->nik }}</td>
+            </tr>
+            <tr>
+                <td>Alamat Tinggal</td>
+                <td>:</td>
+                <td>{{ $member->family->alamat ?? '-' }}</td>
+            </tr>
+        </table>
 
-    <div class="signature-wrapper">
-        <div class="sign-col sign-left">
-            <div class="ttd-title">
-                <p>Pemohon / Warga,</p>
-            </div>
-            <div class="ttd-space"></div>
-            <p class="ttd-name">{{ strtoupper($member->nama) }}</p>
+        <p>Orang tersebut di atas adalah benar-benar warga/penduduk kami yang berdomisili di alamat tersebut. Surat pengantar ini dibuat sebagai syarat untuk keperluan:</p>
+        <div style="margin-left: 20px; font-weight: bold; margin-top: 10px; margin-bottom: 10px;">
+            "{{ $keperluan }}"
         </div>
 
-        <div class="sign-col">
-            <div class="ttd-title">
-                <p>{{ now()->translatedFormat('d F Y') }}</p>
-                <p>Ketua RT {{ $member->family->rt }} RW {{ $member->family->rw }}</p>
-            </div>
-            <div class="ttd-space"></div>
-            <p class="ttd-name">{{ auth()->user()->name ?? 'Pengurus RT' }}</p>
+        <p>Demikian surat pengantar ini dibuat dengan sebenarnya agar dapat dipergunakan sebagaimana mestinya oleh instansi/pihak yang berwenang.</p>
+    </div>
+
+    <div class="signature-section">
+        <div class="signature-box-left">
+            <p><br>Pemohon,</p>
+            <br><br><br>
+            <p><strong>( {{ $member->nama }} )</strong></p>
         </div>
+
+        <div class="signature-box">
+            <p>Dikeluarkan pada tanggal: {{ now()->translatedFormat('d F Y') }}<br><strong>Ketua RT {{ substr(app('currentTenant')->name ?? '001', 0, 3) }}</strong></p>
+            
+            @if($rtSignature)
+                <img src="{{ $rtSignature }}" alt="Tanda Tangan RT" class="signature-img">
+            @else
+                <br><br><br>
+            @endif
+            
+            <p><strong>( {{ $rtName ?? '...........................' }} )</strong></p>
+        </div>
+        <div class="clear"></div>
     </div>
 
 </body>

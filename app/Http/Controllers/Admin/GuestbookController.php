@@ -41,4 +41,16 @@ class GuestbookController extends Controller
         $guestbook->delete();
         return back()->with('success', 'Data tamu dihapus.');
     }
+
+    public function updatePin(Request $request)
+    {
+        $request->validate([
+            'pin' => 'required|numeric|digits_between:4,8'
+        ]);
+
+        $tenantId = app('currentTenant')->id;
+        \App\Models\Setting::set("tenant_{$tenantId}_security_pin", $request->pin);
+
+        return back()->with('success', 'PIN Keamanan Satpam berhasil diperbarui!');
+    }
 }

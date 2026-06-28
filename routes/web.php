@@ -100,6 +100,12 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::get('/', [MemberController::class, 'index'])->name('index');
     });
 
+    Route::prefix('warga-kos')->name('warga-kos.')->middleware('rt_role:owner,sekretaris')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\TemporaryResidentController::class, 'index'])->name('index');
+        Route::put('/{resident}', [\App\Http\Controllers\Admin\TemporaryResidentController::class, 'update'])->name('update');
+        Route::delete('/{resident}', [\App\Http\Controllers\Admin\TemporaryResidentController::class, 'destroy'])->name('destroy');
+    });
+
     Route::get('/export/excel', [ExportController::class, 'excel'])->name('export.excel');
     Route::get('/export/pdf', [ExportController::class, 'pdf'])->name('export.pdf');
 
@@ -135,6 +141,8 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
 
     Route::prefix('admin/pengajuan-surat')->name('admin.pengajuan.')->middleware('rt_role:owner,sekretaris')->group(function () {
         Route::get('/', [AdminLetterRequestController::class, 'index'])->name('index');
+        Route::post('/signature', [AdminLetterRequestController::class, 'updateSignature'])->name('signature');
+        Route::get('/{letterRequest}/pdf', [AdminLetterRequestController::class, 'downloadPdf'])->name('pdf');
         Route::put('/{letterRequest}', [AdminLetterRequestController::class, 'update'])->name('update');
         Route::delete('/{letterRequest}', [AdminLetterRequestController::class, 'destroy'])->name('destroy');
     });
@@ -211,6 +219,7 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
 
     Route::prefix('admin/guestbooks')->name('admin.guestbooks.')->middleware('rt_role:owner,sekretaris,humas')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\GuestbookController::class, 'index'])->name('index');
+        Route::post('/update-pin', [\App\Http\Controllers\Admin\GuestbookController::class, 'updatePin'])->name('update-pin');
         Route::post('/{guestbook}/mark-left', [\App\Http\Controllers\Admin\GuestbookController::class, 'markAsLeft'])->name('mark-left');
         Route::delete('/{guestbook}', [\App\Http\Controllers\Admin\GuestbookController::class, 'destroy'])->name('destroy');
     });
@@ -232,6 +241,7 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
 
     Route::prefix('admin/cctv')->name('admin.cctvs.')->middleware('rt_role:owner,keamanan')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\AdminCctvController::class, 'index'])->name('index');
+        Route::post('/ezviz-settings', [\App\Http\Controllers\Admin\AdminCctvController::class, 'updateEzvizSettings'])->name('ezviz-settings');
         Route::post('/', [\App\Http\Controllers\Admin\AdminCctvController::class, 'store'])->name('store');
         Route::put('/{cctv}', [\App\Http\Controllers\Admin\AdminCctvController::class, 'update'])->name('update');
         Route::delete('/{cctv}', [\App\Http\Controllers\Admin\AdminCctvController::class, 'destroy'])->name('destroy');
@@ -316,4 +326,5 @@ Route::middleware(['tenant.slug'])->prefix('/{tenant:slug}')->group(function () 
     Route::post('/trigger-panic', [HomeController::class, 'triggerPanic'])->name('trigger-panic');
     Route::post('/submit-vote', [HomeController::class, 'submitVote'])->name('submit-vote');
     Route::post('/submit-guestbook', [HomeController::class, 'submitGuestbook'])->name('submit-guestbook');
+    Route::post('/lapor-kos', [HomeController::class, 'storeKos'])->name('lapor.kos');
 });

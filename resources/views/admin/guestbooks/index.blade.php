@@ -1,16 +1,61 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-                <h1 class="text-base font-semibold text-gray-900">Buku Tamu (Security Gate)</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Kelola data tamu dan pantau keamanan lingkungan RT</p>
-            </div>
-            
-            <div class="bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-2 text-indigo-800 text-sm flex items-center gap-2">
-                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                PIN Keamanan Satpam: <span class="font-bold tracking-widest text-lg">{{ \App\Models\Setting::get("tenant_".app('currentTenant')->id."_security_pin", "1234") }}</span>
-            </div>
+        <div>
+            <h1 class="text-base font-semibold text-gray-900">Buku Tamu (Security Gate)</h1>
+            <p class="text-sm text-gray-500 mt-0.5">Kelola data tamu dan pantau keamanan lingkungan RT</p>
         </div>
+    </x-slot>
+
+    <div class="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+        
+        <!-- Action Toolbar -->
+        <div class="flex justify-end">
+            <div class="bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-2 text-indigo-800 text-sm flex items-center gap-2 group relative w-full sm:w-auto justify-between sm:justify-start">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    PIN Keamanan Satpam: <span class="font-bold tracking-widest text-lg">{{ \App\Models\Setting::get("tenant_".app('currentTenant')->id."_security_pin", "1234") }}</span>
+                </div>
+                
+                <button type="button" onclick="editPin('{{ \App\Models\Setting::get("tenant_".app('currentTenant')->id."_security_pin", "1234") }}')" class="p-1.5 rounded-lg bg-indigo-100 text-indigo-600 hover:bg-indigo-200 transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100" title="Ubah PIN">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                </button>
+            </div>
+        </div>    
+        <form id="form-update-pin" action="{{ route('admin.guestbooks.update-pin') }}" method="POST" class="hidden">
+            @csrf
+            <input type="hidden" name="pin" id="input-new-pin">
+        </form>
+
+        <!-- SweetAlert2 Script -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            function editPin(currentPin) {
+                Swal.fire({
+                    title: 'Ubah PIN Keamanan',
+                    input: 'text',
+                    inputLabel: 'Masukkan PIN baru (4-8 angka)',
+                    inputValue: currentPin,
+                    inputAttributes: {
+                        pattern: '[0-9]*',
+                        inputmode: 'numeric',
+                        maxlength: '8'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Simpan',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#4f46e5',
+                    inputValidator: (value) => {
+                        if (!value) return 'PIN tidak boleh kosong!';
+                        if (!/^\d{4,8}$/.test(value)) return 'PIN harus berupa 4-8 digit angka!';
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('input-new-pin').value = result.value;
+                        document.getElementById('form-update-pin').submit();
+                    }
+                });
+            }
+        </script>
     </x-slot>
 
     <div class="max-w-7xl mx-auto space-y-4 sm:space-y-6">

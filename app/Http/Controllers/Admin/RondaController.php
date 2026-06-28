@@ -18,17 +18,17 @@ class RondaController extends Controller
         // Fetch upcoming schedules (Grouped by date)
         $schedules = RondaSchedule::with('member')
             ->where('tenant_id', $tenantId)
-            ->where('date', '>=', now()->format('Y-m-d'))
+            ->whereDate('date', '>=', now()->format('Y-m-d'))
             ->orderBy('date', 'asc')
             ->get()
             ->groupBy(function($item) {
                 return $item->date->format('Y-m-d');
             });
 
-        // Fetch past schedules with attendances
+        // Fetch past schedules with attendances (including today)
         $history = RondaSchedule::with(['member', 'attendance'])
             ->where('tenant_id', $tenantId)
-            ->where('date', '<', now()->format('Y-m-d'))
+            ->whereDate('date', '<=', now()->format('Y-m-d'))
             ->orderBy('date', 'desc')
             ->paginate(15);
 

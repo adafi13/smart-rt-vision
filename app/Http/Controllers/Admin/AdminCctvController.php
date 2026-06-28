@@ -12,8 +12,28 @@ class AdminCctvController extends Controller
     {
         $tenantId = auth()->user()->tenant_id;
         $cctvs = Cctv::where('tenant_id', $tenantId)->get();
+        
+        $ezvizAppKey = \App\Models\Setting::get("tenant_{$tenantId}_ezviz_app_key", "");
+        $ezvizAppSecret = \App\Models\Setting::get("tenant_{$tenantId}_ezviz_app_secret", "");
             
-        return view('admin.cctvs.index', compact('cctvs'));
+        return view('admin.cctvs.index', compact('cctvs', 'ezvizAppKey', 'ezvizAppSecret'));
+    }
+
+    public function updateEzvizSettings(Request $request)
+    {
+        $request->validate([
+            'ezviz_app_key' => 'nullable|string',
+            'ezviz_app_secret' => 'nullable|string',
+        ]);
+
+        $tenantId = auth()->user()->tenant_id;
+        \App\Models\Setting::set("tenant_{$tenantId}_ezviz_app_key", $request->ezviz_app_key);
+        \App\Models\Setting::set("tenant_{$tenantId}_ezviz_app_secret", $request->ezviz_app_secret);
+        
+        // Clear cached token if any
+        \App\Services\EzvizService::clearCachedToken($tenantId);
+
+        return back()->with('success', 'Konfigurasi API EZVIZ berhasil diperbarui.');
     }
 
     public function store(Request $request)

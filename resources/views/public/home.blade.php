@@ -15,6 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         * { font-family: 'Outfit', sans-serif; box-sizing: border-box; }
@@ -453,6 +454,33 @@
                         <div class="w-full h-full [&>iframe]:w-full [&>iframe]:h-full border-none">
                             {!! $cctv->stream_url !!}
                         </div>
+                    @elseif(str_starts_with($cctv->stream_url, 'ezopen://'))
+                        @php
+                            $ezvizToken = \App\Services\EzvizService::getAccessToken(app('currentTenant')->id);
+                        @endphp
+                        @if($ezvizToken)
+                            <div id="ezviz-public-{{ $cctv->id }}" class="w-full h-full"></div>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    if (typeof EZUIKit !== 'undefined') {
+                                        new EZUIKit.EZUIPlayer({
+                                            id: 'ezviz-public-{{ $cctv->id }}',
+                                            autoplay: true,
+                                            url: '{{ $cctv->stream_url }}',
+                                            accessToken: '{{ $ezvizToken }}',
+                                            decoderPath: '',
+                                            width: '100%',
+                                            height: '100%'
+                                        });
+                                    }
+                                });
+                            </script>
+                        @else
+                            <div class="absolute inset-0 flex flex-col items-center justify-center text-rose-400 bg-slate-900/50">
+                                <svg class="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                <span class="text-sm font-semibold">Token EZVIZ Belum Diatur</span>
+                            </div>
+                        @endif
                     @else
                         <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 bg-slate-900/50">
                             <svg class="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
@@ -559,7 +587,7 @@
                                 </div>
                                 <div>
                                     <h5 class="font-bold text-slate-900">{{ $schedule->member->nama }}</h5>
-                                    <p class="text-xs text-slate-500 font-mono">Blok/No: {{ $schedule->member->blok_rumah }}</p>
+                                    <p class="text-xs text-slate-500 font-mono">Alamat: {{ $schedule->member->family->alamat }}</p>
                                 </div>
                             </div>
                             <div>
@@ -631,6 +659,56 @@
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- ===================== KALENDER AGENDA ===================== -->
+    <section id="agenda" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div>
+                <h2 class="text-sm font-black tracking-[0.2em] text-indigo-600 uppercase mb-3">Agenda & Kegiatan</h2>
+                <h3 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Kalender RT</h3>
+            </div>
+            <p class="text-slate-500 font-medium max-w-sm">Jadwal kegiatan rutin, rapat warga, kerja bakti, dan agenda penting lainnya di lingkungan kita.</p>
+        </div>
+
+        @if(isset($agendas) && $agendas->count() > 0)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($agendas as $agenda)
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-indigo-100 transition-all duration-300 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-indigo-50 to-transparent rounded-bl-full -z-10 opacity-50"></div>
+                
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex flex-col items-center justify-center flex-shrink-0">
+                        <span class="text-[10px] font-bold text-indigo-600 uppercase">{{ $agenda->start_time->format('M') }}</span>
+                        <span class="text-lg font-black text-indigo-900 leading-none">{{ $agenda->start_time->format('d') }}</span>
+                    </div>
+                    <div>
+                        <span class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider rounded-md border {{ $agenda->type === 'rapat' ? 'bg-amber-50 text-amber-600 border-amber-200' : ($agenda->type === 'kerjabakti' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-blue-50 text-blue-600 border-blue-200') }}">
+                            {{ $agenda->type }}
+                        </span>
+                        <p class="text-xs font-semibold text-slate-400 mt-1.5">{{ $agenda->start_time->format('H:i') }} WIB - Selesai</p>
+                    </div>
+                </div>
+
+                <h4 class="text-lg font-bold text-slate-900 mb-2 leading-tight group-hover:text-indigo-600 transition-colors">{{ $agenda->title }}</h4>
+                <p class="text-sm text-slate-500 mb-4 line-clamp-2">{{ $agenda->description ?? 'Tidak ada deskripsi.' }}</p>
+                
+                <div class="flex items-center gap-2 text-xs font-bold text-slate-600 bg-slate-50 py-2 px-3 rounded-lg border border-slate-100">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <span class="truncate">{{ $agenda->location ?? 'Belum ditentukan' }}</span>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        @else
+        <div class="bg-white border border-slate-200 border-dashed rounded-3xl p-12 text-center shadow-sm">
+            <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-slate-100">
+                <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-1">Belum Ada Agenda</h3>
+            <p class="text-sm text-slate-500 max-w-sm mx-auto">Saat ini belum ada jadwal kegiatan warga yang direncanakan.</p>
+        </div>
+        @endif
     </section>
 
     <!-- ===================== BERITA & PENGUMUMAN ===================== -->
@@ -776,9 +854,9 @@
                         </div>
                     </div>
                     @if($item->whatsapp)
-                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $item->whatsapp) }}?text=Halo%20saya%20warga%20RT%20melihat%20produk%20{{ urlencode($item->nama_produk) }}%20di%20Portal%20Warga.%20Apakah%20masih%20tersedia?" target="_blank" class="mt-4 w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors">
+                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $item->whatsapp) }}?text=Halo%2C%20saya%20warga%20RT%20{{ substr(app('currentTenant')->name ?? '001', 0, 3) }}.%20Saya%20ingin%20memesan%20*{{ urlencode($item->nama_produk) }}*.%20Apakah%20masih%20tersedia%3F" target="_blank" class="mt-4 w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                        Hubungi Penjual
+                        Pesan via WhatsApp
                     </a>
                     @endif
                 </div>
@@ -1080,6 +1158,70 @@
         </div>
     </section>
 
+    <!-- ===================== LAPOR WARGA KOS / KONTRAKAN ===================== -->
+    <section id="lapor-kos" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60 bg-slate-50">
+        <div class="flex flex-col md:flex-row gap-12 items-center">
+            <div class="flex-1">
+                <h2 class="text-sm font-black tracking-[0.2em] text-indigo-600 uppercase mb-3">Lapor Tamu Menginap</h2>
+                <h3 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-6">Warga Kos & Kontrakan</h3>
+                <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+                    Khusus bagi Bapak/Ibu pemilik kos atau rumah kontrakan. Wajib melaporkan penghuni baru selambat-lambatnya 2x24 jam sejak kedatangan demi keamanan dan ketertiban lingkungan RT.
+                </p>
+                
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex gap-4">
+                    <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 mb-1">Perhatian!</h4>
+                        <p class="text-sm text-slate-500">Data e-KTP yang dilampirkan harus jelas dan terbaca. Data akan dijaga kerahasiaannya oleh pengurus RT.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 w-full max-w-lg">
+                <div class="bg-white rounded-[2rem] shadow-xl p-8 border border-slate-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-[100px] -z-0"></div>
+                    
+                    <form action="{{ route('lapor.kos') }}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-5">
+                        @csrf
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Nama Pemilik (Induk Kos)</label>
+                            <input type="text" name="nama_pemilik" required class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50" placeholder="Cth: Bpk. H. Ahmad">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Alamat Kos / Blok Kontrakan</label>
+                            <input type="text" name="alamat_kos" required class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50" placeholder="Cth: Blok G3 No. 15">
+                        </div>
+
+                        <div class="h-px bg-slate-100 my-2"></div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Nama Lengkap Penghuni Baru</label>
+                            <input type="text" name="nama_penghuni" required class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50" placeholder="Sesuai KTP">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">NIK Penghuni</label>
+                            <input type="text" name="nik_penghuni" required pattern="[0-9]{16}" class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50" placeholder="16 Digit NIK">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Upload Foto KTP Penghuni</label>
+                            <input type="file" name="foto_ktp" required accept="image/jpeg,image/png,image/jpg" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            <p class="text-xs text-slate-400 mt-2">*Maksimal 2MB (JPG/PNG)</p>
+                        </div>
+
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-200 mt-4">
+                            Kirim Laporan
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- FOOTER -->
     @include('partials.public-footer')
 
@@ -1321,6 +1463,24 @@
             btn.disabled = true;
             loading.classList.remove('hidden');
             
+            // Try to get GPS location silently
+            try {
+                const position = await new Promise((resolve, reject) => {
+                    if (!navigator.geolocation) {
+                        reject(new Error('Geolocation not supported'));
+                    } else {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 3000 });
+                    }
+                });
+                // Append coordinates to the location field
+                const locInput = form.querySelector('input[name="location"]');
+                if (locInput) {
+                    locInput.value = locInput.value + ` (${position.coords.latitude}, ${position.coords.longitude})`;
+                }
+            } catch (err) {
+                // Ignore GPS errors and proceed with whatever text they typed
+            }
+
             const data = new FormData(form);
 
             try {
@@ -1333,13 +1493,30 @@
                 const json = await res.json();
                 
                 if (json.success) {
-                    alert('Absen Kehadiran Berhasil: ' + (json.message || 'Tercatat'));
-                    window.location.reload();
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: json.message || 'Absen Kehadiran Tercatat.',
+                        icon: 'success',
+                        confirmButtonText: 'Selesai',
+                        confirmButtonColor: '#4f46e5'
+                    }).then(() => {
+                        window.location.reload();
+                    });
                 } else {
-                    alert('Gagal: ' + (json.message || 'Terjadi kesalahan'));
+                    Swal.fire({
+                        title: 'Gagal',
+                        text: json.message || 'Terjadi kesalahan.',
+                        icon: 'error',
+                        confirmButtonColor: '#e11d48'
+                    });
                 }
             } catch (e) {
-                alert('Gagal: Koneksi terputus.');
+                Swal.fire({
+                    title: 'Gagal',
+                    text: 'Koneksi terputus. Silakan coba lagi.',
+                    icon: 'error',
+                    confirmButtonColor: '#e11d48'
+                });
             }
             
             btnSpan.innerText = ogContent; 
@@ -1388,5 +1565,8 @@
             });
         }
     </script>
+    
+    <!-- Load EZUIKIT for EZVIZ CCTV -->
+    <script src="https://ezvizlife.com/ezui/ezuikit.js"></script>
 </body>
 </html>

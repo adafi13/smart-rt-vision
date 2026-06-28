@@ -21,6 +21,31 @@
                         </button>
                     </div>
 
+                    <!-- EZVIZ Config Panel -->
+                    <div class="mb-8 p-5 bg-indigo-50 border border-indigo-100 rounded-2xl">
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-indigo-900 mb-1">Konfigurasi EZVIZ Cloud API</h4>
+                                <p class="text-sm text-indigo-700 mb-4">Masukkan kredensial dari akun Developer EZVIZ Anda agar sistem bisa mengambil token streaming secara otomatis.</p>
+                                <form action="{{ route('admin.cctvs.ezviz-settings') }}" method="POST" class="flex flex-col sm:flex-row gap-3 items-end">
+                                    @csrf
+                                    <div class="w-full sm:w-1/3">
+                                        <label class="block text-xs font-bold text-indigo-900 mb-1">App Key</label>
+                                        <input type="text" name="ezviz_app_key" value="{{ $ezvizAppKey ?? '' }}" class="w-full rounded-lg border-indigo-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm" placeholder="Masukkan App Key">
+                                    </div>
+                                    <div class="w-full sm:w-1/3">
+                                        <label class="block text-xs font-bold text-indigo-900 mb-1">App Secret</label>
+                                        <input type="password" name="ezviz_app_secret" value="{{ $ezvizAppSecret ?? '' }}" class="w-full rounded-lg border-indigo-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm" placeholder="Masukkan App Secret">
+                                    </div>
+                                    <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-lg transition-colors">Simpan Pengaturan</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
                     @if(session('success'))
                         <div class="mb-4 bg-emerald-50 text-emerald-700 p-4 rounded-xl flex items-center gap-3">
                             <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -71,6 +96,33 @@
                                             <div class="w-full h-full [&>iframe]:w-full [&>iframe]:h-full border-none">
                                                 {!! $cctv->stream_url !!}
                                             </div>
+                                        @elseif(str_starts_with($cctv->stream_url, 'ezopen://'))
+                                            @php
+                                                $ezvizToken = \App\Services\EzvizService::getAccessToken(auth()->user()->tenant_id);
+                                            @endphp
+                                            @if($ezvizToken)
+                                                <div id="ezviz-player-{{ $cctv->id }}" class="w-full h-full"></div>
+                                                <script>
+                                                    document.addEventListener('DOMContentLoaded', function() {
+                                                        if (typeof EZUIKit !== 'undefined') {
+                                                            new EZUIKit.EZUIPlayer({
+                                                                id: 'ezviz-player-{{ $cctv->id }}',
+                                                                autoplay: true,
+                                                                url: '{{ $cctv->stream_url }}',
+                                                                accessToken: '{{ $ezvizToken }}',
+                                                                decoderPath: '',
+                                                                width: '100%',
+                                                                height: '100%'
+                                                            });
+                                                        }
+                                                    });
+                                                </script>
+                                            @else
+                                                <div class="text-rose-400 flex flex-col items-center gap-2 p-4 text-center">
+                                                    <svg class="w-8 h-8 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                                    <span class="text-xs">Token EZVIZ Belum Diatur</span>
+                                                </div>
+                                            @endif
                                         @else
                                             <div class="text-gray-400 flex flex-col items-center gap-2">
                                                 <svg class="w-8 h-8 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -194,3 +246,6 @@
         </div>
     </x-modal>
 </x-app-layout>
+
+<!-- Load EZUIKIT for EZVIZ -->
+<script src="https://ezvizlife.com/ezui/ezuikit.js"></script>

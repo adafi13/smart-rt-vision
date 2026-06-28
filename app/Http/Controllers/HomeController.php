@@ -42,7 +42,7 @@ class HomeController extends Controller
             
             'ronda_schedules' => \App\Models\RondaSchedule::with(['member', 'attendance'])
                 ->where('tenant_id', app('currentTenant')->id)
-                ->where('date', now()->format('Y-m-d'))
+                ->whereDate('date', now()->format('Y-m-d'))
                 ->get(),
                 
             'rt_staffs' => \App\Models\RtStaff::where('tenant_id', app('currentTenant')->id)
@@ -152,7 +152,7 @@ class HomeController extends Controller
 
         $schedule = \App\Models\RondaSchedule::where('tenant_id', $tenantId)
             ->where('member_id', $warga->id)
-            ->where('date', now()->format('Y-m-d'))
+            ->whereDate('date', now()->format('Y-m-d'))
             ->first();
 
         if (!$schedule) {
@@ -364,5 +364,32 @@ class HomeController extends Controller
                 'message' => 'Terjadi kesalahan sistem.'
             ]);
         }
+    }
+
+    public function storeKos(Request $request)
+    {
+        $request->validate([
+            'nama_pemilik' => 'required|string|max:255',
+            'alamat_kos' => 'required|string|max:255',
+            'nama_penghuni' => 'required|string|max:255',
+            'nik_penghuni' => 'required|string|size:16',
+            'foto_ktp' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $tenantId = app('currentTenant')->id;
+
+        $fotoKtpPath = $request->file('foto_ktp')->store('warga-kos/ktp', 'public');
+
+        \App\Models\TemporaryResident::create([
+            'tenant_id' => $tenantId,
+            'nama_pemilik' => $request->nama_pemilik,
+            'alamat_kos' => $request->alamat_kos,
+            'nama_penghuni' => $request->nama_penghuni,
+            'nik_penghuni' => $request->nik_penghuni,
+            'foto_ktp' => $fotoKtpPath,
+            'status' => 'Pending',
+        ]);
+
+        return back()->with('success', 'Laporan tamu menginap/kos berhasil dikirim! Silakan tunggu verifikasi pengurus RT.');
     }
 }

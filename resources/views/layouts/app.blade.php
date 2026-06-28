@@ -84,7 +84,7 @@
              :class="sidebarExpanded ? 'md:ml-[260px]' : 'md:ml-[70px]'">
 
             <!-- Topbar -->
-            <header class="sticky top-0 z-20 bg-white border-b border-gray-200 px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
+            <header class="sticky top-0 z-20 bg-white border-b border-gray-200 px-4 sm:px-6 min-h-[56px] py-3 flex items-start sm:items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <!-- Mobile hamburger -->
                     <button @click="mobileOpen = !mobileOpen"

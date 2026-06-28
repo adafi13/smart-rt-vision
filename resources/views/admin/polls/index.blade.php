@@ -1,18 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-                <h1 class="text-base font-semibold text-gray-900">Musyawarah Warga (E-Voting)</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Kelola jejak pendapat atau pemilihan untuk warga</p>
-            </div>
-            <button x-data="" x-on:click="$dispatch('open-modal', 'create-poll')" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                Buat Polling Baru
-            </button>
+        <div>
+            <h1 class="text-base font-semibold text-gray-900">Musyawarah Warga (E-Voting)</h1>
+            <p class="text-sm text-gray-500 mt-0.5">Kelola jejak pendapat atau pemilihan untuk warga</p>
         </div>
     </x-slot>
 
     <div class="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+        
+        <!-- Action Toolbar -->
+        <div class="flex justify-end">
+            <button x-data="" x-on:click="$dispatch('open-modal', 'create-poll')" class="w-full sm:w-auto inline-flex justify-center items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Buat Polling Baru
+            </button>
+        </div>
         @if(session('success'))
             <div class="flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-medium">
                 <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>

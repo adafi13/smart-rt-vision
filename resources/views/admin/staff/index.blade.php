@@ -1,18 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-                <h2 class="text-xl font-bold text-gray-900 leading-tight">Manajemen Staff RT</h2>
-                <p class="text-sm text-gray-500 mt-1">Kelola akses pengurus RT (Sekretaris, Bendahara, dll).</p>
-            </div>
+        <div>
+            <h2 class="text-xl font-bold text-gray-900 leading-tight">Manajemen Staff RT</h2>
+            <p class="text-sm text-gray-500 mt-1">Kelola akses pengurus RT (Sekretaris, Bendahara, dll).</p>
+        </div>
+    </x-slot>
+
+    <div class="max-w-6xl mx-auto">
+        
+        <!-- Action Toolbar -->
+        <div class="flex justify-end mb-6">
             <button @click="$dispatch('open-modal', 'add-staff')" class="btn-primary w-full sm:w-auto justify-center">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Tambah Pengurus
             </button>
         </div>
-    </x-slot>
-
-    <div class="max-w-6xl mx-auto">
         <!-- Error & Success Messages -->
         @if(session('success'))
             <div class="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl flex items-center gap-3">

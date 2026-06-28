@@ -7,6 +7,9 @@ use App\Models\LetterRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\AuditLog;
+use App\Models\Setting;
+use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class LetterRequestController extends Controller
 {
@@ -19,8 +22,88 @@ class LetterRequestController extends Controller
         }
 
         $letterRequests = $query->paginate(15)->withQueryString();
+        
+        $tenantId = app('currentTenant')->id;
+        $rtSignature = Setting::get("tenant_{$tenantId}_rt_signature_path");
+        $rtName = Setting::get("tenant_{$tenantId}_rt_name");
 
-        return view('admin.letter-requests.index', compact('letterRequests', 'status'));
+        return view('admin.letter-requests.index', compact('letterRequests', 'status', 'rtSignature', 'rtName'));
+    }
+
+    public function updateSignature(Request $request)
+    {
+        $request->validate([
+            'rt_name' => 'required|string|max:255',
+            'rt_signature' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+        ]);
+
+        $tenantId = app('currentTenant')->id;
+
+        Setting::set("tenant_{$tenantId}_rt_name", $request->rt_name);
+
+        if ($request->hasFile('rt_signature')) {
+            $oldSignature = Setting::get("tenant_{$tenantId}_rt_signature_path");
+            if ($oldSignature) {
+                Storage::disk('public')->delete($oldSignature);
+            }
+
+            $path = $request->file('rt_signature')->store('signatures', 'public');
+            Setting::set("tenant_{$tenantId}_rt_signature_path", $path);
+        } elseif ($request->filled('signature_data')) {
+            $oldSignature = Setting::get("tenant_{$tenantId}_rt_signature_path");
+            if ($oldSignature) {
+                Storage::disk('public')->delete($oldSignature);
+            }
+            
+            $base64Data = $request->signature_data;
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64Data, $type)) {
+                $base64Data = substr($base64Data, strpos($base64Data, ',') + 1);
+                $type = strtolower($type[1]);
+                if (in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
+                    $base64Data = base64_decode($base64Data);
+                    $filename = 'signatures/' . uniqid() . '.' . $type;
+                    Storage::disk('public')->put($filename, $base64Data);
+                    Setting::set("tenant_{$tenantId}_rt_signature_path", $filename);
+                }
+            }
+        }
+
+        return back()->with('success', 'Pengaturan Kop & Tanda Tangan berhasil disimpan.');
+    }
+
+    public function downloadPdf(LetterRequest $letterRequest)
+    {
+        if ($letterRequest->status !== 'Disetujui') {
+            return back()->with('error', 'Hanya surat yang disetujui yang dapat dicetak.');
+        }
+
+        $tenantId = app('currentTenant')->id;
+        $rtSignaturePath = Setting::get("tenant_{$tenantId}_rt_signature_path");
+        $rtSignature = $rtSignaturePath ? public_path('storage/' . $rtSignaturePath) : null;
+        
+        // If local dev environment where public_path might fail for dompdf, encode as base64
+        if ($rtSignature && file_exists($rtSignature)) {
+            $type = pathinfo($rtSignature, PATHINFO_EXTENSION);
+            $data = file_get_contents($rtSignature);
+            $rtSignature = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        }
+
+        $rtName = Setting::get("tenant_{$tenantId}_rt_name");
+        $member = $letterRequest->member;
+
+        $pdf = Pdf::loadView('pdf.surat_pengantar', [
+            'nomor_surat' => $letterRequest->id,
+            'keperluan' => $letterRequest->keperluan,
+            'jenis_surat' => $letterRequest->jenis_surat,
+            'member' => $member,
+            'rtSignature' => $rtSignature,
+            'rtName' => $rtName,
+        ]);
+
+        if (request()->has('preview')) {
+            return $pdf->stream("Surat_Pengantar_{$member->nama}.pdf");
+        }
+        return $pdf->download("Surat_Pengantar_{$member->nama}.pdf");
     }
 
     public function update(Request $request, LetterRequest $letterRequest)

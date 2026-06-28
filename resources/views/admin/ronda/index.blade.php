@@ -56,7 +56,7 @@
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Pilih Regu Bertugas</label>
                         <select name="member_ids[]" multiple required class="w-full rounded-xl border-gray-200 text-sm" x-data x-init="new TomSelect($el, {plugins: ['remove_button'], placeholder: 'Cari nama warga...'})">
                             @foreach($members as $m)
-                                <option value="{{ $m->id }}">{{ $m->nama }} (Blok {{ $m->blok_rumah }})</option>
+                                <option value="{{ $m->id }}">{{ $m->nama }} (Alamat: {{ $m->family->alamat }})</option>
                             @endforeach
                         </select>
                     </div>
@@ -96,7 +96,7 @@
                                         </div>
                                         <div>
                                             <p class="text-sm font-bold text-gray-900 leading-tight">{{ $s->member->nama }}</p>
-                                            <p class="text-[10px] text-gray-500 font-medium">Blok Rumah: <span class="text-gray-700 font-bold">{{ $s->member->blok_rumah }}</span></p>
+                                            <p class="text-[10px] text-gray-500 font-medium">Alamat: <span class="text-gray-700 font-bold">{{ $s->member->family->alamat }}</span></p>
                                         </div>
                                     </div>
                                     <form action="{{ route('admin.ronda.schedule.destroy', $s) }}" method="POST" onsubmit="return confirm('Hapus/batalkan warga ini dari tugas ronda?')">
@@ -152,7 +152,7 @@
                                     </div>
                                     <div>
                                         <span class="font-bold text-gray-900 block leading-tight">{{ $h->member->nama }}</span>
-                                        <span class="text-[10px] text-gray-500">Blok {{ $h->member->blok_rumah }}</span>
+                                        <span class="text-[10px] text-gray-500">Alamat: {{ $h->member->family->alamat ?? '-' }}</span>
                                     </div>
                                 </div>
                             </td>
@@ -176,10 +176,10 @@
                                 @if($h->attendance)
                                     <div class="flex justify-end gap-2">
                                         @if($h->attendance->photo_path)
-                                        <a href="{{ asset('storage/'.$h->attendance->photo_path) }}" target="_blank" class="px-3 py-1.5 bg-white border border-gray-200 hover:bg-indigo-50 text-indigo-600 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm text-xs font-bold" title="Selfie Bukti Kehadiran">
+                                        <button type="button" onclick="showSelfie('{{ asset('storage/'.$h->attendance->photo_path) }}')" class="px-3 py-1.5 bg-white border border-gray-200 hover:bg-indigo-50 text-indigo-600 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm text-xs font-bold" title="Selfie Bukti Kehadiran">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                             Foto Selfie
-                                        </a>
+                                        </button>
                                         @endif
                                         @if($h->attendance->location)
                                         <a href="https://maps.google.com/?q={{ $h->attendance->location }}" target="_blank" class="px-3 py-1.5 bg-white border border-gray-200 hover:bg-emerald-50 text-emerald-600 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm text-xs font-bold" title="Titik Lokasi">
@@ -212,7 +212,7 @@
                                     {{ $h->date->translatedFormat('d M Y') }}
                                 </span>
                                 <h3 class="font-bold text-gray-900 leading-tight">{{ $h->member->nama }}</h3>
-                                <p class="text-[10px] text-gray-500 mt-0.5">Blok Rumah: {{ $h->member->blok_rumah }}</p>
+                                <p class="text-[10px] text-gray-500 mt-0.5">Alamat: {{ $h->member->family->alamat }}</p>
                             </div>
                             <div class="text-right flex-shrink-0">
                                 @if($h->attendance)
@@ -228,10 +228,10 @@
                     @if($h->attendance)
                     <div class="p-3 bg-gray-50/50 border-t border-gray-50 flex gap-2 pl-5">
                         @if($h->attendance->photo_path)
-                            <a href="{{ asset('storage/'.$h->attendance->photo_path) }}" target="_blank" class="flex-1 flex items-center justify-center gap-1.5 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-[11px] font-bold rounded-lg transition-colors shadow-sm">
+                            <button type="button" onclick="showSelfie('{{ asset('storage/'.$h->attendance->photo_path) }}')" class="flex-1 flex items-center justify-center gap-1.5 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-[11px] font-bold rounded-lg transition-colors shadow-sm">
                                 <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                 Foto Selfie
-                            </a>
+                            </button>
                         @endif
                         @if($h->attendance->location)
                             <a href="https://maps.google.com/?q={{ $h->attendance->location }}" target="_blank" class="flex-1 flex items-center justify-center gap-1.5 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-[11px] font-bold rounded-lg transition-colors shadow-sm">
@@ -274,4 +274,23 @@
         .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function showSelfie(url) {
+            Swal.fire({
+                title: 'Bukti Kehadiran',
+                imageUrl: url,
+                imageAlt: 'Foto Selfie',
+                imageWidth: '100%',
+                showConfirmButton: true,
+                confirmButtonText: 'Tutup',
+                confirmButtonColor: '#4f46e5',
+                customClass: {
+                    image: 'rounded-xl max-w-sm mx-auto shadow-sm',
+                    popup: 'rounded-2xl pb-6 px-4'
+                },
+                width: '400px'
+            });
+        }
+    </script>
 </x-app-layout>

@@ -64,6 +64,7 @@
                     'items' => array_filter([
                         ($isOwner || $isSekretaris) ? ['route' => 'kk.index', 'match' => 'kk.*', 'label' => 'Data KK'] : null,
                         ($isOwner || $isSekretaris) ? ['route' => 'warga.index', 'match' => 'warga.*', 'label' => 'Data Warga'] : null,
+                        ($isOwner || $isSekretaris) ? ['route' => 'warga-kos.index', 'match' => 'warga-kos.*', 'label' => 'Warga Kos/Kontrakan'] : null,
                     ]),
                 ],
                 [
@@ -83,7 +84,7 @@
                         ($isOwner || $isSekretaris) ? ['route' => 'admin.documents.index', 'match' => 'admin.documents.*', 'label' => 'Brankas Digital'] : null,
                         ($isOwner || $isSekretaris || $isKeamanan || $isPembangunan) ? ['route' => 'admin.laporan.index', 'match' => 'admin.laporan.*', 'label' => 'Laporan Warga'] : null,
                         ($isOwner || $isSekretaris || $isKeamanan) ? ['route' => 'admin.panic.index', 'match' => 'admin.panic.*', 'label' => 'Riwayat Darurat (Panic)'] : null,
-                        ($isOwner || $isKeamanan) ? ['route' => 'admin.cctvs.index', 'match' => 'admin.cctvs.*', 'label' => 'CCTV Lingkungan'] : null,
+                        // ($isOwner || $isKeamanan) ? ['route' => 'admin.cctvs.index', 'match' => 'admin.cctvs.*', 'label' => 'CCTV Lingkungan'] : null,
                         ($isOwner || $isSekretaris || $isKeamanan) ? ['route' => 'admin.ronda.index', 'match' => 'admin.ronda.*', 'label' => 'Jadwal Ronda'] : null,
                         ($isOwner || $isSekretaris || $isBendahara || $isPembangunan) ? ['route' => 'admin.inventaris.index', 'match' => 'admin.inventaris.*', 'label' => 'Inventaris & Aset'] : null,
                         ($isOwner || $isSekretaris || $isHumas) ? ['route' => 'admin.polls.index', 'match' => 'admin.polls.*', 'label' => 'Musyawarah (E-Voting)'] : null,
