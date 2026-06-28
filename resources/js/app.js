@@ -54,6 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (field.type === 'email' && !isValidEmail(val)) {
                 showFieldError(field, 'Format email tidak valid.');
                 hasError = true;
+            } else if (field.hasAttribute('minlength') && val.length < parseInt(field.getAttribute('minlength'))) {
+                showFieldError(field, `Minimal ${field.getAttribute('minlength')} karakter.`);
+                hasError = true;
+            } else if (field.hasAttribute('pattern') && !(new RegExp('^' + field.getAttribute('pattern') + '$').test(val))) {
+                showFieldError(field, field.getAttribute('title') || 'Format tidak sesuai.');
+                hasError = true;
             }
         });
 

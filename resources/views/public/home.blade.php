@@ -1107,7 +1107,7 @@
                                 </div>
                                 <div class="col-span-2">
                                     <label class="label">Kontak Darurat (WhatsApp)</label>
-                                    <input type="text" name="nomor_wa" required class="input-field" placeholder="08...">
+                                    <input type="text" name="nomor_wa" required minlength="11" pattern="[0-9]+" title="Masukkan minimal 11 angka" class="input-field" placeholder="08...">
                                 </div>
                                 <div>
                                     <label class="label">Tgl Pergi</label>
@@ -1133,7 +1133,7 @@
                         <form onsubmit="return submitForm(event, 'cek-rumah-form', '{{ route('titip-rumah.track', ['tenant' => $tenant->slug]) }}', 'GET')" id="cek-rumah-form" class="space-y-4">
                             <div>
                                 <label class="label">Nomor WhatsApp Anda</label>
-                                <input type="text" name="nomor_wa" required class="input-field" placeholder="08...">
+                                <input type="text" name="nomor_wa" required minlength="11" pattern="[0-9]+" title="Masukkan minimal 11 angka" class="input-field" placeholder="08...">
                             </div>
                             <button type="submit" class="btn-gradient w-full mt-2" style="background: linear-gradient(135deg, #059669, #10b981);">Cek Log Patroli Satpam</button>
                         </form>
