@@ -46,15 +46,20 @@
     mobileOpen: false,
     pwaPrompt: null,
     pwaInstallable: false,
+    pwaInstalled: false,
     installPwa() {
+        if (this.pwaInstalled) return;
         if(this.pwaPrompt) {
             this.pwaPrompt.prompt();
             this.pwaPrompt.userChoice.then((choice) => {
-                if(choice.outcome === 'accepted') this.pwaInstallable = false;
+                if(choice.outcome === 'accepted') {
+                    this.pwaInstallable = false;
+                    this.pwaInstalled = true;
+                }
             });
         }
     }
-}" @beforeinstallprompt.window="$event.preventDefault(); pwaPrompt = $event; pwaInstallable = true">
+}" @beforeinstallprompt.window="$event.preventDefault(); pwaPrompt = $event; pwaInstallable = true" @appinstalled.window="pwaInstallable = false; pwaInstalled = true">
 
     <!-- Global Announcements (Root Level, guarantees top z-index) -->
     <x-global-announcement />
@@ -100,9 +105,10 @@
                 </div>
 
                 <!-- PWA Install Button -->
-                <button x-show="pwaInstallable" style="display: none;" @click="installPwa()" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-2 transition-colors flex-shrink-0">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                    <span class="hidden sm:inline">Install Aplikasi</span>
+                <button x-show="pwaInstallable || pwaInstalled" style="display: none;" @click="installPwa()" :class="pwaInstalled ? 'bg-emerald-50 text-emerald-600 border border-emerald-200 cursor-default opacity-80' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200 cursor-pointer'" class="text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-2 transition-colors flex-shrink-0">
+                    <svg x-show="!pwaInstalled" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <svg x-show="pwaInstalled" style="display: none;" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span class="hidden sm:inline" x-text="pwaInstalled ? '✓ Sudah Terinstall' : 'Install Aplikasi'"></span>
                 </button>
             </header>
 
