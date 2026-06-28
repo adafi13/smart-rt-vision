@@ -38,6 +38,9 @@
         .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
         .reveal.is-visible { opacity: 1; transform: translateY(0); }
 
+        /* Pricing card: smooth transition for scale/opacity/shadow changes */
+        .pricing-card { transition: transform 0.35s cubic-bezier(.2,.8,.2,1), opacity 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease; }
+
         #hero3d-canvas { display: block; width: 100%; height: 100%; }
 
         ::-webkit-scrollbar { width: 6px; }
@@ -479,8 +482,11 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5 reveal">
             @foreach($plans as $plan)
-            <div class="rounded-2xl border p-6 relative transition-all duration-300 bg-white" 
-                 :class="recommendedPlan === '{{ $plan->slug }}' ? 'border-indigo-500 ring-4 ring-indigo-500/20 shadow-2xl shadow-indigo-200/50 scale-[1.03] z-10' : 'border-gray-100 shadow-sm opacity-60 hover:opacity-100 scale-95 hover:scale-100'">
+            <div class="pricing-card rounded-2xl border p-6 relative bg-white"
+                 :data-recommended="recommendedPlan === '{{ $plan->slug }}'"
+                 :style="recommendedPlan === '{{ $plan->slug }}'
+                    ? 'border-color:#6366f1; box-shadow:0 0 0 4px rgba(99,102,241,0.18),0 8px 30px rgba(99,102,241,0.15); transform:scale(1.04); z-index:10; opacity:1;'
+                    : 'border-color:#e5e7eb; box-shadow:0 1px 4px rgba(0,0,0,0.06); transform:scale(0.97); opacity:0.55;'">
                 @if($plan->is_popular)
                 <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[11px] font-bold text-white whitespace-nowrap" style="background: linear-gradient(135deg,#6366f1,#a855f7);">PALING POPULER</span>
                 @endif
