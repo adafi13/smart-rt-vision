@@ -1083,41 +1083,62 @@
                 </div>
 
                 <!-- FORM: Titip Rumah Kosong -->
-                <div x-show="modal === 'titip-rumah'">
-                    <form method="POST" action="{{ route('titip-rumah', ['tenant' => $tenant->slug]) }}" class="space-y-4">
-                        @csrf
-                        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-2">
-                            <p class="text-xs text-indigo-800 leading-relaxed font-medium">Laporkan rumah kosong saat Anda mudik atau dinas luar kota. Keamanan RT akan memantau keamanan rumah Anda secara rutin dan melapor ke aplikasi.</p>
-                        </div>
-                        
-                        <div>
-                            <label class="label">Nama Lengkap Pemilik/Pelapor</label>
-                            <input type="text" name="pelapor_nama" required class="input-field" placeholder="Nama Anda...">
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="col-span-2">
-                                <label class="label">Alamat / Blok Rumah</label>
-                                <input type="text" name="alamat_rumah" required class="input-field" placeholder="Contoh: Blok B No 12">
+                <div x-show="modal === 'titip-rumah'" x-data="{ activeTab: 'lapor' }">
+                    <div class="flex bg-slate-100 p-1 rounded-xl mb-6">
+                        <button @click="activeTab = 'lapor'" :class="{'bg-white shadow-sm text-indigo-700': activeTab === 'lapor', 'text-slate-500 hover:text-slate-700': activeTab !== 'lapor'}" class="flex-1 py-2 text-sm font-bold rounded-lg transition-all">Form Lapor Baru</button>
+                        <button @click="activeTab = 'cek'" :class="{'bg-white shadow-sm text-indigo-700': activeTab === 'cek', 'text-slate-500 hover:text-slate-700': activeTab !== 'cek'}" class="flex-1 py-2 text-sm font-bold rounded-lg transition-all">Cek Status Laporan</button>
+                    </div>
+
+                    <div x-show="activeTab === 'lapor'">
+                        <form method="POST" action="{{ route('titip-rumah', ['tenant' => $tenant->slug]) }}" class="space-y-4">
+                            @csrf
+                            <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-2">
+                                <p class="text-xs text-indigo-800 leading-relaxed font-medium">Laporkan rumah kosong saat Anda mudik atau dinas luar kota. Keamanan RT akan memantau keamanan rumah Anda secara rutin dan melapor ke aplikasi.</p>
                             </div>
-                            <div class="col-span-2">
-                                <label class="label">Kontak Darurat (WhatsApp)</label>
+                            
+                            <div>
+                                <label class="label">Nama Lengkap Pemilik/Pelapor</label>
+                                <input type="text" name="pelapor_nama" required class="input-field" placeholder="Nama Anda...">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="col-span-2">
+                                    <label class="label">Alamat / Blok Rumah</label>
+                                    <input type="text" name="alamat_rumah" required class="input-field" placeholder="Contoh: Blok B No 12">
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="label">Kontak Darurat (WhatsApp)</label>
+                                    <input type="text" name="nomor_wa" required class="input-field" placeholder="08...">
+                                </div>
+                                <div>
+                                    <label class="label">Tgl Pergi</label>
+                                    <input type="date" name="tanggal_pergi" required class="input-field" min="{{ date('Y-m-d') }}">
+                                </div>
+                                <div>
+                                    <label class="label">Rencana Pulang</label>
+                                    <input type="date" name="tanggal_pulang" required class="input-field" min="{{ date('Y-m-d') }}">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="label">Catatan Tambahan (Opsional)</label>
+                                <textarea name="catatan_warga" rows="2" class="input-field" placeholder="Contoh: Kunci pagar titip ke Pak Satpam, dll..."></textarea>
+                            </div>
+                            <button type="submit" class="btn-gradient w-full mt-2" style="background: linear-gradient(135deg, #4f46e5, #6366f1);">Kirim Laporan Titip Rumah</button>
+                        </form>
+                    </div>
+
+                    <div x-show="activeTab === 'cek'">
+                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-4 mb-4">
+                            <p class="text-xs text-slate-600 leading-relaxed font-medium">Masukkan nomor WhatsApp yang Anda gunakan saat mendaftar penitipan rumah untuk melacak status dan melihat log patroli dari satpam.</p>
+                        </div>
+                        <form onsubmit="return submitForm(event, 'cek-rumah-form', '{{ route('titip-rumah.track', ['tenant' => $tenant->slug]) }}', 'GET')" id="cek-rumah-form" class="space-y-4">
+                            <div>
+                                <label class="label">Nomor WhatsApp Anda</label>
                                 <input type="text" name="nomor_wa" required class="input-field" placeholder="08...">
                             </div>
-                            <div>
-                                <label class="label">Tgl Pergi</label>
-                                <input type="date" name="tanggal_pergi" required class="input-field" min="{{ date('Y-m-d') }}">
-                            </div>
-                            <div>
-                                <label class="label">Rencana Pulang</label>
-                                <input type="date" name="tanggal_pulang" required class="input-field" min="{{ date('Y-m-d') }}">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="label">Catatan Tambahan (Opsional)</label>
-                            <textarea name="catatan_warga" rows="2" class="input-field" placeholder="Contoh: Kunci pagar titip ke Pak Satpam, dll..."></textarea>
-                        </div>
-                        <button type="submit" class="btn-gradient w-full mt-2" style="background: linear-gradient(135deg, #4f46e5, #6366f1);">Kirim Laporan Titip Rumah</button>
-                    </form>
+                            <button type="submit" class="btn-gradient w-full mt-2" style="background: linear-gradient(135deg, #059669, #10b981);">Cek Log Patroli Satpam</button>
+                        </form>
+                        <div id="cek-rumah-result" class="mt-4"></div>
+                    </div>
                 </div>
 
             </div>
@@ -1406,7 +1427,7 @@
                 let statusColor = json.data.status === 'MENUNGGU' ? 'bg-amber-100 text-amber-700' : (json.data.status === 'DIPROSES' ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700');
                 
                 let replyFormHtml = ``;
-                if(json.data.status !== 'Selesai' && json.data.status !== 'Ditolak') {
+                if(json.data.status !== 'Selesai' && json.data.status !== 'Ditolak' && !json.data.no_reply_form) {
                     replyFormHtml = `
                         <div class="mt-4 pt-4 border-t border-slate-100">
                             <form onsubmit="return submitBalasan(event, '${json.data.ticket_number}')" id="form-balasan-${json.data.ticket_number}" class="flex gap-2 items-center bg-slate-50 p-1.5 rounded-xl border border-slate-200 focus-within:border-indigo-400 focus-within:ring-1 focus-within:ring-indigo-400 transition-all">

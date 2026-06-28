@@ -421,4 +421,69 @@ class HomeController extends Controller
 
         return back()->with('success', 'Laporan rumah kosong berhasil dikirim. Pengurus/Keamanan akan memantau rumah Anda.');
     }
+
+    public function trackVacantHome(Request $request)
+    {
+        $tenantId = app('currentTenant')->id;
+        $nomorWa = $request->query('nomor_wa');
+
+        if (!$nomorWa) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Silakan masukkan nomor WA Anda.'
+            ]);
+        }
+
+        $vacantHome = VacantHome::where('tenant_id', $tenantId)
+            ->where('nomor_wa', $nomorWa)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if (!$vacantHome) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak ditemukan laporan penitipan rumah untuk nomor WA tersebut.'
+            ]);
+        }
+
+        $timeline = [];
+        
+        // Add creation event
+        $timeline[] = [
+            'is_system' => true,
+            'pesan' => 'Rumah mulai dipantau oleh pengurus / keamanan.',
+            'waktu' => $vacantHome->created_at->format('d M Y, H:i'),
+        ];
+
+        // Add patrol logs
+        $logs = $vacantHome->logs()->orderBy('waktu_patroli', 'asc')->get();
+        foreach ($logs as $log) {
+            $timeline[] = [
+                'is_system' => false,
+                'is_admin' => true, // Make it look like admin reply
+                'sender' => 'Satpam: ' . $log->petugas_nama,
+                'pesan' => $log->catatan_petugas ?? 'Patroli rutin (Tidak ada catatan)',
+                'waktu' => $log->waktu_patroli->format('d M Y, H:i'),
+                'attachment_url' => $log->foto_bukti ? \Illuminate\Support\Facades\Storage::url($log->foto_bukti) : null,
+            ];
+        }
+
+        if ($vacantHome->status === 'Selesai') {
+            $timeline[] = [
+                'is_system' => true,
+                'pesan' => 'Masa penitipan telah selesai.',
+                'waktu' => $vacantHome->updated_at->format('d M Y, H:i'),
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'status' => $vacantHome->status,
+                'ticket_number' => 'VH-' . $vacantHome->id,
+                'no_reply_form' => true, // We will use this flag in JS to hide the reply form
+                'timeline' => $timeline
+            ]
+        ]);
+    }
 }

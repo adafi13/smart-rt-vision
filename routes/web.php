@@ -339,4 +339,5 @@ Route::middleware(['tenant.slug'])->prefix('/{tenant:slug}')->group(function () 
     Route::post('/submit-guestbook', [HomeController::class, 'submitGuestbook'])->name('submit-guestbook');
     Route::post('/lapor-kos', [HomeController::class, 'storeKos'])->name('lapor.kos');
     Route::post('/titip-rumah', [HomeController::class, 'storeVacantHome'])->name('titip-rumah');
+    Route::get('/titip-rumah/track', [HomeController::class, 'trackVacantHome'])->name('titip-rumah.track');
 });
