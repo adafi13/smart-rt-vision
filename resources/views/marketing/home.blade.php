@@ -459,20 +459,27 @@
 
         <!-- Toggle Bulanan / Tahunan -->
         <div class="flex justify-center mb-10 reveal">
-            <div style="position:relative; display:inline-flex; background:#f1f5f9; border:1.5px solid #e2e8f0; border-radius:16px; padding:5px; box-shadow:inset 0 1px 3px rgba(0,0,0,0.07);">
-                <div style="position:absolute; top:5px; bottom:5px; border-radius:11px; background:#fff; box-shadow:0 1px 6px rgba(0,0,0,0.10); border:1px solid #e2e8f0; transition:all .25s cubic-bezier(.4,0,.2,1); z-index:0;"
-                     :style="isYearly ? 'left: calc(50% + 2px); right: 5px;' : 'left: 5px; right: calc(50% + 2px);'"></div>
+            <div style="display:inline-flex; border-radius:14px; padding:4px; background:#f1f5f9; border:1px solid #e2e8f0; gap:4px;">
+
                 <button type="button" @click="isYearly = false"
-                    style="position:relative; z-index:1; padding:9px 28px; border:none; background:transparent; border-radius:11px; font-size:13px; font-weight:700; cursor:pointer; transition:color .2s; white-space:nowrap;"
-                    :style="!isYearly ? 'color:#4f46e5;' : 'color:#94a3b8;'">
+                    style="padding:10px 28px; border-radius:10px; border:none; cursor:pointer; font-size:13px; font-weight:700; letter-spacing:.02em; transition:all .2s ease; white-space:nowrap;"
+                    :style="!isYearly
+                        ? 'background:linear-gradient(135deg,#4f46e5,#6366f1); color:#fff; box-shadow:0 2px 8px rgba(79,70,229,.35);'
+                        : 'background:transparent; color:#94a3b8;'">
                     Bulanan
                 </button>
+
                 <button type="button" @click="isYearly = true"
-                    style="position:relative; z-index:1; padding:9px 20px 9px 24px; border:none; background:transparent; border-radius:11px; font-size:13px; font-weight:700; cursor:pointer; transition:color .2s; display:flex; align-items:center; gap:8px; white-space:nowrap;"
-                    :style="isYearly ? 'color:#4f46e5;' : 'color:#94a3b8;'">
+                    style="padding:10px 20px 10px 24px; border-radius:10px; border:none; cursor:pointer; font-size:13px; font-weight:700; letter-spacing:.02em; transition:all .2s ease; display:flex; align-items:center; gap:8px; white-space:nowrap;"
+                    :style="isYearly
+                        ? 'background:linear-gradient(135deg,#4f46e5,#6366f1); color:#fff; box-shadow:0 2px 8px rgba(79,70,229,.35);'
+                        : 'background:transparent; color:#94a3b8;'">
                     Tahunan
-                    <span style="padding:2px 8px; border-radius:99px; font-size:9px; font-weight:900; letter-spacing:.06em; background:#dcfce7; color:#16a34a; border:1px solid #bbf7d0;">HEMAT 1 BLN</span>
+                    <span style="padding:2px 7px; border-radius:99px; font-size:9px; font-weight:900; letter-spacing:.05em; background:#dcfce7; color:#16a34a; border:1px solid #86efac;">
+                        HEMAT 1 BLN
+                    </span>
                 </button>
+
             </div>
         </div>
 
