@@ -445,8 +445,11 @@
     </section>
 
     <!-- ===================== HARGA ===================== -->
-    <section id="harga" class="max-w-6xl mx-auto px-4 sm:px-6 py-4 pb-20 sm:pb-24"
-             x-data="pricingSlider(@json($plans->map(fn($p) => ['slug' => $p->slug, 'name' => $p->name, 'max_kk' => $p->max_kk])->values()))">
+    {{-- Inject plan data as a global JS variable (safe from HTML encoding issues) --}}
+    <script>
+        window.__pricingPlans = {!! json_encode($plans->map(fn($p) => ['slug' => $p->slug, 'name' => $p->name, 'max_kk' => $p->max_kk])->values()) !!};
+    </script>
+    <section id="harga" class="max-w-6xl mx-auto px-4 sm:px-6 py-4 pb-20 sm:pb-24" x-data="pricingSlider()">
         <div class="text-center max-w-xl mx-auto mb-8 reveal">
             <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Harga</span>
             <h2 class="text-2xl sm:text-3xl font-black text-gray-900 mt-2">Paket Sesuai Kebutuhan RT Anda</h2>
@@ -670,11 +673,14 @@
             }
         }
 
-        function pricingSlider(plansData) {
-            // Sort plans ascending by max_kk (null/0 = unlimited, always last)
+        function pricingSlider() {
+            // Read plan data from global variable (injected from Blade/PHP above)
+            const plansData = window.__pricingPlans || [];
+
+            // Sort plans ascending by max_kk (null/0 = unlimited, always last = highest tier)
             const sortedPlans = [...plansData].sort((a, b) => {
                 if (!a.max_kk && !b.max_kk) return 0;
-                if (!a.max_kk) return 1;   // unlimited → last (highest tier)
+                if (!a.max_kk) return 1;   // unlimited → last
                 if (!b.max_kk) return -1;
                 return a.max_kk - b.max_kk;
             });
