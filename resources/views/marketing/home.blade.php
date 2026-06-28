@@ -477,9 +477,6 @@
                       :style="isYearly ? 'color:#0f172a;' : 'color:#94a3b8;'">
                     Tahunan
                 </span>
-                <span style="padding:3px 10px; border-radius:99px; font-size:10px; font-weight:900; background-color:#10b981; color:#fff; letter-spacing:0.04em; text-transform:uppercase; box-shadow:0 2px 6px rgba(16,185,129,0.25);">
-                    Hemat 1 Bln
-                </span>
             </div>
         </div>
 
