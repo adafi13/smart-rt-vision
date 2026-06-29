@@ -1,2 +1,10 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin/
+Disallow: /super-admin/
+Disallow: /warga/
+Disallow: /login
+Disallow: /register
+Disallow: /password/
+
+Sitemap: https://smartrtvision.sekawanputrapratama.com/sitemap.xml

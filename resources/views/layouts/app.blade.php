@@ -4,7 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="SmartRT Vision - Sistem Pendataan Warga RT berbasis AI">
+    <meta name="description" content="SmartRT Vision — Dashboard internal warga dan pengurus RT. Sistem Pendataan Warga RT berbasis AI.">
+    <meta name="robots" content="noindex, nofollow"> <!-- Prevent indexing of private dashboard pages -->
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ isset($title) ? $title . ' · ' : '' }}{{ config('app.name', 'SmartRT Vision') }}">
+    <meta property="og:description" content="SmartRT Vision — Dashboard internal warga dan pengurus RT. Sistem Pendataan Warga RT berbasis AI.">
+    <meta property="og:image" content="{{ asset('logo.png') }}">
+
     <title>{{ isset($title) ? $title . ' · ' : '' }}{{ config('app.name', 'SmartRT Vision') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}">

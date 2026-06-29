@@ -3,7 +3,27 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="SmartRT Vision — platform SaaS untuk pengurus RT/RW: ekstraksi data KK otomatis dengan AI, portal mandiri warga, dan transparansi kas.">
+    <meta name="description" content="SmartRT Vision — Platform SaaS terbaik untuk pengurus RT/RW: ekstraksi data KK otomatis dengan AI, portal mandiri warga, manajemen keuangan transparan, dan administrasi digital.">
+    <meta name="keywords" content="aplikasi rt rw, software pengurus rt, bayar iuran rt, aplikasi kas rt, platform warga rt, manajemen rukun tetangga, ekstraksi kk ai, smart rt, rt digital, aplikasi warga">
+    <meta name="author" content="Sekawan Putra Pratama">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="{{ config('app.name', 'SmartRT Vision') }} — Kelola RT Lebih Mudah dengan AI">
+    <meta property="og:description" content="Platform SaaS terbaik untuk pengurus RT/RW. Ekstraksi data KK otomatis, portal mandiri warga, dan manajemen keuangan transparan.">
+    <meta property="og:image" content="{{ asset('logo.png') }}">
+    <meta property="og:site_name" content="{{ config('app.name', 'SmartRT Vision') }}">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ url()->current() }}">
+    <meta name="twitter:title" content="{{ config('app.name', 'SmartRT Vision') }} — Kelola RT Lebih Mudah dengan AI">
+    <meta name="twitter:description" content="Platform SaaS terbaik untuk pengurus RT/RW. Ekstraksi data KK otomatis, portal mandiri warga, dan manajemen keuangan transparan.">
+    <meta name="twitter:image" content="{{ asset('logo.png') }}">
+
     <title>{{ config('app.name', 'SmartRT Vision') }} — Kelola RT Lebih Mudah dengan AI</title>
     <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
 

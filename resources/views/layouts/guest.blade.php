@@ -4,6 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    
+    <meta name="description" content="Masuk ke portal SmartRT Vision. Kelola data RT/RW, iuran kas, dan administrasi warga dalam satu dashboard cerdas berbasis AI.">
+    <meta name="robots" content="noindex, nofollow"> <!-- Prevent indexing of login pages -->
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="{{ config('app.name', 'SmartRT Vision') }} — Portal Masuk">
+    <meta property="og:description" content="Masuk ke portal SmartRT Vision. Kelola data RT/RW, iuran kas, dan administrasi warga dalam satu dashboard cerdas berbasis AI.">
+    <meta property="og:image" content="{{ asset('logo.png') }}">
+    
     <title>{{ config('app.name', 'SmartRT Vision') }} — Masuk</title>
     <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
