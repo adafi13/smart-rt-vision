@@ -59,7 +59,17 @@ class Tenant extends Model
         }
 
         if ($this->onTrial()) {
-            return Plan::where('slug', 'starter')->first();
+            return new Plan([
+                'name' => 'Trial (Uji Coba)',
+                'slug' => 'trial',
+                'description' => 'Paket uji coba gratis dengan fitur terbatas.',
+                'price' => 0,
+                'max_users' => 10,
+                'max_kk' => 50,
+                'max_ai_extractions_per_month' => 100,
+                'features' => ['Fitur Dasar', '100x Scan AI'],
+                'is_active' => true,
+            ]);
         }
 
         return null;
