@@ -858,16 +858,24 @@
 
 
     <!-- ===================== MODALS ( ALPINE ) ===================== -->
-    <div x-show="modal !== null" style="display: none; background: rgba(15,23,42,0.8); backdrop-filter: blur(8px);" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" x-transition.opacity>
-        <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 max-h-[90vh] overflow-y-auto shadow-2xl relative origin-bottom" 
+    <div x-show="modal !== null" 
+         style="display: none; background: rgba(15,23,42,0.8); backdrop-filter: blur(8px);" 
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-250"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 max-h-[90vh] overflow-y-auto shadow-2xl relative origin-center" 
              @click.away="modal = null" 
              x-show="modal !== null"
              x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-12 scale-95 [transform:perspective(800px)_rotateX(12deg)]"
+             x-transition:enter-start="opacity-0 translate-y-8 scale-95 [transform:perspective(800px)_rotateX(10deg)]"
              x-transition:enter-end="opacity-100 translate-y-0 scale-100 [transform:perspective(800px)_rotateX(0deg)]"
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0 scale-100 [transform:perspective(800px)_rotateX(0deg)]"
-             x-transition:leave-end="opacity-0 translate-y-12 scale-95 [transform:perspective(800px)_rotateX(12deg)]">
+             x-transition:leave-end="opacity-0 translate-y-8 scale-95 [transform:perspective(800px)_rotateX(10deg)]">
                 
                 <!-- Modal Close -->
                 <button @click="modal = null" class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors">
