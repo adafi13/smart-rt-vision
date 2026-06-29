@@ -76,11 +76,14 @@
                                 <div class="absolute top-0 left-0 right-0 h-1 bg-indigo-400 shadow-[0_0_15px_3px_rgba(99,102,241,0.8)] animate-scan"></div>
                             </div>
                         </div>
-                        <div>
+                        <div class="flex items-center justify-center gap-2">
                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-[11px] font-bold text-gray-700 shadow-sm truncate max-w-[250px]">
                                 <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                 <span id="file-name" class="truncate"></span>
                             </span>
+                            <button type="button" id="clear-btn" class="p-1.5 rounded-lg bg-white border border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600 shadow-sm transition-colors" title="Batal / Hapus Foto" onclick="event.stopPropagation(); clearImage();">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -127,6 +130,25 @@
                 fileInput.dispatchEvent(new Event('change'));
             }
         });
+
+        function clearImage() {
+            fileInput.value = '';
+            document.getElementById('preview').src = '#';
+            document.getElementById('file-name').textContent = '';
+            
+            // Show placeholder, hide preview
+            document.getElementById('placeholder').classList.remove('hidden');
+            document.getElementById('preview-wrap').classList.add('hidden');
+            
+            // Revert border styling
+            dropZone.classList.add('border-gray-300', 'border-dashed', 'bg-gray-50/50');
+            dropZone.classList.remove('border-indigo-400', 'border-solid', 'bg-indigo-50/50');
+            
+            // Disable button
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed', 'pointer-events-none');
+        }
 
         fileInput.addEventListener('change', function() {
             const [file] = this.files;
