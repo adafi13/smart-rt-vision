@@ -365,54 +365,7 @@
         </div>
     </section>
 
-    <!-- ===================== KALENDER AGENDA ===================== -->
-    @if(isset($agendas) && $agendas->count() > 0)
-    <section id="agenda" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60 bg-white">
-        <div class="text-center mb-16">
-            <h2 class="text-sm font-black tracking-[0.2em] text-indigo-600 uppercase mb-3">Kegiatan Lingkungan</h2>
-            <h3 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-6">Agenda Mendatang</h3>
-            <p class="text-lg text-slate-500 max-w-2xl mx-auto font-medium">Jadwal kegiatan RT/RW, dari rapat, kerja bakti, hingga posyandu.</p>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @foreach($agendas as $agenda)
-            <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 bg-white rounded-xl flex flex-col items-center justify-center border border-slate-200 shadow-sm font-bold text-slate-700">
-                        <span class="text-xs uppercase text-slate-400">{{ $agenda->start_time->format('M') }}</span>
-                        <span class="text-lg leading-none">{{ $agenda->start_time->format('d') }}</span>
-                    </div>
-                    @if($agenda->type === 'rapat')
-                        <span class="px-2.5 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-md">Rapat</span>
-                    @elseif($agenda->type === 'kerjabakti')
-                        <span class="px-2.5 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-md">Kerja Bakti</span>
-                    @elseif($agenda->type === 'posyandu')
-                        <span class="px-2.5 py-1 bg-pink-100 text-pink-700 text-xs font-bold rounded-md">Posyandu</span>
-                    @else
-                        <span class="px-2.5 py-1 bg-gray-200 text-gray-700 text-xs font-bold rounded-md">Umum</span>
-                    @endif
-                </div>
-                <h4 class="text-xl font-bold text-slate-900 mb-2">{{ $agenda->title }}</h4>
-                @if($agenda->description)
-                    <p class="text-sm text-slate-500 mb-4 line-clamp-2">{{ $agenda->description }}</p>
-                @endif
-                <div class="flex flex-col gap-2 mt-auto">
-                    <div class="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        {{ $agenda->start_time->format('H:i') }} {{ $agenda->end_time ? ' - ' . $agenda->end_time->format('H:i') : ' - Selesai' }}
-                    </div>
-                    @if($agenda->location)
-                    <div class="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        {{ $agenda->location }}
-                    </div>
-                    @endif
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </section>
-    @endif
 
     <!-- ===================== BRANKAS DIGITAL ===================== -->
     @if(isset($public_documents) && $public_documents->count() > 0)
@@ -576,7 +529,7 @@
     @endif
 
     <!-- ===================== JADWAL & ABSENSI RONDA ===================== -->
-    <section id="ronda" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60 bg-white">
+    <section id="ronda" class="max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24 bg-white border border-slate-200/80 rounded-[2rem] shadow-sm my-12 reveal">
         <div class="text-center mb-16 reveal">
             <h2 class="text-sm font-black tracking-[0.2em] text-indigo-600 uppercase mb-3">Keamanan & Ketertiban</h2>
             <h3 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-6">Jadwal Ronda Malam</h3>
