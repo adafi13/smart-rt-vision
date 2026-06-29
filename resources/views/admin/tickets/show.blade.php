@@ -57,11 +57,11 @@
                     @foreach($ticket->replies->skip(1) as $reply)
                         <div class="flex items-start gap-5 {{ $reply->is_staff_reply ? 'flex-row-reverse' : '' }}">
                             <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-black shrink-0 border transition-all duration-300 {{ $reply->is_staff_reply ? 'bg-slate-900 dark:bg-emerald-600 text-white border-slate-800 dark:border-emerald-500 shadow-xl shadow-slate-900/20 dark:shadow-none' : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20 shadow-lg shadow-emerald-500/10 dark:shadow-none' }}">
-                                {{ strtoupper(substr($reply->user->name, 0, 1)) }}
+                            {{ strtoupper(substr($reply->user?->name ?? '?', 0, 1)) }}
                             </div>
                             <div class="{{ $reply->is_staff_reply ? 'items-end' : 'items-start' }} flex flex-col max-w-[calc(100%-70px)]">
                                 <div class="flex items-center gap-2 mb-3 {{ $reply->is_staff_reply ? 'flex-row-reverse' : '' }}">
-                                    <span class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ $reply->user->name }}</span>
+                                    <span class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ $reply->user?->name ?? 'Unknown' }}</span>
                                     @if($reply->is_staff_reply)
                                         <span class="text-[9px] font-black text-emerald-500 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full uppercase tracking-widest border border-emerald-500/20">SmartRT Vision Team</span>
                                     @endif

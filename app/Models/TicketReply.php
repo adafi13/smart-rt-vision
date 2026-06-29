@@ -21,6 +21,8 @@ class TicketReply extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        // withoutGlobalScopes() ensures super admin users (who have no tenant_id)
+        // can also be loaded — prevents null when a staff reply is from super admin
+        return $this->belongsTo(User::class)->withoutGlobalScopes();
     }
 }
