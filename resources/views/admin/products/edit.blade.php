@@ -46,10 +46,20 @@
                     </div>
 
                     <!-- Harga -->
-                    <div>
+                    <div x-data="{ 
+                        rawVal: '{{ old('harga', $product->harga) }}', 
+                        formattedVal: '{{ old('harga', $product->harga) ? number_format(old('harga', $product->harga), 0, '', '.') : '' }}',
+                        formatNumber() {
+                            let val = this.formattedVal.replace(/\D/g, '');
+                            this.rawVal = val;
+                            this.formattedVal = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                        }
+                    }">
                         <label class="block text-sm font-bold text-slate-900 mb-2">Harga (Rp)</label>
-                        <input type="number" name="harga" value="{{ old('harga', $product->harga) }}" 
-                            class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 transition-colors px-4 py-3 text-sm @error('harga') border-red-500 @enderror">
+                        <input type="text" x-model="formattedVal" @input="formatNumber" 
+                            class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 transition-colors px-4 py-3 text-sm font-bold text-indigo-600 @error('harga') border-red-500 @enderror"
+                            placeholder="Kosongkan jika tidak pasti">
+                        <input type="hidden" name="harga" x-model="rawVal">
                         @error('harga') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
