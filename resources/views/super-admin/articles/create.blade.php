@@ -12,6 +12,10 @@
         content_style: 'body { font-family:Inter,sans-serif; font-size:16px }'
       });
     </script>
+    <style>
+        /* Sembunyikan warning API Key TinyMCE */
+        .tox-notifications-container { display: none !important; }
+    </style>
 
     <div class="mb-6 flex justify-between items-center">
         <div>
