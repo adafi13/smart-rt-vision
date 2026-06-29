@@ -15,6 +15,7 @@ class TicketController extends Controller
     {
         $tickets = Ticket::where('tenant_id', auth()->user()->tenant_id)
             ->with('user')
+            ->withCount('replies')
             ->latest()
             ->paginate(15);
 

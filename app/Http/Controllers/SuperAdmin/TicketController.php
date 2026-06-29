@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Models\TicketReply;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,7 +13,7 @@ class TicketController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Ticket::with(['tenant', 'user', 'assignedTo', 'replies'])->latest();
+        $query = Ticket::with(['tenant', 'user', 'assignedTo'])->withCount('replies')->latest();
 
         $search = $request->input('search');
         $status = $request->input('status', 'all');
@@ -48,7 +49,8 @@ class TicketController extends Controller
     public function show(Ticket $ticket)
     {
         $ticket->load(['tenant', 'user', 'replies.user', 'assignedTo']);
-        $admins = User::where('role', 'owner')->get(); // Super admins
+        // Super admins can assign to any staff
+        $admins = User::where('is_super_admin', true)->orWhere('role', 'su')->get();
         return view('super-admin.tickets.show', compact('ticket', 'admins'));
     }
 
