@@ -25,6 +25,11 @@ class NewsController extends Controller
         return view('admin.news.index', ['newsList' => $newsList]);
     }
 
+    public function create()
+    {
+        return view('admin.news.create');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -42,7 +47,7 @@ class NewsController extends Controller
                     $path = $request->file('gambar')->store('news', 'public');
                 }
 
-                $news = News::create([
+                News::create([
                     'tenant_id' => auth()->user()->tenant_id,
                     'judul' => $request->judul,
                     'slug' => Str::slug($request->judul).'-'.uniqid(),
@@ -51,23 +56,17 @@ class NewsController extends Controller
                     'gambar' => $path,
                     'is_penting' => $request->boolean('is_penting'),
                 ]);
-
-                AuditLog::create([
-                    'tenant_id' => auth()->user()->tenant_id,
-                    'user_id' => auth()->id(),
-                    'action' => 'create_news',
-                    'model_type' => News::class,
-                    'model_id' => $news->id,
-                    'new_values' => $news->toArray(),
-                    'ip_address' => request()->ip(),
-                    'user_agent' => request()->userAgent(),
-                ]);
             });
 
-            return back()->with('success', 'Berita berhasil dipublikasikan.');
+            return redirect()->route('admin.berita.index')->with('success', 'Berita berhasil dipublikasikan.');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal mempublikasikan berita: ' . $e->getMessage());
         }
+    }
+
+    public function edit(News $news)
+    {
+        return view('admin.news.edit', compact('news'));
     }
 
     public function update(Request $request, News $news)
@@ -82,7 +81,6 @@ class NewsController extends Controller
 
         try {
             DB::transaction(function () use ($request, $news) {
-                $oldValues = $news->only('judul', 'kategori', 'isi', 'gambar', 'is_penting');
                 $path = $news->gambar;
                 
                 if ($request->hasFile('gambar')) {
@@ -99,21 +97,9 @@ class NewsController extends Controller
                     'gambar' => $path,
                     'is_penting' => $request->boolean('is_penting'),
                 ]);
-
-                AuditLog::create([
-                    'tenant_id' => $news->tenant_id ?? auth()->user()->tenant_id,
-                    'user_id' => auth()->id(),
-                    'action' => 'update_news',
-                    'model_type' => News::class,
-                    'model_id' => $news->id,
-                    'old_values' => $oldValues,
-                    'new_values' => $news->only('judul', 'kategori', 'isi', 'gambar', 'is_penting'),
-                    'ip_address' => request()->ip(),
-                    'user_agent' => request()->userAgent(),
-                ]);
             });
 
-            return back()->with('success', 'Berita berhasil diperbarui.');
+            return redirect()->route('admin.berita.index')->with('success', 'Berita berhasil diperbarui.');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal memperbarui berita: ' . $e->getMessage());
         }
@@ -123,24 +109,11 @@ class NewsController extends Controller
     {
         try {
             DB::transaction(function () use ($news) {
-                $oldValues = $news->toArray();
-                
                 if ($news->gambar) {
                     Storage::disk('public')->delete($news->gambar);
                 }
                 
                 $news->delete();
-
-                AuditLog::create([
-                    'tenant_id' => $news->tenant_id ?? auth()->user()->tenant_id,
-                    'user_id' => auth()->id(),
-                    'action' => 'delete_news',
-                    'model_type' => News::class,
-                    'model_id' => $news->id,
-                    'old_values' => $oldValues,
-                    'ip_address' => request()->ip(),
-                    'user_agent' => request()->userAgent(),
-                ]);
             });
 
             return back()->with('success', 'Berita dihapus.');
