@@ -237,7 +237,7 @@
             </div>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 reveal">
+        <div class="flex flex-wrap justify-center gap-5 reveal">
             @php $actions = [
                 ['modal'=>'cek-nik','title'=>'Cek Status Warga','desc'=>'Verifikasi status keanggotaan warga Anda di database RT.','color'=>'#6366f1','bg'=>'bg-indigo-50','icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
                 ['modal'=>'ajukan-surat','title'=>'Pengajuan Surat Resmi','desc'=>'Minta surat pengantar RT untuk KTP, KK, SKCK, atau Nikah.','color'=>'#0891b2','bg'=>'bg-cyan-50','icon'=>'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
@@ -253,7 +253,7 @@
             ]; @endphp
             
             @foreach($actions as $a)
-            <button type="button" @click="modal = '{{ $a['modal'] }}'" class="service-card group">
+            <button type="button" @click="modal = '{{ $a['modal'] }}'" class="service-card group w-full md:w-[calc(50%-1.25rem)] lg:w-[calc(33.333%-1.25rem)] max-w-sm">
                 <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-2 {{ $a['bg'] }} transition-transform duration-300 group-hover:scale-110">
                     <svg class="w-7 h-7" style="color: {{ $a['color'] }};" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $a['icon'] }}"/></svg>
                 </div>
@@ -310,9 +310,9 @@
     @endif
 
     <!-- ===================== TRANSPARANSI KAS ===================== -->
-    <section id="kas" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 relative">
-        <div class="absolute inset-0 bg-white -z-10 transform skew-y-2"></div>
-        <div class="text-center max-w-2xl mx-auto mb-16 reveal relative z-10">
+    <section id="kas" class="w-full bg-white py-24 relative border-t border-b border-slate-200/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+            <div class="text-center max-w-2xl mx-auto mb-16 reveal relative z-10">
             <span class="inline-block py-1 px-3 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-widest mb-3">Keuangan Terbuka</span>
             <h2 class="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">Transparansi Dana Warga</h2>
             <p class="text-base text-slate-500 mt-4 font-medium">Bebas kecurigaan. Setiap rupiah kas yang masuk dan keluar dapat Anda pantau secara langsung.</p>
@@ -363,6 +363,7 @@
             </div>
             @endif
         </div>
+    </div>
     </section>
 
 
@@ -847,7 +848,7 @@
 
 
     <!-- ===================== MODALS ( ALPINE ) ===================== -->
-    <div x-show="modal !== null" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" x-transition.opacity style="background: rgba(15,23,42,0.8); backdrop-filter: blur(8px);">
+    <div x-show="modal !== null" style="display: none; background: rgba(15,23,42,0.8); backdrop-filter: blur(8px);" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" x-transition.opacity>
         <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 max-h-[90vh] overflow-y-auto shadow-2xl relative" @click.away="modal = null" x-transition.scale.95 x-show="modal !== null">
                 
                 <!-- Modal Close -->
