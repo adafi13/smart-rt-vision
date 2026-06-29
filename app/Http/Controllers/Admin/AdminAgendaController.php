@@ -19,6 +19,11 @@ class AdminAgendaController extends Controller
         return view('admin.agendas.index', compact('agendas'));
     }
 
+    public function create()
+    {
+        return view('admin.agendas.create');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -41,7 +46,15 @@ class AdminAgendaController extends Controller
             'type' => $request->type,
         ]);
 
-        return back()->with('success', 'Agenda kegiatan berhasil ditambahkan.');
+        return redirect()->route('admin.agendas.index')->with('success', 'Agenda kegiatan berhasil ditambahkan.');
+    }
+
+    public function edit(Agenda $agenda)
+    {
+        if ($agenda->tenant_id !== auth()->user()->tenant_id) {
+            abort(403);
+        }
+        return view('admin.agendas.edit', compact('agenda'));
     }
 
     public function update(Request $request, Agenda $agenda)
@@ -68,7 +81,7 @@ class AdminAgendaController extends Controller
             'type' => $request->type,
         ]);
 
-        return back()->with('success', 'Agenda kegiatan berhasil diperbarui.');
+        return redirect()->route('admin.agendas.index')->with('success', 'Agenda kegiatan berhasil diperbarui.');
     }
 
     public function destroy(Agenda $agenda)

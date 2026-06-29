@@ -244,7 +244,9 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
 
     Route::prefix('admin/agenda')->name('admin.agendas.')->middleware('rt_role:owner,sekretaris,humas')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\AdminAgendaController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\AdminAgendaController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Admin\AdminAgendaController::class, 'store'])->name('store');
+        Route::get('/{agenda}/edit', [\App\Http\Controllers\Admin\AdminAgendaController::class, 'edit'])->name('edit');
         Route::put('/{agenda}', [\App\Http\Controllers\Admin\AdminAgendaController::class, 'update'])->name('update');
         Route::delete('/{agenda}', [\App\Http\Controllers\Admin\AdminAgendaController::class, 'destroy'])->name('destroy');
     });

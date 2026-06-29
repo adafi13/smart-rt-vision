@@ -15,10 +15,10 @@
                             <h3 class="text-lg font-bold">Daftar Kegiatan RT</h3>
                             <p class="text-sm text-gray-500">Kelola jadwal rapat, kerja bakti, dan posyandu.</p>
                         </div>
-                        <button @click="$dispatch('open-modal', 'add-agenda')" class="btn-primary">
+                        <a href="{{ route('admin.agendas.create') }}" class="btn-primary">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                             Tambah Agenda
-                        </button>
+                        </a>
                     </div>
 
                     @if(session('success'))
@@ -74,56 +74,10 @@
                                         </td>
                                         <td class="p-4 text-sm text-gray-600">{{ $agenda->location ?? '-' }}</td>
                                         <td class="p-4 text-right flex items-center justify-end gap-2">
-                                            <button @click="$dispatch('open-modal', 'edit-agenda-{{ $agenda->id }}')" class="text-indigo-600 hover:text-indigo-900 font-semibold text-xs bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors">Edit</button>
+                                            <a href="{{ route('admin.agendas.edit', $agenda->id) }}" class="text-indigo-600 hover:text-indigo-900 font-semibold text-xs bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors inline-block">Edit</a>
                                             <button @click="$dispatch('open-modal', 'delete-agenda-{{ $agenda->id }}')" class="text-rose-600 hover:text-rose-900 font-semibold text-xs bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-lg transition-colors">Hapus</button>
                                         </td>
                                     </tr>
-
-                                    <!-- Edit Modal -->
-                                    <x-modal name="edit-agenda-{{ $agenda->id }}" :show="false" maxWidth="md">
-                                        <div class="p-6">
-                                            <h2 class="text-lg font-bold text-gray-900 mb-4">Edit Agenda</h2>
-                                            <form action="{{ route('admin.agendas.update', $agenda) }}" method="POST" class="space-y-4">
-                                                @csrf
-                                                @method('PUT')
-                                                <div>
-                                                    <label class="label">Judul Kegiatan</label>
-                                                    <input type="text" name="title" value="{{ $agenda->title }}" class="input-field" required>
-                                                </div>
-                                                <div>
-                                                    <label class="label">Jenis Kegiatan</label>
-                                                    <select name="type" class="input-field" required>
-                                                        <option value="umum" {{ $agenda->type == 'umum' ? 'selected' : '' }}>Umum</option>
-                                                        <option value="rapat" {{ $agenda->type == 'rapat' ? 'selected' : '' }}>Rapat Warga/Pengurus</option>
-                                                        <option value="kerjabakti" {{ $agenda->type == 'kerjabakti' ? 'selected' : '' }}>Kerja Bakti</option>
-                                                        <option value="posyandu" {{ $agenda->type == 'posyandu' ? 'selected' : '' }}>Posyandu</option>
-                                                    </select>
-                                                </div>
-                                                <div class="grid grid-cols-2 gap-4">
-                                                    <div>
-                                                        <label class="label">Waktu Mulai</label>
-                                                        <input type="datetime-local" name="start_time" value="{{ $agenda->start_time->format('Y-m-d\TH:i') }}" class="input-field" required>
-                                                    </div>
-                                                    <div>
-                                                        <label class="label">Waktu Selesai (Opsional)</label>
-                                                        <input type="datetime-local" name="end_time" value="{{ $agenda->end_time ? $agenda->end_time->format('Y-m-d\TH:i') : '' }}" class="input-field">
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <label class="label">Lokasi</label>
-                                                    <input type="text" name="location" value="{{ $agenda->location }}" class="input-field">
-                                                </div>
-                                                <div>
-                                                    <label class="label">Deskripsi Tambahan</label>
-                                                    <textarea name="description" class="input-field" rows="3">{{ $agenda->description }}</textarea>
-                                                </div>
-                                                <div class="mt-6 flex justify-end gap-3">
-                                                    <button type="button" @click="$dispatch('close')" class="px-4 py-2 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
-                                                    <button type="submit" class="btn-primary">Simpan</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </x-modal>
 
                                     <!-- Delete Modal -->
                                     <x-modal name="delete-agenda-{{ $agenda->id }}" :show="false" maxWidth="sm">
@@ -158,48 +112,4 @@
         </div>
     </div>
 
-    <!-- Add Modal -->
-    <x-modal name="add-agenda" :show="false" maxWidth="md">
-        <div class="p-6">
-            <h2 class="text-lg font-bold text-gray-900 mb-4">Tambah Agenda Kegiatan</h2>
-            <form action="{{ route('admin.agendas.store') }}" method="POST" class="space-y-4">
-                @csrf
-                <div>
-                    <label class="label">Judul Kegiatan</label>
-                    <input type="text" name="title" class="input-field" required placeholder="Contoh: Rapat Rutin Bulanan">
-                </div>
-                <div>
-                    <label class="label">Jenis Kegiatan</label>
-                    <select name="type" class="input-field" required>
-                        <option value="umum">Umum</option>
-                        <option value="rapat">Rapat Warga/Pengurus</option>
-                        <option value="kerjabakti">Kerja Bakti</option>
-                        <option value="posyandu">Posyandu</option>
-                    </select>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="label">Waktu Mulai</label>
-                        <input type="datetime-local" name="start_time" class="input-field" required>
-                    </div>
-                    <div>
-                        <label class="label">Waktu Selesai (Opsional)</label>
-                        <input type="datetime-local" name="end_time" class="input-field">
-                    </div>
-                </div>
-                <div>
-                    <label class="label">Lokasi</label>
-                    <input type="text" name="location" class="input-field" placeholder="Contoh: Balai RT 01">
-                </div>
-                <div>
-                    <label class="label">Deskripsi Tambahan</label>
-                    <textarea name="description" class="input-field" rows="3" placeholder="Informasi tambahan terkait kegiatan..."></textarea>
-                </div>
-                <div class="mt-6 flex justify-end gap-3">
-                    <button type="button" @click="$dispatch('close')" class="px-4 py-2 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
-                    <button type="submit" class="btn-primary">Tambahkan</button>
-                </div>
-            </form>
-        </div>
-    </x-modal>
 </x-app-layout>
