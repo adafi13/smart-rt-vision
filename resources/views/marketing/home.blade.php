@@ -171,9 +171,9 @@
                 </p>
 
                 <!-- CTA Buttons -->
-                <div class="flex flex-col sm:flex-row gap-3 mb-8">
-                    <a href="{{ route('register') }}" class="flex items-center justify-center gap-2 w-full sm:w-auto px-7 py-4 rounded-2xl font-bold text-sm text-slate-900 bg-indigo-400 hover:bg-indigo-300 transition-all hover:scale-[1.01] shadow-lg shadow-indigo-500/30">
-                        MULAI GRATIS 14 HARI →
+                <div class="mb-10 mt-2">
+                    <a href="#cara-kerja" class="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-2xl font-bold text-sm text-slate-900 bg-indigo-400 hover:bg-indigo-300 transition-all hover:scale-[1.05] shadow-lg shadow-indigo-500/30">
+                        LIHAT DEMO FITUR →
                     </a>
                 </div>
 
