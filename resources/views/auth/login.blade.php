@@ -73,14 +73,7 @@
             @error('password') <p class="auth-error">{{ $message }}</p> @enderror
         </div>
 
-        <!-- Remember Me -->
-        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-            <input id="remember_me" name="remember" type="checkbox"
-                   style="width:16px;height:16px;border-radius:4px;accent-color:#2563eb;cursor:pointer;"
-                   {{ old('remember') || request()->cookie('remembered_email') ? 'checked' : '' }}>
-            <span style="font-size:13px;color:#64748b;font-weight:500;">Ingat sesi saya</span>
-        </label>
-
+        <!-- Note: Fitur "Ingat Saya" dihapus untuk mengaktifkan Auto-Logout demi keamanan -->
         <!-- Submit -->
         <button type="submit" id="loginBtn" class="auth-btn" style="margin-top:4px;">
             <span id="btnText" style="display:flex;align-items:center;justify-content:center;gap:8px;">
