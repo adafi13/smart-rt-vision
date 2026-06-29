@@ -79,6 +79,46 @@
         .tilt-card > * {
             transform: translateZ(20px); /* Push inner elements slightly forward in 3D space */
         }
+
+        /* Custom 3D Modal Transition Classes */
+        .modal-backdrop-parent {
+            perspective: 1000px;
+        }
+        .backdrop-enter-active {
+            transition: opacity 0.3s ease-out;
+        }
+        .backdrop-leave-active {
+            transition: opacity 0.25s ease-in;
+        }
+        .backdrop-enter-start, .backdrop-leave-end {
+            opacity: 0;
+        }
+        .backdrop-enter-end, .backdrop-leave-start {
+            opacity: 1;
+        }
+
+        .modal-enter-active {
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease-out;
+        }
+        .modal-leave-active {
+            transition: transform 0.25s cubic-bezier(0.25, 1, 0.50, 1), opacity 0.2s ease-in;
+        }
+        .modal-enter-start {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95) rotateX(8deg);
+        }
+        .modal-enter-end {
+            opacity: 1;
+            transform: translateY(0) scale(1) rotateX(0deg);
+        }
+        .modal-leave-start {
+            opacity: 1;
+            transform: translateY(0) scale(1) rotateX(0deg);
+        }
+        .modal-leave-end {
+            opacity: 0;
+            transform: translateY(25px) scale(0.96) rotateX(6deg);
+        }
     </style>
 </head>
 <body x-data="{ modal: null }" @keydown.escape.window="modal = null">
@@ -860,22 +900,22 @@
     <!-- ===================== MODALS ( ALPINE ) ===================== -->
     <div x-show="modal !== null" 
          style="display: none; background: rgba(15,23,42,0.8); backdrop-filter: blur(8px);" 
-         class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-250"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0">
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 modal-backdrop-parent" 
+         x-transition:enter="backdrop-enter-active"
+         x-transition:enter-start="backdrop-enter-start"
+         x-transition:enter-end="backdrop-enter-end"
+         x-transition:leave="backdrop-leave-active"
+         x-transition:leave-start="backdrop-leave-start"
+         x-transition:leave-end="backdrop-leave-end">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 max-h-[90vh] overflow-y-auto shadow-2xl relative origin-center" 
              @click.away="modal = null" 
              x-show="modal !== null"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-8 scale-95 [transform:perspective(800px)_rotateX(10deg)]"
-             x-transition:enter-end="opacity-100 translate-y-0 scale-100 [transform:perspective(800px)_rotateX(0deg)]"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 scale-100 [transform:perspective(800px)_rotateX(0deg)]"
-             x-transition:leave-end="opacity-0 translate-y-8 scale-95 [transform:perspective(800px)_rotateX(10deg)]">
+             x-transition:enter="modal-enter-active"
+             x-transition:enter-start="modal-enter-start"
+             x-transition:enter-end="modal-enter-end"
+             x-transition:leave="modal-leave-active"
+             x-transition:leave-start="modal-leave-start"
+             x-transition:leave-end="modal-leave-end">
                 
                 <!-- Modal Close -->
                 <button @click="modal = null" class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors">
