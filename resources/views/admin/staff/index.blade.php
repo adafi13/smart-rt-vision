@@ -10,10 +10,10 @@
         
         <!-- Action Toolbar -->
         <div class="flex justify-end mb-6">
-            <button @click="$dispatch('open-modal', 'add-staff')" class="btn-primary w-full sm:w-auto justify-center">
+            <a href="{{ route('admin.staff.create') }}" class="btn-primary w-full sm:w-auto justify-center">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Tambah Pengurus
-            </button>
+            </a>
         </div>
         <!-- Error & Success Messages -->
         @if(session('success'))
@@ -86,10 +86,10 @@
                                 @endif
                             </td>
                             <td class="p-4 text-right flex items-center justify-end gap-2">
-                                <button @click="$dispatch('open-modal', 'edit-staff-{{ $staff->id }}')" class="text-indigo-600 hover:text-indigo-900 font-semibold text-xs bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1">
+                                <a href="{{ route('admin.staff.edit', $staff) }}" class="text-indigo-600 hover:text-indigo-900 font-semibold text-xs bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                     Edit
-                                </button>
+                                </a>
                                 
                                 <button @click="$dispatch('open-modal', 'reset-password-{{ $staff->id }}')" class="text-amber-600 hover:text-amber-900 font-semibold text-xs bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
@@ -105,40 +105,7 @@
                             </td>
                         </tr>
 
-                        <!-- Edit Modal -->
-                        <x-modal name="edit-staff-{{ $staff->id }}" :show="false" maxWidth="md">
-                            <div class="p-6">
-                                <h2 class="text-lg font-bold text-gray-900 mb-4">Edit Pengurus: {{ $staff->name }}</h2>
-                                <form action="{{ route('admin.staff.update', $staff) }}" method="POST" class="space-y-4">
-                                    @csrf
-                                    @method('PUT')
-                                    <div>
-                                        <label class="label">Nama Lengkap</label>
-                                        <input type="text" name="name" value="{{ $staff->name }}" class="input-field" required>
-                                    </div>
-                                    <div>
-                                        <label class="label">Email / Username</label>
-                                        <input type="email" name="email" value="{{ $staff->email }}" class="input-field" required>
-                                    </div>
-                                    <div>
-                                        <label class="label">Jabatan (Role)</label>
-                                        <select name="tenant_role" class="input-field" required>
-                                            <option value="owner" {{ (empty($staff->tenant_role) || $staff->tenant_role === 'owner') ? 'selected' : '' }}>Ketua RT (Owner)</option>
-                                            <option value="wakil_ketua" {{ $staff->tenant_role === 'wakil_ketua' ? 'selected' : '' }}>Wakil Ketua RT</option>
-                                            <option value="sekretaris" {{ $staff->tenant_role === 'sekretaris' ? 'selected' : '' }}>Sekretaris</option>
-                                            <option value="bendahara" {{ $staff->tenant_role === 'bendahara' ? 'selected' : '' }}>Bendahara</option>
-                                            <option value="keamanan" {{ $staff->tenant_role === 'keamanan' ? 'selected' : '' }}>Seksi Keamanan</option>
-                                            <option value="humas" {{ $staff->tenant_role === 'humas' ? 'selected' : '' }}>Seksi Humas</option>
-                                            <option value="pembangunan" {{ $staff->tenant_role === 'pembangunan' ? 'selected' : '' }}>Seksi Pembangunan</option>
-                                        </select>
-                                    </div>
-                                    <div class="mt-6 flex justify-end gap-3">
-                                        <button type="button" @click="$dispatch('close')" class="px-4 py-2 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
-                                        <button type="submit" class="btn-primary">Simpan Perubahan</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </x-modal>
+
 
                         <!-- Reset Password Modal -->
                         <x-modal name="reset-password-{{ $staff->id }}" :show="false" maxWidth="sm">
@@ -233,10 +200,10 @@
                     </div>
                     
                     <div class="flex items-center gap-2 mt-4 pt-4 border-t border-gray-50">
-                        <button @click="$dispatch('open-modal', 'edit-staff-{{ $staff->id }}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl font-semibold text-xs transition-colors">
+                        <a href="{{ route('admin.staff.edit', $staff) }}" class="flex-1 flex items-center justify-center gap-1.5 py-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl font-semibold text-xs transition-colors">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                             Edit
-                        </button>
+                        </a>
                         
                         <button @click="$dispatch('open-modal', 'reset-password-{{ $staff->id }}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-xl font-semibold text-xs transition-colors">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
@@ -265,43 +232,4 @@
         </div>
     </div>
 
-    <!-- Add Staff Modal -->
-    <x-modal name="add-staff" :show="false" maxWidth="md">
-        <div class="p-6">
-            <h2 class="text-lg font-bold text-gray-900 mb-1">Tambah Pengurus RT</h2>
-            <p class="text-sm text-gray-500 mb-5">Berikan akses kepada sekretaris atau bendahara untuk membantu Anda.</p>
-            
-            <form action="{{ route('admin.staff.store') }}" method="POST" class="space-y-4">
-                @csrf
-                <div>
-                    <label class="label">Nama Lengkap</label>
-                    <input type="text" name="name" class="input-field" required placeholder="Contoh: Budi Santoso">
-                </div>
-                <div>
-                    <label class="label">Email / Username</label>
-                    <input type="email" name="email" class="input-field" required placeholder="Contoh: sekretaris@rt01.com">
-                </div>
-                <div>
-                    <label class="label">Jabatan (Hak Akses)</label>
-                    <select name="tenant_role" class="input-field" required>
-                        <option value="owner">Ketua RT (Akses Penuh)</option>
-                        <option value="wakil_ketua">Wakil Ketua RT (Akses Penuh)</option>
-                        <option value="sekretaris">Sekretaris (Warga, Surat, Berita, Organisasi)</option>
-                        <option value="bendahara">Bendahara (Kas, Iuran, Tunggakan)</option>
-                        <option value="keamanan">Seksi Keamanan (Ronda, Panic Alert, Laporan)</option>
-                        <option value="humas">Seksi Humas (Berita, Polling, Buku Tamu)</option>
-                        <option value="pembangunan">Seksi Pembangunan (Inventaris, Laporan)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="label">Password Login</label>
-                    <input type="text" name="password" class="input-field" required placeholder="Minimal 8 karakter">
-                </div>
-                <div class="mt-6 flex justify-end gap-3">
-                    <button type="button" @click="$dispatch('close')" class="px-4 py-2 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
-                    <button type="submit" class="btn-primary">Tambahkan</button>
-                </div>
-            </form>
-        </div>
-    </x-modal>
 </x-app-layout>

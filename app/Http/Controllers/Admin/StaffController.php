@@ -23,6 +23,11 @@ class StaffController extends Controller
         return view('admin.staff.index', compact('staffs'));
     }
 
+    public function create()
+    {
+        return view('admin.staff.create');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -45,7 +50,16 @@ class StaffController extends Controller
             'tenant_id' => auth()->user()->tenant_id,
         ]);
 
-        return back()->with('success', 'Akun pengurus berhasil ditambahkan.');
+        return redirect()->route('admin.staff.index')->with('success', 'Akun pengurus berhasil ditambahkan.');
+    }
+
+    public function edit(User $staff)
+    {
+        if ($staff->tenant_id !== auth()->user()->tenant_id) {
+            abort(403);
+        }
+
+        return view('admin.staff.edit', compact('staff'));
     }
 
     public function update(Request $request, User $staff)
@@ -82,7 +96,7 @@ class StaffController extends Controller
         
         $staff->save();
 
-        return back()->with('success', 'Data pengurus berhasil diperbarui.');
+        return redirect()->route('admin.staff.index')->with('success', 'Data pengurus berhasil diperbarui.');
     }
 
     public function resetPassword(Request $request, User $staff)

@@ -200,7 +200,9 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
 
     Route::prefix('admin/staff')->name('admin.staff.')->middleware('rt_role:owner')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\StaffController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\StaffController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Admin\StaffController::class, 'store'])->name('store');
+        Route::get('/{staff}/edit', [\App\Http\Controllers\Admin\StaffController::class, 'edit'])->name('edit');
         Route::put('/{staff}', [\App\Http\Controllers\Admin\StaffController::class, 'update'])->name('update');
         Route::post('/{staff}/reset-password', [\App\Http\Controllers\Admin\StaffController::class, 'resetPassword'])->name('reset_password');
         Route::delete('/{staff}', [\App\Http\Controllers\Admin\StaffController::class, 'destroy'])->name('destroy');
