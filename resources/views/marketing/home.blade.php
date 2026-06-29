@@ -151,7 +151,7 @@
         <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(55% 65% at 50% 42%, rgba(10,9,21,0.65) 0%, rgba(10,9,21,0.25) 55%, transparent 75%);"></div>
 
         <!-- Single responsive layout -->
-        <div class="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 lg:pt-36 lg:pb-24 flex flex-col lg:flex-row lg:items-center lg:gap-16">
+        <div class="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-40 pb-16 lg:pt-40 lg:pb-24 flex flex-col lg:flex-row lg:items-center lg:gap-16">
 
             <!-- LEFT: Text Content -->
             <div class="flex-1 flex flex-col items-center text-center lg:items-start lg:text-left">
@@ -172,8 +172,8 @@
 
                 <!-- CTA Buttons -->
                 <div class="mb-10 mt-2 w-full max-w-xs sm:max-w-none">
-                    <a href="#cara-kerja" class="flex sm:inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-2xl font-bold text-sm text-slate-900 bg-indigo-400 hover:bg-indigo-300 transition-all hover:scale-[1.05] shadow-lg shadow-indigo-500/30">
-                        LIHAT DEMO FITUR →
+                    <a href="{{ route('register') }}" class="flex sm:inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-2xl font-bold text-sm text-slate-900 bg-indigo-400 hover:bg-indigo-300 transition-all hover:scale-[1.05] shadow-lg shadow-indigo-500/30">
+                        UJI COBA 14 HARI →
                     </a>
                 </div>
 
