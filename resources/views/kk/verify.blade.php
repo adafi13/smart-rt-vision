@@ -139,15 +139,17 @@
                                         <div>
                                             <label class="text-xs text-gray-500 mb-1 block">Gender</label>
                                             <select name="anggota[{{ $i }}][jenis_kelamin]"
-                                                    class="w-full rounded-lg px-3 py-2 text-xs text-gray-900 outline-none border border-gray-200 bg-white focus:border-indigo-400 transition-all">
+                                                    class="w-full rounded-lg px-3 py-2 text-xs text-gray-900 outline-none border transition-all {{ isset($warn['jenis_kelamin']) ? 'border-amber-300 bg-amber-50' : 'border-gray-200 bg-white focus:border-indigo-400' }}">
                                                 <option value="Laki-laki" {{ ($anggota['jenis_kelamin']??'')==='Laki-laki'?'selected':'' }}>Laki-laki</option>
                                                 <option value="Perempuan" {{ ($anggota['jenis_kelamin']??'')==='Perempuan'?'selected':'' }}>Perempuan</option>
                                             </select>
+                                            @if(isset($warn['jenis_kelamin'])) <p class="text-[10px] text-amber-600 mt-0.5">{{ implode(', ', (array)$warn['jenis_kelamin']) }}</p> @endif
                                         </div>
                                         <div>
                                             <label class="text-xs text-gray-500 mb-1 block">Tgl. Lahir</label>
                                             <input type="date" name="anggota[{{ $i }}][tanggal_lahir]" value="{{ $anggota['tanggal_lahir'] ?? '' }}"
-                                                   class="w-full rounded-lg px-3 py-2 text-xs text-gray-900 outline-none border border-gray-200 bg-white focus:border-indigo-400 transition-all">
+                                                   class="w-full rounded-lg px-3 py-2 text-xs text-gray-900 outline-none border transition-all {{ isset($warn['tanggal_lahir']) ? 'border-amber-300 bg-amber-50' : 'border-gray-200 bg-white focus:border-indigo-400' }}">
+                                            @if(isset($warn['tanggal_lahir'])) <p class="text-[10px] text-amber-600 mt-0.5">{{ implode(', ', (array)$warn['tanggal_lahir']) }}</p> @endif
                                         </div>
                                     </div>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
@@ -159,7 +161,8 @@
                                         <div>
                                             <label class="text-xs text-gray-500 mb-1 block">Agama</label>
                                             <input type="text" name="anggota[{{ $i }}][agama]" value="{{ $anggota['agama'] ?? '' }}"
-                                                   class="w-full rounded-lg px-3 py-2 text-xs text-gray-900 outline-none border border-gray-200 bg-white focus:border-indigo-400 transition-all">
+                                                   class="w-full rounded-lg px-3 py-2 text-xs text-gray-900 outline-none border transition-all {{ isset($warn['agama']) ? 'border-amber-300 bg-amber-50' : 'border-gray-200 bg-white focus:border-indigo-400' }}">
+                                            @if(isset($warn['agama'])) <p class="text-[10px] text-amber-600 mt-0.5">{{ implode(', ', (array)$warn['agama']) }}</p> @endif
                                         </div>
                                     </div>
                                     <div class="grid grid-cols-3 gap-2 mt-2">
@@ -176,7 +179,8 @@
                                         <div>
                                             <label class="text-xs text-gray-500 mb-1 block">Status Kawin</label>
                                             <input type="text" name="anggota[{{ $i }}][status_perkawinan]" value="{{ $anggota['status_perkawinan'] ?? '' }}"
-                                                   class="w-full rounded-lg px-3 py-2 text-xs text-gray-900 outline-none border border-gray-200 bg-white focus:border-indigo-400 transition-all">
+                                                   class="w-full rounded-lg px-3 py-2 text-xs text-gray-900 outline-none border transition-all {{ isset($warn['status_perkawinan']) ? 'border-amber-300 bg-amber-50' : 'border-gray-200 bg-white focus:border-indigo-400' }}">
+                                            @if(isset($warn['status_perkawinan'])) <p class="text-[10px] text-amber-600 mt-0.5">{{ implode(', ', (array)$warn['status_perkawinan']) }}</p> @endif
                                         </div>
                                     </div>
                                     <input type="hidden" name="anggota[{{ $i }}][hubungan_keluarga]" value="{{ $anggota['hubungan_keluarga'] ?? '' }}">

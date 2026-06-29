@@ -56,6 +56,48 @@ class NikValidator
             $warnings['nik'][] = 'Peringatan: NIK ini sudah terdaftar di sistem.';
         }
 
+        // 4. Validasi Masa Depan Tanggal Lahir
+        if (!empty($tanggalLahir)) {
+            if (strtotime($tanggalLahir) > time()) {
+                $warnings['tanggal_lahir'][] = 'Peringatan: Tanggal lahir tidak boleh di masa depan.';
+            }
+        }
+
+        // 5. Validasi Hubungan Keluarga dan Gender
+        if (!empty($jenisKelamin)) {
+            $hubungan = strtolower($member['hubungan_keluarga'] ?? '');
+            if ($hubungan === 'istri' && $jenisKelamin !== 'Perempuan') {
+                $warnings['jenis_kelamin'][] = 'Peringatan: Anggota dengan hubungan keluarga "Istri" harus berjenis kelamin Perempuan.';
+            }
+        }
+
+        // 6. Validasi Status Perkawinan Anak di Bawah Umur
+        if (!empty($tanggalLahir)) {
+            $birthYear = (int)date('Y', strtotime($tanggalLahir));
+            $currentYear = (int)date('Y');
+            $age = $currentYear - $birthYear;
+            $statusKawin = strtolower($member['status_perkawinan'] ?? '');
+            if ($age < 15 && !empty($statusKawin) && $statusKawin !== 'belum kawin' && $statusKawin !== 'belum kawin') {
+                $warnings['status_perkawinan'][] = 'Peringatan: Status perkawinan anak di bawah 15 tahun umumnya adalah "Belum Kawin".';
+            }
+        }
+
+        // 7. Validasi Agama Standar (Deteksi Typos hasil OCR)
+        if (!empty($member['agama'])) {
+            $agamaList = ['islam', 'kristen', 'katolik', 'hindu', 'buddha', 'khonghucu', 'protestan', 'penghayat'];
+            $agamaInput = strtolower(trim($member['agama']));
+            $matched = false;
+            foreach ($agamaList as $a) {
+                if (str_contains($agamaInput, $a)) {
+                    $matched = true;
+                    break;
+                }
+            }
+            if (!$matched) {
+                $warnings['agama'][] = 'Peringatan: Agama tidak standar. Pastikan tidak ada salah ketik.';
+            }
+        }
+
         return $warnings;
     }
 

@@ -89,9 +89,32 @@ class FamilyController extends Controller
 
         $warningsKk = NikValidator::validateKk($data['nomor_kk'] ?? '');
         $warningsAnggota = [];
+
+        // 1. Dapatkan Tahun Lahir Kepala Keluarga (KK)
+        $parentBirthYear = null;
+        if (isset($data['anggota']) && is_array($data['anggota'])) {
+            foreach ($data['anggota'] as $anggota) {
+                $hubungan = strtolower($anggota['hubungan_keluarga'] ?? '');
+                if (($hubungan === 'kepala keluarga' || $hubungan === 'suami') && !empty($anggota['tanggal_lahir'])) {
+                    $parentBirthYear = (int)date('Y', strtotime($anggota['tanggal_lahir']));
+                    break;
+                }
+            }
+        }
+
+        // 2. Jalankan validasi dasar & validasi relasi umur orang tua-anak
         if (isset($data['anggota']) && is_array($data['anggota'])) {
             foreach ($data['anggota'] as $i => $anggota) {
                 $warningsAnggota[$i] = NikValidator::validate($anggota);
+
+                $hubungan = strtolower($anggota['hubungan_keluarga'] ?? '');
+                if ($hubungan === 'anak' && !empty($anggota['tanggal_lahir']) && $parentBirthYear !== null) {
+                    $childBirthYear = (int)date('Y', strtotime($anggota['tanggal_lahir']));
+                    // Jika anak lahir sebelum orang tua atau selisih umur kurang dari 14 tahun
+                    if ($childBirthYear <= $parentBirthYear || ($childBirthYear - $parentBirthYear) < 14) {
+                        $warningsAnggota[$i]['tanggal_lahir'][] = 'Peringatan: Tahun lahir anak (' . $childBirthYear . ') tidak selaras dengan Kepala Keluarga (' . $parentBirthYear . ').';
+                    }
+                }
             }
         }
 
