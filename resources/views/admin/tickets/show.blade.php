@@ -31,7 +31,7 @@
                                     <span class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ $ticket->user->name }}</span>
                                     <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full uppercase tracking-widest border border-emerald-200 dark:border-emerald-500/20">Pelapor</span>
                                 </div>
-                                <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-5 text-sm text-slate-700 dark:text-slate-300 font-bold leading-relaxed whitespace-pre-wrap border border-slate-100 dark:border-slate-700 shadow-inner">{{ $ticket->description }}</div>
+                                <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-5 text-sm text-slate-700 dark:text-slate-300 font-bold leading-relaxed whitespace-pre-wrap border border-slate-100 dark:border-slate-700 shadow-inner">{{ $ticket->replies->first()?->message ?? '-' }}</div>
                                 
                                 <div class="flex items-center gap-2 mt-4 text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -54,7 +54,7 @@
 
                 {{-- Replies Thread --}}
                 <div class="space-y-8">
-                    @foreach($ticket->replies as $reply)
+                    @foreach($ticket->replies->skip(1) as $reply)
                         <div class="flex items-start gap-5 {{ $reply->is_staff_reply ? 'flex-row-reverse' : '' }}">
                             <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-black shrink-0 border transition-all duration-300 {{ $reply->is_staff_reply ? 'bg-slate-900 dark:bg-emerald-600 text-white border-slate-800 dark:border-emerald-500 shadow-xl shadow-slate-900/20 dark:shadow-none' : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20 shadow-lg shadow-emerald-500/10 dark:shadow-none' }}">
                                 {{ strtoupper(substr($reply->user->name, 0, 1)) }}
@@ -63,7 +63,7 @@
                                 <div class="flex items-center gap-2 mb-3 {{ $reply->is_staff_reply ? 'flex-row-reverse' : '' }}">
                                     <span class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ $reply->user->name }}</span>
                                     @if($reply->is_staff_reply)
-                                        <span class="text-[9px] font-black text-emerald-500 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full uppercase tracking-widest border border-emerald-500/20">ApoApps Team</span>
+                                        <span class="text-[9px] font-black text-emerald-500 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full uppercase tracking-widest border border-emerald-500/20">SmartRT Vision Team</span>
                                     @endif
                                 </div>
                                 <div class="{{ $reply->is_staff_reply ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-xl shadow-slate-900/20 dark:shadow-none' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 shadow-lg shadow-slate-200/40 dark:shadow-none' }} rounded-[2rem] p-6 text-sm font-bold leading-relaxed whitespace-pre-wrap transition-colors">
@@ -86,7 +86,7 @@
                             <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                             <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Tambahkan Balasan</h4>
                         </div>
-                        <form method="POST" action="{{ route('admin.tickets.reply', $ticket) }}"  class="space-y-6">
+                        <form method="POST" action="{{ route('admin.tickets.reply', $ticket) }}" enctype="multipart/form-data" class="space-y-6">
                             @csrf
                             <textarea name="message" rows="5" required placeholder="Tulis balasan atau informasi tambahan Anda di sini..."
                                       class="w-full px-6 py-5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-[2rem] text-sm font-bold text-slate-700 dark:text-white placeholder-slate-300 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-500 focus:border-transparent resize-none transition-all leading-relaxed">{{ old('message') }}</textarea>

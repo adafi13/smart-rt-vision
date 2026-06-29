@@ -86,20 +86,43 @@ class TicketController extends Controller
         }
 
         $request->validate([
-            'message' => 'required|string',
+            'message'    => 'required|string',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,zip|max:10240',
         ]);
+
+        $attachmentPath = null;
+        if ($request->hasFile('attachment') && $request->file('attachment')->isValid()) {
+            $attachmentPath = $request->file('attachment')->store('ticket-attachments', 'public');
+        }
 
         TicketReply::create([
-            'ticket_id' => $ticket->id,
-            'user_id' => Auth::id(),
-            'message' => $request->message,
+            'ticket_id'      => $ticket->id,
+            'user_id'        => Auth::id(),
+            'message'        => $request->message,
+            'is_staff_reply' => false,
+            'attachment'     => $attachmentPath,
         ]);
 
-        // Auto update to open so super admin knows there's a new reply from tenant
+        // Let super admin know there's a new reply from tenant side
         if ($ticket->status !== 'closed') {
             $ticket->update(['status' => 'open']);
         }
 
         return back()->with('success', 'Balasan berhasil dikirim.');
+    }
+
+    public function close(Ticket $ticket)
+    {
+        if ($ticket->tenant_id !== auth()->user()->tenant_id) {
+            abort(404);
+        }
+
+        $ticket->update([
+            'status'      => 'resolved',
+            'resolved_at' => now(),
+        ]);
+
+        return redirect()->route('admin.tickets.index')
+            ->with('success', 'Tiket #' . $ticket->ticket_number . ' telah ditandai sebagai selesai.');
     }
 }

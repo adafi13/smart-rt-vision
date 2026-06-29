@@ -264,6 +264,7 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::post('/', [\App\Http\Controllers\Admin\TicketController::class, 'store'])->name('store');
         Route::get('/{ticket}', [\App\Http\Controllers\Admin\TicketController::class, 'show'])->name('show');
         Route::post('/{ticket}/reply', [\App\Http\Controllers\Admin\TicketController::class, 'reply'])->name('reply');
+        Route::post('/{ticket}/close', [\App\Http\Controllers\Admin\TicketController::class, 'close'])->name('close');
     });
 });
 
