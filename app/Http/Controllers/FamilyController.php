@@ -105,9 +105,34 @@ class FamilyController extends Controller
         }
 
         $request->validate([
-            'nomor_kk' => 'required|string',
+            'nomor_kk' => 'required|string|size:16',
             'nama_kepala_keluarga' => 'required|string',
         ]);
+
+        $tenantId = app('currentTenant')->id;
+
+        // 1. Validasi Keunikan Nomor KK pada RT ini
+        $existsKk = Family::where('tenant_id', $tenantId)
+            ->where('nomor_kk', $request->nomor_kk)
+            ->exists();
+        if ($existsKk) {
+            return back()->with('error', 'Gagal: Nomor KK ' . $request->nomor_kk . ' sudah terdaftar di database RT Anda.')->withInput();
+        }
+
+        // 2. Validasi Keunikan NIK Anggota pada RT ini
+        if ($request->has('anggota') && is_array($request->anggota)) {
+            foreach ($request->anggota as $anggotaData) {
+                if (empty($anggotaData['nik'])) continue;
+                
+                $existsNik = Member::whereHas('family', function ($q) use ($tenantId) {
+                    $q->where('tenant_id', $tenantId);
+                })->where('nik', $anggotaData['nik'])->exists();
+                
+                if ($existsNik) {
+                    return back()->with('error', 'Gagal: Warga dengan NIK ' . $anggotaData['nik'] . ' (' . ($anggotaData['nama'] ?? 'Tanpa Nama') . ') sudah terdaftar di database RT Anda.')->withInput();
+                }
+            }
+        }
 
         try {
             \Illuminate\Support\Facades\DB::transaction(function () use ($request) {
