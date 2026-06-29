@@ -70,6 +70,15 @@
         ::-webkit-scrollbar-track { background: #f8fafc; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* 3D Tilt Card Transition */
+        .tilt-card { 
+            transition: transform 0.15s ease-out, box-shadow 0.3s ease, border-color 0.3s ease; 
+            transform-style: preserve-3d;
+        }
+        .tilt-card > * {
+            transform: translateZ(20px); /* Push inner elements slightly forward in 3D space */
+        }
     </style>
 </head>
 <body x-data="{ modal: null }" @keydown.escape.window="modal = null">
@@ -81,10 +90,13 @@
     <section id="hero" class="relative min-h-[100dvh] flex items-center overflow-hidden bg-[#09090b]">
         <!-- Modern Clean Background Pattern -->
         <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-            <!-- Sleek Radial Gradient for depth (not generic blobs) -->
-            <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.15),rgba(255,255,255,0))]"></div>
-            <!-- Ultra-faint grid pattern -->
-            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiPjxwYXRoIGQ9Ik0wIDI0VjBIMjQiLz48L2c+PC9zdmc+')] [mask-image:linear-gradient(to_bottom,white,transparent_80%)]"></div>
+            <!-- Animated Glowing Mesh Blurs -->
+            <div class="absolute -top-[10%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-indigo-600/10 blur-[120px] animate-pulse" style="animation-duration: 8s;"></div>
+            <div class="absolute top-[40%] right-[5%] w-[45vw] h-[45vw] rounded-full bg-cyan-500/10 blur-[130px] animate-pulse" style="animation-duration: 12s; animation-delay: 2s;"></div>
+            <div class="absolute -bottom-[10%] left-[20%] w-[40vw] h-[40vw] rounded-full bg-purple-500/10 blur-[110px] animate-pulse" style="animation-duration: 10s; animation-delay: 4s;"></div>
+            
+            <!-- Ultra-faint radial grid pattern with animation -->
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiPjxwYXRoIGQ9Ik0wIDI0VjBIMjQiLz48L2c+PC9zdmc+')] [mask-image:radial-gradient(ellipse_at_center,white_80%,transparent_100%)] opacity-35 animate-pulse" style="animation-duration: 15s;"></div>
         </div>
 
         <div class="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 py-24 md:py-32 w-full mt-10 sm:mt-0">
@@ -141,7 +153,7 @@
                                 : null;
                         @endphp
                         
-                        <div class="col-span-2 sm:col-span-3 lg:col-span-2 p-5 sm:p-6 rounded-3xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 hover:bg-slate-900/80 hover:border-slate-700 transition-colors">
+                        <div class="col-span-2 sm:col-span-3 lg:col-span-2 p-5 sm:p-6 rounded-3xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 hover:bg-slate-900/80 hover:border-slate-700 transition-all duration-300 tilt-card cursor-pointer shadow-lg hover:shadow-indigo-500/10">
                             <div class="relative flex-shrink-0">
                                 @if($ketua && $ketua->photo)
                                     <img src="{{ asset('storage/'.$ketua->photo) }}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-white/10" alt="{{ $ketua->name }}">
@@ -172,19 +184,19 @@
                         </div>
 
                         <!-- Stats Cards: Kartu Keluarga -->
-                        <div class="col-span-1 p-5 rounded-3xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl flex flex-col justify-center text-center hover:bg-slate-900/80 transition-colors">
+                        <div class="col-span-1 p-5 rounded-3xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl flex flex-col justify-center text-center hover:bg-slate-900/80 transition-all duration-300 tilt-card cursor-pointer shadow-lg hover:shadow-indigo-500/10">
                             <p class="text-3xl sm:text-4xl font-black text-white mb-1">{{ number_format($total_kk) }}</p>
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Kepala Keluarga</p>
                         </div>
 
                         <!-- Stats Cards: Penduduk -->
-                        <div class="col-span-1 p-5 rounded-3xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl flex flex-col justify-center text-center hover:bg-slate-900/80 transition-colors">
+                        <div class="col-span-1 p-5 rounded-3xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl flex flex-col justify-center text-center hover:bg-slate-900/80 transition-all duration-300 tilt-card cursor-pointer shadow-lg hover:shadow-indigo-500/10">
                             <p class="text-3xl sm:text-4xl font-black text-white mb-1">{{ number_format($total_warga) }}</p>
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Total Penduduk</p>
                         </div>
                         
                         <!-- Stats Cards: Kas (Spans full width on mobile, 2 cols on desktop if needed, or fits in 3 col layout on tablet) -->
-                        <div class="col-span-2 sm:col-span-1 lg:col-span-2 p-5 rounded-3xl bg-gradient-to-br from-indigo-900/50 to-slate-900/60 border border-indigo-500/20 backdrop-blur-xl flex flex-col justify-center text-center sm:text-left hover:border-indigo-500/40 transition-colors">
+                        <div class="col-span-2 sm:col-span-1 lg:col-span-2 p-5 rounded-3xl bg-gradient-to-br from-indigo-900/50 to-slate-900/60 border border-indigo-500/20 backdrop-blur-xl flex flex-col justify-center text-center sm:text-left hover:border-indigo-500/40 transition-all duration-300 tilt-card cursor-pointer shadow-lg hover:shadow-indigo-500/20">
                             <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
                                 <div>
                                     <p class="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1 flex items-center justify-center sm:justify-start gap-1.5">
@@ -1731,6 +1743,29 @@
                 navigator.serviceWorker.register('/sw.js');
             });
         }
+    </script>
+    
+    <!-- 3D Tilt Card JavaScript Effect -->
+    <script>
+        document.querySelectorAll('.tilt-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const xc = rect.width / 2;
+                const yc = rect.height / 2;
+                const angleX = (yc - y) / 10; 
+                const angleY = (x - xc) / 10; 
+                card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) scale3d(1.02, 1.02, 1.02)`;
+                
+                // Add dynamically moving subtle inner drop-shadow
+                card.style.boxShadow = `${-angleY * 1.5}px ${angleX * 1.5}px 30px rgba(99, 102, 241, 0.25)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                card.style.boxShadow = '';
+            });
+        });
     </script>
     
     <!-- Load EZUIKIT for EZVIZ CCTV -->
