@@ -151,7 +151,7 @@
         <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(55% 65% at 50% 42%, rgba(10,9,21,0.65) 0%, rgba(10,9,21,0.25) 55%, transparent 75%);"></div>
 
         <!-- ApoApps-style: 2-col on desktop, stacked on mobile -->
-        <div class="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 pt-28 pb-16 sm:pt-36 sm:pb-24 flex flex-col lg:flex-row lg:items-center lg:gap-16">
+        <div class="relative z-10 w-full max-w-6xl mx-auto px-6 sm:px-10 lg:px-12 pt-28 pb-16 sm:pt-36 sm:pb-24 flex flex-col lg:flex-row lg:items-center lg:gap-16">
 
             <!-- LEFT: Text Content -->
             <div class="flex-1 text-left">
@@ -175,10 +175,10 @@
 
                 <!-- CTA Buttons -->
                 <div class="flex flex-col sm:flex-row gap-3 mb-10">
-                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl font-bold text-sm text-slate-900 bg-indigo-400 hover:bg-indigo-300 transition-all hover:scale-[1.02] shadow-lg shadow-indigo-500/30 whitespace-nowrap">
-                        MULAI GRATIS 14 HARI →
+                    <a href="{{ route('register') }}" class="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-2xl font-bold text-sm text-slate-900 bg-indigo-400 hover:bg-indigo-300 transition-all hover:scale-[1.01] shadow-lg shadow-indigo-500/30">
+                        MULAI GRATIS 14 HARI &nbsp;→
                     </a>
-                    <a href="#cara-kerja" class="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl font-semibold text-sm text-slate-300 border border-white/15 bg-white/5 hover:bg-white/10 hover:text-white transition-all whitespace-nowrap">
+                    <a href="#cara-kerja" class="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-2xl font-semibold text-sm text-slate-300 border border-white/20 bg-white/5 hover:bg-white/10 hover:text-white transition-all">
                         LIHAT DEMO FITUR
                     </a>
                 </div>
