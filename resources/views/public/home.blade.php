@@ -265,7 +265,7 @@
             ]; @endphp
             
             @foreach($actions as $a)
-            <button type="button" @click="modal = '{{ $a['modal'] }}'" class="service-card group w-full md:w-[calc(50%-1.25rem)] lg:w-[calc(33.333%-1.25rem)] max-w-sm">
+            <button type="button" @click="modal = '{{ $a['modal'] }}'" class="service-card group w-full md:w-[calc(50%-1.25rem)] lg:w-[calc(33.333%-1.25rem)] max-w-sm tilt-card cursor-pointer shadow-sm hover:shadow-indigo-500/10">
                 <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-2 {{ $a['bg'] }} transition-transform duration-300 group-hover:scale-110">
                     <svg class="w-7 h-7" style="color: {{ $a['color'] }};" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $a['icon'] }}"/></svg>
                 </div>
@@ -861,7 +861,15 @@
 
     <!-- ===================== MODALS ( ALPINE ) ===================== -->
     <div x-show="modal !== null" style="display: none; background: rgba(15,23,42,0.8); backdrop-filter: blur(8px);" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" x-transition.opacity>
-        <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 max-h-[90vh] overflow-y-auto shadow-2xl relative" @click.away="modal = null" x-transition.scale.95 x-show="modal !== null">
+        <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 max-h-[90vh] overflow-y-auto shadow-2xl relative origin-bottom" 
+             @click.away="modal = null" 
+             x-show="modal !== null"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-12 scale-95 [transform:perspective(800px)_rotateX(12deg)]"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100 [transform:perspective(800px)_rotateX(0deg)]"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 scale-100 [transform:perspective(800px)_rotateX(0deg)]"
+             x-transition:leave-end="opacity-0 translate-y-12 scale-95 [transform:perspective(800px)_rotateX(12deg)]">
                 
                 <!-- Modal Close -->
                 <button @click="modal = null" class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors">
