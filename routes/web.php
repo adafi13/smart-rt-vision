@@ -22,6 +22,8 @@ use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\Public\BlogController;
+use App\Http\Controllers\SuperAdmin\ArticleController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,6 +42,9 @@ Route::post('/webhook/xendit', [BillingController::class, 'webhook'])->name('web
 
 // ===== HALAMAN JUALAN SAAS (marketing, publik) =====
 Route::get('/', [MarketingController::class, 'index'])->name('marketing.home');
+
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 Route::get('/syarat-dan-ketentuan', function () {
     return view('terms');
@@ -317,6 +322,9 @@ Route::middleware(['auth', 'super_admin'])->prefix('super-admin')->name('super-a
     // Pengumuman Global (terpisah)
     Route::resource('announcements', \App\Http\Controllers\SuperAdmin\AnnouncementController::class)->except('show');
     Route::post('announcements/{announcement}/toggle', [\App\Http\Controllers\SuperAdmin\AnnouncementController::class, 'toggleActive'])->name('announcements.toggle');
+
+    // Manajemen Blog / Artikel SEO
+    Route::resource('articles', ArticleController::class)->except('show');
 
     // Laporan Keuangan
     Route::get('finance', [\App\Http\Controllers\SuperAdmin\FinanceController::class, 'index'])->name('finance.index');
