@@ -16,9 +16,38 @@
             @csrf
             <input type="hidden" name="foto_path" value="{{ $fotoPath ?? '' }}">
 
-            <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
 
-                <!-- KK Info (3/5) -->
+                <!-- Column Kiri: Pratinjau Dokumen Asli (Sticky) -->
+                <div class="lg:col-span-2">
+                    <div class="sticky top-6 space-y-4">
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden p-4">
+                            <div class="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
+                                <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider">Dokumen Asli</h3>
+                                @if($fotoPath)
+                                <a href="{{ asset('storage/'.$fotoPath) }}" target="_blank" class="text-xs text-indigo-600 hover:underline flex items-center gap-1 font-bold">
+                                    Buka Tab Baru <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                </a>
+                                @endif
+                            </div>
+                            @if($fotoPath)
+                                @if(\Illuminate\Support\Str::endsWith($fotoPath, '.pdf'))
+                                    <iframe src="{{ asset('storage/'.$fotoPath) }}" class="w-full h-[65vh] rounded-2xl border border-gray-100 bg-gray-50"></iframe>
+                                @else
+                                    <div class="overflow-auto max-h-[65vh] rounded-2xl border border-gray-100 bg-gray-50 flex items-center justify-center p-2">
+                                        <img src="{{ asset('storage/'.$fotoPath) }}" class="max-w-full h-auto object-contain cursor-zoom-in" onclick="window.open(this.src)" title="Klik untuk memperbesar">
+                                    </div>
+                                @endif
+                            @else
+                                <div class="text-center py-12 text-gray-400">
+                                    <p class="text-xs">Dokumen tidak ditemukan.</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column Kanan: Formulir Verifikasi (Kepala & Anggota) -->
                 <div class="lg:col-span-3 space-y-4">
                     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                         <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-2.5 bg-gray-50">
@@ -72,10 +101,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Members (2/5) -->
-                <div class="lg:col-span-2">
                     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50">
                             <div class="flex items-center gap-2.5">
