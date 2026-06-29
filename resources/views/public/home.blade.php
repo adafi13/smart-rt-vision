@@ -104,13 +104,11 @@
                 
                 <!-- Left: Typography & Actions -->
                 <div class="w-full lg:w-1/2 text-center lg:text-left flex flex-col items-center lg:items-start">
-                    <!-- Premium Badge -->
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold text-indigo-200 border border-indigo-500/30 bg-indigo-500/10 backdrop-blur-md mb-6 transition-all hover:bg-indigo-500/20">
-                        <span class="relative flex h-2 w-2">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-                        </span>
-                        <span>PORTAL CERDAS WARGA &middot; {{ strtoupper($tenant->name ?? config('app.name', 'SmartRT Vision')) }}</span>
+                    <!-- Premium Accent Tagline -->
+                    <div class="inline-flex items-center gap-3 px-3 py-1.5 rounded-lg border-l-2 border-indigo-500 bg-indigo-950/20 backdrop-blur-sm mb-6 select-none">
+                        <span class="text-[10px] font-black tracking-[0.2em] text-indigo-400 uppercase">Portal Cerdas Warga</span>
+                        <span class="text-slate-700 text-sm font-light">|</span>
+                        <span class="text-[10px] font-black tracking-[0.1em] text-white uppercase">{{ strtoupper($tenant->name ?? config('app.name', 'SmartRT Vision')) }}</span>
                     </div>
                     
                     <h1 class="text-[2.5rem] sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight text-white mb-6">
