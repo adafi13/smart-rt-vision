@@ -8,52 +8,71 @@
 
     <div class="max-w-7xl mx-auto space-y-4 sm:space-y-6" x-data="{ tab: 'bulanan' }">
         
-        <!-- Filter Bulan/Tahun & Tabs -->
-        <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div class="flex gap-2 p-1 bg-gray-100/80 border border-gray-200 rounded-xl w-full sm:w-auto">
-                <button @click="tab = 'bulanan'" :class="tab === 'bulanan' ? 'bg-white shadow-sm text-gray-900 font-bold border border-gray-200/50' : 'text-gray-500 hover:text-gray-700 font-medium'" class="flex-1 sm:flex-none px-4 py-2 text-sm rounded-lg transition-all text-center">Bulan Ini</button>
-                <button @click="tab = 'tahunan'" :class="tab === 'tahunan' ? 'bg-white shadow-sm text-gray-900 font-bold border border-gray-200/50' : 'text-gray-500 hover:text-gray-700 font-medium'" class="flex-1 sm:flex-none px-4 py-2 text-sm rounded-lg transition-all text-center">Akumulasi {{ $year }}</button>
+        <!-- TOP SECTION: Info, Settings, and Filter -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+            
+            <!-- Banner Info & Settings -->
+            <div class="lg:col-span-2 bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-lg shadow-indigo-200/50">
+                <!-- Decorative Circle -->
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-10 right-20 w-32 h-32 bg-indigo-400/20 rounded-full blur-xl"></div>
+                
+                <div class="relative z-10 flex flex-col sm:flex-row justify-between items-start gap-5 h-full">
+                    <div class="flex-1 flex flex-col justify-between h-full">
+                        <div>
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-indigo-500/30 border border-indigo-400/30 text-indigo-100 text-[10px] font-bold uppercase tracking-wider mb-3">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                Info Sistem
+                            </div>
+                            <h3 class="text-xl sm:text-2xl font-black mb-2 leading-tight">Sistem Tunggakan Otomatis</h3>
+                            <p class="text-indigo-100 text-xs sm:text-sm max-w-xl leading-relaxed">
+                                Mendeteksi piutang secara <strong>otomatis (Time-based)</strong>. Warga yang belum mencatat iuran bulanan pada menu Kas Masuk akan langsung dicatat menunggak sesuai dengan tarif dasar RT.
+                            </p>
+                        </div>
+                        
+                        <div class="mt-6 flex flex-wrap items-center gap-3">
+                            <div class="px-4 py-2 bg-indigo-900/40 rounded-xl text-sm font-bold border border-indigo-500/30 backdrop-blur-sm">
+                                Tarif Dasar: <span class="text-white ml-1">Rp {{ number_format($nominalIuran, 0, ',', '.') }} <span class="text-indigo-200 text-xs font-medium font-normal">/ bln</span></span>
+                            </div>
+                            <button x-on:click="$dispatch('open-modal', 'setting-iuran')" class="px-5 py-2 bg-white text-indigo-700 rounded-xl text-sm font-bold hover:bg-indigo-50 transition-all shadow-sm active:scale-95 flex items-center gap-1.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                Ubah Tarif
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <form action="{{ route('admin.tunggakan.index') }}" method="GET" class="flex gap-2 items-center bg-white p-1 rounded-xl shadow-sm border border-gray-200 w-full sm:w-auto">
-                <select name="month" class="w-full sm:w-auto border-0 focus:ring-0 text-sm py-2 pl-3 pr-8 rounded-lg text-gray-700 cursor-pointer font-medium bg-gray-50 hover:bg-gray-100 transition-colors">
-                    @for($m = 1; $m <= 12; $m++)
-                        <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>{{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}</option>
-                    @endfor
-                </select>
-                <select name="year" class="w-full sm:w-auto border-0 focus:ring-0 text-sm py-2 pl-3 pr-8 rounded-lg text-gray-700 cursor-pointer font-medium bg-gray-50 hover:bg-gray-100 transition-colors">
-                    @for($y = date('Y') - 1; $y <= date('Y') + 1; $y++)
-                        <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
-                    @endfor
-                </select>
-                <button type="submit" class="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors shadow-sm">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                </button>
-            </form>
+            <!-- Filter Card -->
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm flex flex-col justify-center">
+                <h3 class="text-sm font-bold text-gray-800 mb-4">Pilih Periode Laporan</h3>
+                <form action="{{ route('admin.tunggakan.index') }}" method="GET" class="flex flex-col gap-3">
+                    <div class="flex gap-2 w-full">
+                        <select name="month" class="w-full border-gray-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm rounded-xl text-gray-700 bg-gray-50 py-2.5 font-semibold">
+                            @for($m = 1; $m <= 12; $m++)
+                                <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>{{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}</option>
+                            @endfor
+                        </select>
+                        <select name="year" class="w-2/3 border-gray-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm rounded-xl text-gray-700 bg-gray-50 py-2.5 font-semibold">
+                            @for($y = date('Y') - 1; $y <= date('Y') + 1; $y++)
+                                <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full flex items-center justify-center gap-2 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors shadow-sm font-bold text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        Tampilkan Data
+                    </button>
+                </form>
+            </div>
             
-            <button x-on:click="$dispatch('open-modal', 'setting-iuran')" class="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-indigo-200 hover:bg-indigo-50 text-indigo-700 text-sm font-semibold transition-colors shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                Pengaturan
-            </button>
         </div>
 
-        @if(session('success'))
-            <div class="flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-medium">
-                <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <!-- INFO CARD -->
-        <div class="bg-blue-50 border border-blue-200 rounded-2xl p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </div>
-            <div class="flex-1">
-                <h3 class="text-sm font-bold text-blue-900 mb-1">Cara Kerja Sistem Tunggakan</h3>
-                <p class="text-xs text-blue-700 leading-relaxed">
-                    Sistem ini mendeteksi tunggakan secara <strong>otomatis (Time-based)</strong>. Sistem akan mengecek semua bulan dari Januari hingga bulan saat ini. Jika warga belum tercatat menyetor kas bulanan (Iuran) pada suatu bulan di menu <em>Iuran Warga (Kas Masuk)</em>, maka sistem akan mencatatnya sebagai tunggakan sesuai nominal wajib yang telah diatur (Saat ini: <strong>Rp {{ number_format($nominalIuran, 0, ',', '.') }} / bulan</strong>).
-                </p>
+        <!-- TABS (Centered) -->
+        <div class="flex justify-center sm:justify-start">
+            <div class="flex gap-1.5 p-1.5 bg-gray-100 border border-gray-200 rounded-2xl w-full sm:w-fit">
+                <button @click="tab = 'bulanan'" :class="tab === 'bulanan' ? 'bg-white shadow-sm text-indigo-700 font-bold border border-gray-200/50' : 'text-gray-500 hover:text-gray-700 font-semibold'" class="flex-1 sm:flex-none px-6 py-2.5 text-sm rounded-xl transition-all text-center">Bulan Ini</button>
+                <button @click="tab = 'tahunan'" :class="tab === 'tahunan' ? 'bg-white shadow-sm text-indigo-700 font-bold border border-gray-200/50' : 'text-gray-500 hover:text-gray-700 font-semibold'" class="flex-1 sm:flex-none px-6 py-2.5 text-sm rounded-xl transition-all text-center">Akumulasi {{ $year }}</button>
             </div>
         </div>
 
