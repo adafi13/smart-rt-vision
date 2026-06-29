@@ -28,11 +28,11 @@ class Ticket extends Model
     public function getStatusLabelAttribute(): array
     {
         return match ($this->status) {
-            'open' => ['label' => 'Open', 'text' => 'text-rose-600', 'bg' => 'bg-rose-50', 'border' => 'border-rose-200'],
-            'answered' => ['label' => 'Answered', 'text' => 'text-amber-600', 'bg' => 'bg-amber-50', 'border' => 'border-amber-200'],
-            'resolved' => ['label' => 'Resolved', 'text' => 'text-emerald-600', 'bg' => 'bg-emerald-50', 'border' => 'border-emerald-200'],
-            'closed' => ['label' => 'Closed', 'text' => 'text-slate-500', 'bg' => 'bg-slate-100', 'border' => 'border-slate-200'],
-            default => ['label' => $this->status, 'text' => 'text-slate-500', 'bg' => 'bg-slate-100', 'border' => 'border-slate-200'],
+            'open'     => ['label' => 'Open',     'text' => 'text-rose-600',    'bg' => 'bg-rose-50',    'dot' => 'bg-rose-500',    'border' => 'border-rose-200'],
+            'answered' => ['label' => 'Answered', 'text' => 'text-amber-600',  'bg' => 'bg-amber-50',  'dot' => 'bg-amber-500',  'border' => 'border-amber-200'],
+            'resolved' => ['label' => 'Resolved', 'text' => 'text-emerald-600','bg' => 'bg-emerald-50','dot' => 'bg-emerald-500','border' => 'border-emerald-200'],
+            'closed'   => ['label' => 'Closed',   'text' => 'text-slate-500',  'bg' => 'bg-slate-100', 'dot' => 'bg-slate-400',  'border' => 'border-slate-200'],
+            default    => ['label' => $this->status, 'text' => 'text-slate-500', 'bg' => 'bg-slate-100', 'dot' => 'bg-slate-400', 'border' => 'border-slate-200'],
         };
     }
 
@@ -56,6 +56,11 @@ class Ticket extends Model
             'feature_request' => 'Permintaan Fitur',
             default => 'Lainnya',
         };
+    }
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
     }
 
     public function user(): BelongsTo
