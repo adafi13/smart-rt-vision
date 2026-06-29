@@ -50,7 +50,39 @@ class BillingController extends Controller
 
         $tenant = app('currentTenant');
         $user = auth()->user();
-        
+        $externalId = 'SUB-'.$tenant->id.'-'.now()->format('YmdHis');
+
+        $cycle = $request->query('cycle', 'monthly');
+        $amount = $cycle === 'yearly' ? $plan->price_yearly : $plan->price_monthly;
+
+        $coupon = null;
+        if ($request->filled('coupon_code')) {
+            $code = strtoupper(trim($request->coupon_code));
+            $coupon = \App\Models\Coupon::where('code', $code)->where('is_active', true)->first();
+            
+            if (!$coupon) {
+                return back()->with('error', 'Kode promo tidak valid atau tidak aktif.');
+            }
+            if ($coupon->expires_at && $coupon->expires_at->isPast()) {
+                return back()->with('error', 'Kode promo sudah kedaluwarsa.');
+            }
+            if ($coupon->max_uses && $coupon->used_count >= $coupon->max_uses) {
+                return back()->with('error', 'Kuota penggunaan kode promo sudah habis.');
+            }
+            
+            if ($coupon->discount_type === 'percent') {
+                $discount = $amount * ($coupon->discount_value / 100);
+                $amount -= $discount;
+            } else {
+                $amount -= $coupon->discount_value;
+            }
+            
+            if ($amount < 0) {
+                $amount = 0;
+            }
+            $amount = (int) $amount;
+        }
+
         // Check if there's already a pending payment for this plan
         $pending = Subscription::where('tenant_id', $tenant->id)
             ->where('plan_id', $plan->id)
@@ -58,42 +90,59 @@ class BillingController extends Controller
             ->latest()
             ->first();
 
-        if ($pending && $pending->payment_url) {
-            return redirect($pending->payment_url);
+        if ($pending) {
+            // Cancel old pending payment so they can use the new coupon
+            $pending->update(['status' => 'cancelled']);
         }
-
-        $externalId = 'SUB-'.$tenant->id.'-'.now()->format('YmdHis');
-
-        $cycle = $request->query('cycle', 'monthly');
-        $amount = $cycle === 'yearly' ? $plan->price_yearly : $plan->price_monthly;
 
         $subscription = Subscription::forceCreate([
             'tenant_id' => $tenant->id,
             'plan_id' => $plan->id,
-            'status' => 'pending_payment',
+            'status' => $amount <= 0 ? 'active' : 'pending_payment',
             'billing_cycle' => $cycle,
             'payment_external_id' => $externalId,
             'amount' => $amount,
+            'coupon_id' => $coupon ? $coupon->id : null,
         ]);
+
+        if ($amount <= 0) {
+            // It's completely free! Bypass Xendit
+            $periodEnd = $cycle === 'yearly' ? now()->addYears(1) : now()->addDays(30);
+            $subscription->update([
+                'paid_at' => now(),
+                'current_period_start' => now(),
+                'current_period_end' => $periodEnd,
+            ]);
+            $tenant->update(['status' => 'active']);
+            
+            if ($coupon) {
+                $coupon->increment('used_count');
+            }
+            
+            return redirect()->route('billing.success', ['subscription' => $subscription->id])->with('success', 'Paket berhasil diaktifkan dengan kode promo!');
+        }
+
+        $desc = "Subscription {$plan->name} ({$cycle}) - {$tenant->name}";
+        if ($coupon) {
+            $desc .= " (Promo: {$coupon->code})";
+        }
 
         try {
             $result = $xendit->createInvoice(
                 $externalId,
                 $amount,
-                "Subscription {$plan->name} ({$cycle}) - {$tenant->name}",
+                $desc,
                 ['email' => $user->email],
                 route('billing.success', ['subscription' => $subscription->id]),
                 route('billing.index')
             );
             
-            // Save payment url to allow resuming
             $subscription->update([
                 'payment_url' => $result['invoice_url']
             ]);
             
         } catch (\Throwable $e) {
             Log::error('Xendit checkout error: '.$e->getMessage());
-
             return back()->with('error', 'Gagal memproses pembayaran. Silakan coba lagi.');
         }
 
@@ -152,19 +201,26 @@ class BillingController extends Controller
         $status = $payload['status'] ?? null;
 
         if ($status === 'PAID' || $status === 'SETTLED') {
-            $periodEnd = $subscription->billing_cycle === 'yearly' 
-                ? now()->addYears(1) 
-                : now()->addDays(30);
+            // Prevent double processing
+            if ($subscription->status !== 'active') {
+                $periodEnd = $subscription->billing_cycle === 'yearly' 
+                    ? now()->addYears(1) 
+                    : now()->addDays(30);
 
-            $subscription->update([
-                'status' => 'active',
-                'payment_reference_id' => $payload['id'] ?? null,
-                'paid_at' => now(),
-                'current_period_start' => now(),
-                'current_period_end' => $periodEnd,
-            ]);
+                $subscription->update([
+                    'status' => 'active',
+                    'payment_reference_id' => $payload['id'] ?? null,
+                    'paid_at' => now(),
+                    'current_period_start' => now(),
+                    'current_period_end' => $periodEnd,
+                ]);
 
-            $subscription->tenant->update(['status' => 'active']);
+                $subscription->tenant->update(['status' => 'active']);
+
+                if ($subscription->coupon_id) {
+                    \App\Models\Coupon::where('id', $subscription->coupon_id)->increment('used_count');
+                }
+            }
         } elseif (in_array($status, ['EXPIRED', 'FAILED'])) {
             $subscription->update(['status' => 'cancelled']);
         }

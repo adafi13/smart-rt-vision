@@ -23,6 +23,11 @@ class Subscription extends Model
         return $this->belongsTo(Plan::class);
     }
 
+    public function coupon(): BelongsTo
+    {
+        return $this->belongsTo(Coupon::class);
+    }
+
     public function isActive(): bool
     {
         return $this->status === 'active' && $this->current_period_end?->isFuture();
