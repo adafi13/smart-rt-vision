@@ -203,6 +203,9 @@
                         .then(data => {
                             this.results = data;
                             this.loading = false;
+                        })
+                        .catch(err => {
+                            this.loading = false;
                         });
                 });
             }
@@ -224,43 +227,49 @@
              x-transition.leave="ease-in duration-200"
              x-transition.leave-start="opacity-100 scale-100"
              x-transition.leave-end="opacity-0 scale-95"
-             class="mx-auto max-w-xl transform divide-y divide-slate-100 overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 transition-all relative z-[101]">
+             class="mx-auto max-w-xl transform overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 transition-all relative z-[101]">
             
-            <div class="relative">
+            <div class="relative border-b border-slate-100">
                 <svg class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
                 </svg>
                 <input x-ref="searchInput" x-model="query" type="text" class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-slate-900 placeholder:text-slate-400 focus:ring-0 sm:text-sm" placeholder="Cari RT, Paket, Staff..." role="combobox" aria-expanded="false" aria-controls="options">
                 
-                <div x-show="loading" class="absolute right-4 top-3.5">
-                    <svg class="animate-spin h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
-                </div>
+                <template x-if="loading">
+                    <div class="absolute right-4 top-3.5">
+                        <svg class="animate-spin h-5 w-5 text-indigo-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                    </div>
+                </template>
             </div>
 
             <!-- Results -->
-            <ul x-show="results.length > 0" class="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-slate-800" id="options" role="listbox">
-                <template x-for="item in results" :key="item.url">
-                    <li class="cursor-pointer select-none px-4 py-2 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
-                        <a :href="item.url" class="flex items-center gap-3">
-                            <div class="flex h-8 w-8 flex-none items-center justify-center rounded-lg bg-slate-100 group-hover:bg-indigo-100 text-slate-500 group-hover:text-indigo-600" x-html="item.icon"></div>
-                            <div class="flex-auto">
-                                <p class="font-semibold text-slate-900 truncate" x-text="item.title"></p>
-                                <p class="text-xs text-slate-500 truncate" x-text="item.subtitle"></p>
-                            </div>
-                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase" x-text="item.type"></span>
-                        </a>
-                    </li>
-                </template>
-            </ul>
+            <template x-if="results.length > 0">
+                <ul class="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-slate-800" id="options" role="listbox">
+                    <template x-for="item in results" :key="item.url">
+                        <li class="cursor-pointer select-none px-4 py-2 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+                            <a :href="item.url" class="flex items-center gap-3">
+                                <div class="flex h-8 w-8 flex-none items-center justify-center rounded-lg bg-slate-100 group-hover:bg-indigo-100 text-slate-500 group-hover:text-indigo-600" x-html="item.icon"></div>
+                                <div class="flex-auto">
+                                    <p class="font-semibold text-slate-900 truncate" x-text="item.title"></p>
+                                    <p class="text-xs text-slate-500 truncate" x-text="item.subtitle"></p>
+                                </div>
+                                <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase" x-text="item.type"></span>
+                            </a>
+                        </li>
+                    </template>
+                </ul>
+            </template>
 
             <!-- Empty state -->
-            <div x-show="query.length >= 2 && results.length === 0 && !loading" class="px-6 py-14 text-center text-sm sm:px-14">
-                <svg class="mx-auto h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <p class="mt-4 font-semibold text-slate-900">Tidak ada hasil ditemukan</p>
-                <p class="mt-2 text-slate-500">Coba gunakan kata kunci lain (misal: "022" atau "Premium").</p>
-            </div>
+            <template x-if="query.length >= 2 && results.length === 0 && !loading">
+                <div class="px-6 py-14 text-center text-sm sm:px-14">
+                    <svg class="mx-auto h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <p class="mt-4 font-semibold text-slate-900">Tidak ada hasil ditemukan</p>
+                    <p class="mt-2 text-slate-500">Coba gunakan kata kunci lain (misal: "022" atau "Premium").</p>
+                </div>
+            </template>
             
             <div class="flex flex-wrap items-center bg-slate-50 px-4 py-2.5 text-xs text-slate-500 border-t border-slate-100">
                 <span>Tekan <kbd class="font-sans font-semibold text-slate-900 bg-white border border-slate-200 rounded px-1.5 py-0.5 mx-1 shadow-sm">ESC</kbd> untuk menutup</span>
