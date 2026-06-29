@@ -728,33 +728,22 @@
 
                 <!-- COL 2 -->
                 <div>
-                    <h4 class="text-[11px] font-bold text-white uppercase tracking-wider mb-5">Produk</h4>
+                    <h4 class="text-[11px] font-bold text-white uppercase tracking-wider mb-5">Menu Utama</h4>
                     <ul class="space-y-3.5 text-[13px]">
-                        <li><a href="#fitur" class="text-slate-400 hover:text-white transition-colors">Fitur Utama</a></li>
+                        <li><a href="#fitur" class="text-slate-400 hover:text-white transition-colors">Fitur Sistem</a></li>
                         <li><a href="#cara-kerja" class="text-slate-400 hover:text-white transition-colors">Cara Kerja</a></li>
                         <li><a href="#harga" class="text-slate-400 hover:text-white transition-colors">Paket & Harga</a></li>
-                        <li><a href="{{ route('register') }}" class="text-slate-400 hover:text-white transition-colors">Coba Gratis</a></li>
+                        <li><a href="#faq" class="text-slate-400 hover:text-white transition-colors">Tanya Jawab (FAQ)</a></li>
                     </ul>
                 </div>
 
                 <!-- COL 3 -->
                 <div>
-                    <h4 class="text-[11px] font-bold text-white uppercase tracking-wider mb-5">Dukungan</h4>
+                    <h4 class="text-[11px] font-bold text-white uppercase tracking-wider mb-5">Pengurus RT</h4>
                     <ul class="space-y-3.5 text-[13px]">
-                        <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Panduan Sistem Khusus</a></li>
-                        <li><a href="#faq" class="text-slate-400 hover:text-white transition-colors">FAQ & Troubleshooting</a></li>
-                        <li><a href="{{ route('login') }}" class="text-slate-400 hover:text-white transition-colors">Masuk Pengurus</a></li>
-                        <li><a href="https://wa.me/6285156412702" target="_blank" class="text-slate-400 hover:text-white transition-colors">Hubungi Layanan Konsumen</a></li>
-                    </ul>
-                </div>
-
-                <!-- COL 4 -->
-                <div>
-                    <h4 class="text-[11px] font-bold text-white uppercase tracking-wider mb-5">Legal</h4>
-                    <ul class="space-y-3.5 text-[13px]">
-                        <li><a href="{{ url('/kebijakan-privasi') }}" class="text-slate-400 hover:text-white transition-colors">Kebijakan Privasi Data Warga</a></li>
-                        <li><a href="{{ url('/syarat-dan-ketentuan') }}" class="text-slate-400 hover:text-white transition-colors">Syarat & Ketentuan Layanan</a></li>
-                        <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Lisensi Teknologi</a></li>
+                        <li><a href="{{ route('login') }}" class="text-slate-400 hover:text-white transition-colors">Masuk Dashboard</a></li>
+                        <li><a href="{{ route('register') }}" class="text-slate-400 hover:text-white transition-colors">Daftar / Uji Coba Gratis</a></li>
+                        <li><a href="https://wa.me/6285156412702" target="_blank" class="text-slate-400 hover:text-white transition-colors">Hubungi Bantuan (WA)</a></li>
                     </ul>
                 </div>
             </div>
