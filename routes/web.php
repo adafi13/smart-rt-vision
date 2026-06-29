@@ -140,6 +140,7 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
 
     Route::prefix('admin/tunggakan')->name('admin.tunggakan.')->middleware('rt_role:owner,bendahara')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\TunggakanController::class, 'index'])->name('index');
+        Route::post('/setting', [\App\Http\Controllers\Admin\TunggakanController::class, 'updateSetting'])->name('update-setting');
     });
 
     Route::prefix('admin/pengeluaran')->name('admin.pengeluaran.')->middleware('rt_role:owner,bendahara')->group(function () {

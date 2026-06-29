@@ -10,8 +10,7 @@ use Carbon\Carbon;
 
 class TunggakanController extends Controller
 {
-    // Default Iuran per month for calculating arrears
-    const IURAN_BULANAN = 50000; 
+    // Iuran per month is now dynamic from tenant settings 
     
     public function index(Request $request)
     {
@@ -19,6 +18,9 @@ class TunggakanController extends Controller
         $month = $request->input('month', now()->month);
         $year = $request->input('year', now()->year);
         $selectedDate = Carbon::createFromDate($year, $month, 1);
+        
+        $tenant = app('currentTenant');
+        $nominalIuran = $tenant->nominal_iuran_bulanan ?? 50000;
         
         // Tab 1: Bulanan
         $families = Family::orderBy('nama_kepala_keluarga')->get();
@@ -33,7 +35,7 @@ class TunggakanController extends Controller
                 'family' => $family,
                 'status' => $hasPaid ? 'LUNAS' : 'MENUNGGAK',
                 'amount_paid' => $hasPaid ? $contributionsThisMonth[$family->id] : 0,
-                'arrears_amount' => $hasPaid ? 0 : self::IURAN_BULANAN,
+                'arrears_amount' => $hasPaid ? 0 : $nominalIuran,
             ];
         });
 
@@ -70,7 +72,7 @@ class TunggakanController extends Controller
                 'family' => $family,
                 'months_owed' => $monthsOwed,
                 'unpaid_months_list' => $unpaidMonthNames,
-                'total_arrears' => $monthsOwed * self::IURAN_BULANAN,
+                'total_arrears' => $monthsOwed * $nominalIuran,
             ];
         })->filter(function ($item) {
             return $item->months_owed > 0; // Only show those who owe
@@ -81,7 +83,22 @@ class TunggakanController extends Controller
             'tahunan', 
             'month', 
             'year', 
-            'selectedDate'
+            'selectedDate',
+            'nominalIuran'
         ));
+    }
+
+    public function updateSetting(Request $request)
+    {
+        $request->validate([
+            'nominal_iuran_bulanan' => 'required|numeric|min:0'
+        ]);
+
+        $tenant = app('currentTenant');
+        $tenant->update([
+            'nominal_iuran_bulanan' => $request->nominal_iuran_bulanan
+        ]);
+
+        return back()->with('success', 'Nominal Iuran Wajib Bulanan berhasil diperbarui. Seluruh perhitungan tunggakan telah disesuaikan.');
     }
 }

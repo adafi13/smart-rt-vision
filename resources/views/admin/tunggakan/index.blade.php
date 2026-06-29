@@ -30,6 +30,31 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </button>
             </form>
+            
+            <button x-on:click="$dispatch('open-modal', 'setting-iuran')" class="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-indigo-200 hover:bg-indigo-50 text-indigo-700 text-sm font-semibold transition-colors shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                Pengaturan
+            </button>
+        </div>
+
+        @if(session('success'))
+            <div class="flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-medium">
+                <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <!-- INFO CARD -->
+        <div class="bg-blue-50 border border-blue-200 rounded-2xl p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div class="flex-1">
+                <h3 class="text-sm font-bold text-blue-900 mb-1">Cara Kerja Sistem Tunggakan</h3>
+                <p class="text-xs text-blue-700 leading-relaxed">
+                    Sistem ini mendeteksi tunggakan secara <strong>otomatis (Time-based)</strong>. Sistem akan mengecek semua bulan dari Januari hingga bulan saat ini. Jika warga belum tercatat menyetor kas bulanan (Iuran) pada suatu bulan di menu <em>Iuran Warga (Kas Masuk)</em>, maka sistem akan mencatatnya sebagai tunggakan sesuai nominal wajib yang telah diatur (Saat ini: <strong>Rp {{ number_format($nominalIuran, 0, ',', '.') }} / bulan</strong>).
+                </p>
+            </div>
         </div>
 
         <!-- TAB: BULANAN -->
@@ -311,4 +336,50 @@
         </div>
 
     </div>
+
+    <!-- MODAL SETTING IURAN -->
+    <x-modal name="setting-iuran" focusable maxWidth="md">
+        <form action="{{ route('admin.tunggakan.update-setting') }}" method="POST" class="p-6">
+            @csrf
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+                <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 flex-shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900">Pengaturan Tunggakan</h2>
+                    <p class="text-xs text-gray-500">Sesuaikan nominal iuran wajib bulanan</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div x-data="{ 
+                        raw: '{{ $nominalIuran }}',
+                        formatted: '{{ number_format($nominalIuran, 0, ',', '.') }}',
+                        formatValue(val) {
+                            let num = val.toString().replace(/[^0-9]/g, '');
+                            this.raw = num;
+                            this.formatted = num ? parseInt(num, 10).toLocaleString('id-ID') : '';
+                        }
+                    }">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nominal Iuran Wajib per Bulan (Rp)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 text-sm font-medium">Rp</span>
+                        </div>
+                        <input type="hidden" name="nominal_iuran_bulanan" :value="raw">
+                        <input type="text" x-model="formatted" @input="formatValue($event.target.value)" required class="w-full pl-9 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm font-semibold text-gray-900">
+                    </div>
+                    <p class="text-[10px] text-gray-500 mt-2 leading-relaxed">
+                        Perubahan ini akan otomatis mengubah seluruh perhitungan piutang warga di sistem tunggakan berdasarkan tarif yang baru.
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end gap-3">
+                <button type="button" x-on:click="$dispatch('close')" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">Batal</button>
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-sm">Simpan</button>
+            </div>
+        </form>
+    </x-modal>
+
 </x-app-layout>
