@@ -50,7 +50,7 @@
                                     {{ $coupon->discount_type === 'percent' ? 'Persentase (%)' : 'Nominal Pasti (Rp)' }}
                                 </td>
                                 <td class="px-5 py-3 font-bold text-gray-900">
-                                    {{ $coupon->discount_type === 'percent' ? number_format($coupon->discount_value, 0) . '%' : 'Rp ' . number_format($coupon->discount_value, 0, ',', '.') }}
+                                    {{ $coupon->discount_type === 'percent' ? floatval($coupon->discount_value) . '%' : 'Rp ' . number_format($coupon->discount_value, 0, ',', '.') }}
                                 </td>
                                 <td class="px-5 py-3 text-gray-500 text-xs">
                                     <span class="font-bold text-gray-900">{{ $coupon->used_count }}</span>
@@ -105,17 +105,39 @@
                     <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Kode Kupon</label>
                     <input type="text" name="code" class="input-field" placeholder="Contoh: PROMO100, MERDEKA" required style="text-transform: uppercase;">
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-4" x-data="{
+                    type: 'percent',
+                    displayValue: '',
+                    get realValue() {
+                        if (this.type === 'fixed') {
+                            return this.displayValue.replace(/\./g, '');
+                        }
+                        return this.displayValue.replace(/,/g, '.');
+                    },
+                    formatInput() {
+                        if (this.type === 'fixed') {
+                            let val = this.displayValue.replace(/[^0-9]/g, '');
+                            if(val !== '') {
+                                this.displayValue = parseInt(val, 10).toLocaleString('id-ID');
+                            }
+                        } else {
+                            // Allow numbers and one dot or comma
+                            let val = this.displayValue.replace(/[^0-9.,]/g, '');
+                            this.displayValue = val;
+                        }
+                    }
+                }">
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Tipe Diskon</label>
-                        <select name="discount_type" class="input-field" required>
+                        <select name="discount_type" x-model="type" @change="displayValue = ''; formatInput()" class="input-field" required>
                             <option value="percent">Persentase (%)</option>
                             <option value="fixed">Nominal (Rp)</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Nilai Diskon</label>
-                        <input type="number" step="0.01" name="discount_value" class="input-field" placeholder="10 atau 50000" required min="0">
+                        <input type="text" x-model="displayValue" @input="formatInput()" class="input-field" placeholder="10 atau 50.000" required>
+                        <input type="hidden" name="discount_value" :value="realValue">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
