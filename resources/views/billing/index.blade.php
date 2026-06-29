@@ -154,6 +154,11 @@
                             <div class="flex-1">
                                 <p class="text-[9px] sm:text-[10px] font-bold text-indigo-600 uppercase tracking-wider mb-0.5">
                                     Diskon {{ $coupon->discount_type === 'percent' ? floatval($coupon->discount_value).'%' : 'Rp '.number_format($coupon->discount_value, 0, ',', '.') }}
+                                    @if($coupon->applicable_cycle === 'monthly')
+                                        <span class="inline-block ml-1 px-1.5 py-0.5 rounded text-[8px] bg-indigo-100 text-indigo-700">BULANAN</span>
+                                    @elseif($coupon->applicable_cycle === 'yearly')
+                                        <span class="inline-block ml-1 px-1.5 py-0.5 rounded text-[8px] bg-purple-100 text-purple-700">TAHUNAN</span>
+                                    @endif
                                 </p>
                                 <p class="text-xs sm:text-sm font-mono font-bold text-slate-900 select-all">{{ $coupon->code }}</p>
                             </div>

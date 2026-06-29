@@ -69,6 +69,10 @@ class BillingController extends Controller
             if ($coupon->max_uses && $coupon->used_count >= $coupon->max_uses) {
                 return back()->with('error', 'Kuota penggunaan kode promo sudah habis.');
             }
+            if ($coupon->applicable_cycle !== 'all' && $coupon->applicable_cycle !== $cycle) {
+                $cycleName = $coupon->applicable_cycle === 'monthly' ? 'Bulanan' : 'Tahunan';
+                return back()->with('error', "Kode promo ini hanya berlaku untuk paket {$cycleName}.");
+            }
             
             if ($coupon->discount_type === 'percent') {
                 $discount = $amount * ($coupon->discount_value / 100);

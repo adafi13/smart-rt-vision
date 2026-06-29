@@ -20,6 +20,7 @@ class CouponController extends Controller
             'code' => 'required|string|unique:coupons,code',
             'discount_type' => 'required|in:percent,fixed',
             'discount_value' => 'required|numeric|min:0',
+            'applicable_cycle' => 'required|in:all,monthly,yearly',
             'max_uses' => 'nullable|integer|min:1',
             'expires_at' => 'nullable|date',
         ]);
@@ -37,6 +38,7 @@ class CouponController extends Controller
             'code' => 'required|string|unique:coupons,code,' . $coupon->id,
             'discount_type' => 'required|in:percent,fixed',
             'discount_value' => 'required|numeric|min:0',
+            'applicable_cycle' => 'required|in:all,monthly,yearly',
             'max_uses' => 'nullable|integer|min:1',
             'expires_at' => 'nullable|date',
         ]);

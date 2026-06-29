@@ -48,6 +48,15 @@
                                 </td>
                                 <td class="px-5 py-3 font-medium text-gray-700">
                                     {{ $coupon->discount_type === 'percent' ? 'Persentase (%)' : 'Nominal Pasti (Rp)' }}
+                                    <div class="mt-1">
+                                        @if($coupon->applicable_cycle === 'monthly')
+                                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-200">Khusus Bulanan</span>
+                                        @elseif($coupon->applicable_cycle === 'yearly')
+                                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-600 border border-purple-200">Khusus Tahunan</span>
+                                        @else
+                                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-gray-50 text-gray-500 border border-gray-200">Semua Siklus</span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-5 py-3 font-bold text-gray-900">
                                     {{ $coupon->discount_type === 'percent' ? floatval($coupon->discount_value) . '%' : 'Rp ' . number_format($coupon->discount_value, 0, ',', '.') }}
@@ -68,7 +77,7 @@
                                     </form>
                                 </td>
                                 <td class="px-5 py-3 text-right">
-                                    <button onclick="openEditModal({{ $coupon->id }}, '{{ $coupon->code }}', '{{ $coupon->discount_type }}', '{{ $coupon->discount_type === 'fixed' ? intval($coupon->discount_value) : floatval($coupon->discount_value) }}', '{{ $coupon->max_uses }}', '{{ $coupon->expires_at ? $coupon->expires_at->format('Y-m-d\TH:i') : '' }}')" class="p-1.5 text-indigo-500 hover:bg-indigo-50 rounded transition-colors mr-1" title="Edit">
+                                    <button onclick="openEditModal({{ $coupon->id }}, '{{ $coupon->code }}', '{{ $coupon->discount_type }}', '{{ $coupon->discount_type === 'fixed' ? intval($coupon->discount_value) : floatval($coupon->discount_value) }}', '{{ $coupon->applicable_cycle }}', '{{ $coupon->max_uses }}', '{{ $coupon->expires_at ? $coupon->expires_at->format('Y-m-d\TH:i') : '' }}')" class="p-1.5 text-indigo-500 hover:bg-indigo-50 rounded transition-colors mr-1" title="Edit">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                     </button>
                                     <form action="{{ route('super-admin.coupons.destroy', $coupon) }}" method="POST" onsubmit="return confirm('Hapus kupon ini permanen?')" class="inline-block">
@@ -104,9 +113,19 @@
             
             <form action="{{ route('super-admin.coupons.store') }}" method="POST" class="p-5 space-y-4">
                 @csrf
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Kode Kupon</label>
-                    <input type="text" name="code" class="input-field" placeholder="Contoh: PROMO100, MERDEKA" required style="text-transform: uppercase;">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Kode Kupon</label>
+                        <input type="text" name="code" class="input-field" placeholder="Contoh: PROMO100, MERDEKA" required style="text-transform: uppercase;">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Target Siklus</label>
+                        <select name="applicable_cycle" class="input-field" required>
+                            <option value="all">Berlaku untuk Semua</option>
+                            <option value="monthly">Khusus Bulanan</option>
+                            <option value="yearly">Khusus Tahunan</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4" x-data="{
                     type: 'percent',
@@ -172,9 +191,19 @@
             
             <form id="editCouponForm" method="POST" class="p-5 space-y-4">
                 @csrf @method('PUT')
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Kode Kupon</label>
-                    <input type="text" id="edit_code" name="code" class="input-field" required style="text-transform: uppercase;">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Kode Kupon</label>
+                        <input type="text" id="edit_code" name="code" class="input-field" required style="text-transform: uppercase;">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Target Siklus</label>
+                        <select id="edit_applicable_cycle" name="applicable_cycle" class="input-field" required>
+                            <option value="all">Berlaku untuk Semua</option>
+                            <option value="monthly">Khusus Bulanan</option>
+                            <option value="yearly">Khusus Tahunan</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4" id="editDiscountData" x-data="{
                     type: 'percent',
@@ -229,11 +258,12 @@
 
     @push('scripts')
     <script>
-        function openEditModal(id, code, type, value, maxUses, expiresAt) {
+        function openEditModal(id, code, type, value, applicableCycle, maxUses, expiresAt) {
             const form = document.getElementById('editCouponForm');
             form.action = `/super-admin/coupons/${id}`;
             
             document.getElementById('edit_code').value = code;
+            document.getElementById('edit_applicable_cycle').value = applicableCycle || 'all';
             
             // Set values and trigger alpine reactivity
             const alpineData = Alpine.$data(document.getElementById('editDiscountData'));
