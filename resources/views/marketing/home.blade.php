@@ -103,44 +103,105 @@
         details[open] .faq-chevron { transform: rotate(180deg); }
     </style>
 </head>
-<body x-data="{ navOpen: false, scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 50)">
+<body>
 
     <!-- ===================== NAVBAR ===================== -->
-    <header :class="scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-200' : 'glass-dark border-b border-white/10'" class="fixed top-0 inset-x-0 z-40 transition-all duration-300">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <a href="{{ route('marketing.home') }}" class="flex items-center gap-2 sm:gap-2.5 min-w-0">
-                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 transition-colors duration-300" :class="scrolled ? 'bg-slate-100 border border-slate-200' : 'bg-white/10 backdrop-blur border border-white/20'">
-                    <img src="{{ asset('logo.png') }}" alt="SmartRT Vision" class="w-full h-full object-cover">
+    <header x-data="{ navOpen: false, scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 20)"
+        class="fixed top-0 inset-x-0 z-50 transition-all duration-300"
+        :class="scrolled ? 'bg-[#0a0915]/95 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/20' : 'bg-transparent'">
+
+        <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
+
+            <!-- ===== DESKTOP NAVBAR ===== -->
+            <div class="h-16 lg:h-[68px] flex items-center justify-between">
+
+                <!-- Logo -->
+                <a href="{{ route('marketing.home') }}" class="flex items-center gap-2.5 flex-shrink-0 group">
+                    <div class="w-8 h-8 rounded-lg overflow-hidden border border-white/10 bg-white/5">
+                        <img src="{{ asset('logo.png') }}" alt="SmartRT Vision" class="w-full h-full object-cover">
+                    </div>
+                    <span class="font-bold text-sm text-white tracking-tight group-hover:text-indigo-300 transition-colors">
+                        SmartRT <span class="text-indigo-400">Vision</span>
+                    </span>
+                </a>
+
+                <!-- Desktop Nav Links (hidden on mobile) -->
+                <nav class="hidden lg:flex items-center gap-1">
+                    <a href="#fitur" class="px-4 py-2 text-sm text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all font-medium">Fitur</a>
+                    <a href="#cara-kerja" class="px-4 py-2 text-sm text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all font-medium">Cara Kerja</a>
+                    <a href="#harga" class="px-4 py-2 text-sm text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all font-medium">Harga</a>
+                    <a href="#faq" class="px-4 py-2 text-sm text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all font-medium">FAQ</a>
+                </nav>
+
+                <!-- Desktop Right Actions (hidden on mobile) -->
+                <div class="hidden lg:flex items-center gap-3">
+                    <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        Masuk
+                    </a>
+                    <a href="{{ route('register') }}" class="px-5 py-2 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 transition-all hover:shadow-lg hover:shadow-indigo-500/25">
+                        Daftar Gratis
+                    </a>
                 </div>
-                <span class="font-bold text-sm sm:text-base truncate transition-colors duration-300" :class="scrolled ? 'text-slate-900' : 'text-white'">{{ config('app.name', 'SmartRT Vision') }}</span>
-            </a>
 
-            <nav class="hidden md:flex items-center gap-6 text-sm font-medium transition-colors duration-300" :class="scrolled ? 'text-slate-600' : 'text-slate-300'">
-                <a href="#fitur" class="transition-colors" :class="scrolled ? 'hover:text-indigo-600' : 'hover:text-white'">Fitur</a>
-                <a href="#cara-kerja" class="transition-colors" :class="scrolled ? 'hover:text-indigo-600' : 'hover:text-white'">Cara Kerja</a>
-                <a href="#harga" class="transition-colors" :class="scrolled ? 'hover:text-indigo-600' : 'hover:text-white'">Harga</a>
-                <a href="#faq" class="transition-colors" :class="scrolled ? 'hover:text-indigo-600' : 'hover:text-white'">FAQ</a>
-            </nav>
-
-            <div class="flex items-center gap-2 flex-shrink-0">
-                <a href="{{ route('login') }}" class="hidden sm:inline-flex text-sm font-semibold px-3 py-2 transition-colors duration-300" :class="scrolled ? 'text-slate-600 hover:text-indigo-600' : 'text-slate-300 hover:text-white'">Masuk</a>
-                
-                <a href="{{ route('register') }}" :class="scrolled ? 'btn-primary' : 'btn-ghost'" class="!py-2 !px-3 sm:!px-4 text-xs sm:text-sm whitespace-nowrap transition-all duration-300">Daftar Gratis</a>
-                
-                <button type="button" @click="navOpen = !navOpen" class="md:hidden p-2 rounded-lg transition-colors duration-300" :class="scrolled ? 'text-slate-600 hover:bg-slate-100' : 'text-slate-300 hover:text-white hover:bg-white/10'">
-                    <svg x-show="!navOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                    <svg x-show="navOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
+                <!-- Mobile: Daftar + Hamburger -->
+                <div class="flex lg:hidden items-center gap-2">
+                    <a href="{{ route('register') }}" class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 transition-all">
+                        Daftar Gratis
+                    </a>
+                    <button @click="navOpen = !navOpen" type="button"
+                        class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-all">
+                        <svg x-show="!navOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                        <svg x-show="navOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
-        </div>
-        
-        <!-- Mobile Menu -->
-        <div x-show="navOpen" x-transition @click="navOpen = false" class="md:hidden border-t px-4 sm:px-6 py-3 flex flex-col gap-1 text-sm font-medium transition-colors duration-300" :class="scrolled ? 'bg-white border-slate-100 text-slate-600' : 'glass-dark border-white/10 text-slate-300'">
-            <a href="#fitur" class="px-2 py-2.5 rounded-lg transition-colors" :class="scrolled ? 'hover:bg-slate-50 hover:text-indigo-600' : 'hover:bg-white/5 hover:text-white'">Fitur</a>
-            <a href="#cara-kerja" class="px-2 py-2.5 rounded-lg transition-colors" :class="scrolled ? 'hover:bg-slate-50 hover:text-indigo-600' : 'hover:bg-white/5 hover:text-white'">Cara Kerja</a>
-            <a href="#harga" class="px-2 py-2.5 rounded-lg transition-colors" :class="scrolled ? 'hover:bg-slate-50 hover:text-indigo-600' : 'hover:bg-white/5 hover:text-white'">Harga</a>
-            <a href="#faq" class="px-2 py-2.5 rounded-lg transition-colors" :class="scrolled ? 'hover:bg-slate-50 hover:text-indigo-600' : 'hover:bg-white/5 hover:text-white'">FAQ</a>
-            <a href="{{ route('login') }}" class="px-2 py-2.5 rounded-lg transition-colors" :class="scrolled ? 'hover:bg-slate-50 hover:text-indigo-600' : 'hover:bg-white/5 hover:text-white'">Masuk</a>
+
+            <!-- ===== MOBILE MENU (full-width dropdown) ===== -->
+            <div x-show="navOpen"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 -translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 translate-y-0"
+                x-transition:leave-end="opacity-0 -translate-y-2"
+                class="lg:hidden border-t border-white/5 py-4"
+                @click="navOpen = false">
+
+                <!-- Nav Links -->
+                <div class="space-y-0.5 mb-4">
+                    <a href="#fitur" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all group">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 group-hover:scale-125 transition-transform flex-shrink-0"></span>
+                        Fitur
+                    </a>
+                    <a href="#cara-kerja" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all group">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 group-hover:scale-125 transition-transform flex-shrink-0"></span>
+                        Cara Kerja
+                    </a>
+                    <a href="#harga" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all group">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 group-hover:scale-125 transition-transform flex-shrink-0"></span>
+                        Harga
+                    </a>
+                    <a href="#faq" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all group">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 group-hover:scale-125 transition-transform flex-shrink-0"></span>
+                        FAQ
+                    </a>
+                </div>
+
+                <!-- Divider -->
+                <div class="border-t border-white/5 my-3"></div>
+
+                <!-- Auth Buttons -->
+                <div class="flex flex-col gap-2 px-1">
+                    <a href="{{ route('login') }}" class="flex items-center justify-center py-3 rounded-xl text-sm font-semibold text-slate-300 border border-white/10 hover:bg-white/5 hover:text-white transition-all">
+                        Masuk ke Akun
+                    </a>
+                </div>
+            </div>
+
         </div>
     </header>
 
