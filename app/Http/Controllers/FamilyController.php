@@ -48,7 +48,7 @@ class FamilyController extends Controller
         }
 
         $request->validate([
-            'foto_kk' => 'required|image|max:8192',
+            'foto_kk' => 'required|mimes:jpeg,png,jpg,pdf|max:8192',
         ]);
 
         $path = $request->file('foto_kk')->store('kk_images');

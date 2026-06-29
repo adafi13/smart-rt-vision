@@ -32,7 +32,7 @@ class KkExtractor
 
         $prompt = <<<EOT
 Anda adalah sistem ekstraksi data otomatis untuk Kartu Keluarga (KK) Indonesia.
-Tugas Anda adalah membaca gambar Kartu Keluarga yang dilampirkan dan mengembalikan hasilnya secara KETAT dalam format JSON yang telah ditentukan.
+Tugas Anda adalah membaca berkas dokumen Kartu Keluarga (KK) yang dilampirkan (bisa berupa foto, hasil scan gambar, atau file PDF digital) dan mengembalikan hasilnya secara KETAT dalam format JSON yang telah ditentukan.
 
 PERATURAN PENTING:
 1. JANGAN berikan teks pengantar, penutup, atau penjelasan apa pun.
@@ -68,9 +68,9 @@ PERATURAN PENTING:
   ]
 }
 
-4. Jika gambar yang diunggah BUKAN dokumen Kartu Keluarga (KK) Indonesia, atau gambarnya terlalu buram/gelap/terpotong sehingga data tidak bisa dibaca sama sekali, Anda WAJIB mengembalikan JSON error berikut (JANGAN kembalikan struktur di atas):
+4. Jika berkas yang diunggah BUKAN dokumen Kartu Keluarga (KK) Indonesia, atau berkasnya terlalu buram/gelap/rusak sehingga data tidak bisa dibaca sama sekali, Anda WAJIB mengembalikan JSON error berikut (JANGAN kembalikan struktur di atas):
 {
-  "error": "Gambar tidak terdeteksi sebagai Kartu Keluarga atau terlalu buram untuk dibaca oleh AI. Pastikan foto dokumen KK jelas, terang, dan tidak terpotong."
+  "error": "Berkas tidak terdeteksi sebagai Kartu Keluarga atau terlalu buram untuk dibaca oleh AI. Pastikan dokumen KK jelas, terang, dan tidak terpotong."
 }
 
 Jika ada bagian kecil yang tidak terbaca, gunakan string kosong ("") namun tetap kembalikan struktur data KK. Hanya gunakan objek "error" jika keseluruhan dokumen tidak terbaca atau bukan KK. Pastikan array anggota memuat seluruh anggota keluarga yang terdaftar.
