@@ -214,7 +214,9 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
 
     Route::prefix('admin/organisasi')->name('admin.organisasi.')->middleware('rt_role:owner,sekretaris')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\RtStaffController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\RtStaffController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Admin\RtStaffController::class, 'store'])->name('store');
+        Route::get('/{staff}/edit', [\App\Http\Controllers\Admin\RtStaffController::class, 'edit'])->name('edit');
         Route::put('/{staff}', [\App\Http\Controllers\Admin\RtStaffController::class, 'update'])->name('update');
         Route::delete('/{staff}', [\App\Http\Controllers\Admin\RtStaffController::class, 'destroy'])->name('destroy');
     });

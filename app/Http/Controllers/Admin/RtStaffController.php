@@ -20,6 +20,11 @@ class RtStaffController extends Controller
         return view('admin.organisasi.index', compact('staffs'));
     }
 
+    public function create()
+    {
+        return view('admin.organisasi.create');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -40,7 +45,15 @@ class RtStaffController extends Controller
 
         RtStaff::create($data);
 
-        return back()->with('success', 'Anggota jajaran pengurus berhasil ditambahkan.');
+        return redirect()->route('admin.organisasi.index')->with('success', 'Anggota jajaran pengurus berhasil ditambahkan.');
+    }
+
+    public function edit(RtStaff $staff)
+    {
+        if ($staff->tenant_id !== auth()->user()->tenant_id) {
+            abort(403);
+        }
+        return view('admin.organisasi.edit', compact('staff'));
     }
 
     public function update(Request $request, RtStaff $staff)
@@ -69,7 +82,7 @@ class RtStaffController extends Controller
 
         $staff->update($data);
 
-        return back()->with('success', 'Data jajaran pengurus berhasil diperbarui.');
+        return redirect()->route('admin.organisasi.index')->with('success', 'Data jajaran pengurus berhasil diperbarui.');
     }
 
     public function destroy(RtStaff $staff)

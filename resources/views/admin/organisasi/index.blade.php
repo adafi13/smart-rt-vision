@@ -7,10 +7,10 @@
                 <h1 class="text-2xl font-black text-gray-900 tracking-tight">Jajaran Pengurus RT</h1>
                 <p class="text-sm text-gray-500 mt-1">Kelola daftar pengurus yang akan ditampilkan pada Portal Warga.</p>
             </div>
-            <button x-data @click="$dispatch('open-modal', 'add-staff-modal')" class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-200 hover:-translate-y-0.5">
+            <a href="{{ route('admin.organisasi.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-200 hover:-translate-y-0.5">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Tambah Pengurus
-            </button>
+            </a>
         </div>
 
         @if(session('success'))
@@ -68,13 +68,11 @@
 
                         <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                             <!-- Tombol Edit -->
-                            <button type="button" 
-                                    x-data 
-                                    @click="$dispatch('open-modal', 'edit-staff-{{ $staff->id }}')" 
+                            <a href="{{ route('admin.organisasi.edit', $staff->id) }}" 
                                     class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors"
                                     title="Edit Pengurus">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                            </button>
+                            </a>
 
                             <!-- Tombol Hapus -->
                             <form action="{{ route('admin.organisasi.destroy', $staff) }}" method="POST" class="inline">
@@ -88,63 +86,7 @@
                 </div>
             </div>
 
-            <!-- Modal Edit -->
-            <x-modal name="edit-staff-{{ $staff->id }}" focusable>
-                <form method="post" action="{{ route('admin.organisasi.update', $staff) }}" enctype="multipart/form-data" class="p-6">
-                    @csrf @method('PUT')
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                        </div>
-                        <h2 class="text-xl font-black text-gray-900">Edit Data Pengurus</h2>
-                    </div>
 
-                    <div class="space-y-4">
-                        <div>
-                            <x-input-label value="Nama Lengkap" class="font-bold" />
-                            <x-text-input name="name" type="text" class="mt-1 block w-full bg-gray-50 border-gray-200" value="{{ $staff->name }}" required />
-                        </div>
-
-                        <div>
-                            <x-input-label value="Jabatan" class="font-bold" />
-                            <select name="position" required class="mt-1 block w-full bg-gray-50 border-gray-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                                @php $jabatanList = ['Ketua RT','Wakil Ketua RT','Sekretaris','Bendahara','Wakil Bendahara','Seksi Keamanan & Ketertiban','Seksi Kebersihan & Lingkungan','Seksi Kesehatan','Seksi Pendidikan & Kebudayaan','Seksi Sosial & Kemasyarakatan','Seksi Pemuda & Olahraga','Seksi Pemberdayaan Perempuan','Seksi Agama','Anggota']; @endphp
-                                @foreach($jabatanList as $j)
-                                    <option value="{{ $j }}" {{ $staff->position === $j ? 'selected' : '' }}>{{ $j }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <x-input-label value="Nomor Urut (Hierarki)" class="font-bold" />
-                                <x-text-input name="order_level" type="number" min="1" class="mt-1 block w-full bg-gray-50 border-gray-200" value="{{ $staff->order_level }}" required />
-                                <p class="text-[10px] text-gray-500 mt-1">1=Paling atas (Ketua)</p>
-                            </div>
-                            <div>
-                                <x-input-label value="Nomor HP/WA" class="font-bold" />
-                                <x-text-input name="phone" type="text" class="mt-1 block w-full bg-gray-50 border-gray-200" value="{{ $staff->phone }}" />
-                            </div>
-                        </div>
-
-                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                            <x-input-label value="Foto Profil (Baru)" class="font-bold mb-2" />
-                            <input type="file" name="photo" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                            <p class="text-[10px] text-gray-500 mt-1.5">Kosongkan jika tidak ingin mengubah foto. Maks 2MB.</p>
-                        </div>
-
-                        <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
-                            <input type="checkbox" name="is_active" value="1" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 w-5 h-5" {{ $staff->is_active ? 'checked' : '' }}>
-                            <span class="text-sm font-bold text-gray-700">Pengurus Aktif</span>
-                        </label>
-                    </div>
-
-                    <div class="mt-6 flex justify-end gap-3">
-                        <x-secondary-button x-on:click="$dispatch('close')">Batal</x-secondary-button>
-                        <x-primary-button>Simpan Perubahan</x-primary-button>
-                    </div>
-                </form>
-            </x-modal>
             @empty
             <div class="col-span-full">
                 <div class="bg-white border border-gray-200 border-dashed rounded-3xl p-12 text-center">
@@ -153,103 +95,14 @@
                     </div>
                     <h3 class="text-lg font-bold text-gray-900 mb-1">Belum Ada Pengurus</h3>
                     <p class="text-sm text-gray-500 max-w-sm mx-auto">Tambahkan daftar ketua, sekretaris, atau seksi-seksi lainnya untuk ditampilkan di Portal Publik.</p>
-                    <button x-data @click="$dispatch('open-modal', 'add-staff-modal')" class="mt-5 text-indigo-600 text-sm font-bold hover:text-indigo-800">
+                    <a href="{{ route('admin.organisasi.create') }}" class="mt-5 inline-block text-indigo-600 text-sm font-bold hover:text-indigo-800">
                         + Tambah Data Pertama
-                    </button>
+                    </a>
                 </div>
             </div>
             @endforelse
         </div>
     </div>
 
-    <!-- Modal Tambah -->
-    <x-modal name="add-staff-modal" focusable>
-        <form method="post" action="{{ route('admin.organisasi.store') }}" enctype="multipart/form-data" class="p-6">
-            @csrf
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                </div>
-                <h2 class="text-xl font-black text-gray-900">Tambah Jajaran Pengurus</h2>
-            </div>
 
-            <div class="space-y-4">
-                <div>
-                    <x-input-label value="Nama Lengkap" class="font-bold" />
-                    <x-text-input name="name" type="text" class="mt-1 block w-full bg-gray-50 border-gray-200" required />
-                </div>
-
-                <div x-data="jabatanPicker()">
-                    <x-input-label value="Jabatan" class="font-bold" />
-                    <select name="position" required x-model="jabatan" @change="setOrder" class="mt-1 block w-full bg-gray-50 border-gray-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                        <option value="">-- Pilih Jabatan --</option>
-                        <option value="Ketua RT">Ketua RT</option>
-                        <option value="Wakil Ketua RT">Wakil Ketua RT</option>
-                        <option value="Sekretaris">Sekretaris</option>
-                        <option value="Bendahara">Bendahara</option>
-                        <option value="Wakil Bendahara">Wakil Bendahara</option>
-                        <option value="Seksi Keamanan & Ketertiban">Seksi Keamanan & Ketertiban</option>
-                        <option value="Seksi Kebersihan & Lingkungan">Seksi Kebersihan & Lingkungan</option>
-                        <option value="Seksi Kesehatan">Seksi Kesehatan</option>
-                        <option value="Seksi Pendidikan & Kebudayaan">Seksi Pendidikan & Kebudayaan</option>
-                        <option value="Seksi Sosial & Kemasyarakatan">Seksi Sosial & Kemasyarakatan</option>
-                        <option value="Seksi Pemuda & Olahraga">Seksi Pemuda & Olahraga</option>
-                        <option value="Seksi Pemberdayaan Perempuan">Seksi Pemberdayaan Perempuan</option>
-                        <option value="Seksi Agama">Seksi Agama</option>
-                        <option value="Anggota">Anggota</option>
-                    </select>
-                    <p class="text-[10px] text-gray-400 mt-1">Nomor urut hierarki akan terisi otomatis.</p>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <x-input-label value="Nomor Urut (Hierarki)" class="font-bold" />
-                        <x-text-input name="order_level" type="number" min="1" x-ref="orderInput" value="99" class="mt-1 block w-full bg-gray-50 border-gray-200" required />
-                        <p class="text-[10px] text-gray-500 mt-1">Terisi otomatis sesuai jabatan</p>
-                    </div>
-                    <div>
-                        <x-input-label value="Nomor HP/WA" class="font-bold" />
-                        <x-text-input name="phone" type="text" class="mt-1 block w-full bg-gray-50 border-gray-200" />
-                    </div>
-                </div>
-
-                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                    <x-input-label value="Foto Profil" class="font-bold mb-2" />
-                    <input type="file" name="photo" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                    <p class="text-[10px] text-gray-500 mt-1.5">Opsional. Maks 2MB.</p>
-                </div>
-
-                <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
-                    <input type="checkbox" name="is_active" value="1" checked class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 w-5 h-5">
-                    <span class="text-sm font-bold text-gray-700">Tampilkan sebagai Aktif</span>
-                </label>
-            </div>
-
-            <div class="mt-6 flex justify-end gap-3">
-                <x-secondary-button x-on:click="$dispatch('close')">Batal</x-secondary-button>
-                <x-primary-button>Simpan Pengurus</x-primary-button>
-            </div>
-        </form>
-    </x-modal>
-
-<script>
-function jabatanPicker() {
-    const orders = {
-        'Ketua RT': 1, 'Wakil Ketua RT': 2, 'Sekretaris': 3, 'Bendahara': 4,
-        'Wakil Bendahara': 5, 'Seksi Keamanan & Ketertiban': 6,
-        'Seksi Kebersihan & Lingkungan': 7, 'Seksi Kesehatan': 8,
-        'Seksi Pendidikan & Kebudayaan': 9, 'Seksi Sosial & Kemasyarakatan': 10,
-        'Seksi Pemuda & Olahraga': 11, 'Seksi Pemberdayaan Perempuan': 12,
-        'Seksi Agama': 13, 'Anggota': 99
-    };
-    return {
-        jabatan: '',
-        setOrder() {
-            if (this.$refs.orderInput && orders[this.jabatan]) {
-                this.$refs.orderInput.value = orders[this.jabatan];
-            }
-        }
-    };
-}
-</script>
 </x-app-layout>
