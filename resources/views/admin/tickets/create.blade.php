@@ -24,7 +24,7 @@
                 <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mt-1.5">Isi formulir dengan lengkap agar kami dapat menganalisis masalah Anda dengan tepat</p>
             </div>
 
-            <form method="POST" action="{{ route('admin.tickets.store') }}" class="p-10 space-y-8" >
+            <form method="POST" action="{{ route('admin.tickets.store') }}" class="p-10 space-y-8" enctype="multipart/form-data">
                 @csrf
 
                 {{-- Category & Priority --}}
@@ -49,7 +49,6 @@
                             <option value="low"    {{ old('priority') === 'low'    ? 'selected' : '' }}>⚪ Rendah — Tidak mendesak</option>
                             <option value="normal" {{ old('priority', 'normal') === 'normal' ? 'selected' : '' }}>🔵 Normal — Standar</option>
                             <option value="high"   {{ old('priority') === 'high'   ? 'selected' : '' }}>🟠 Tinggi — Mengganggu operasional</option>
-                            <option value="urgent" {{ old('priority') === 'urgent' ? 'selected' : '' }}>🔴 Urgent — Sistem kritis</option>
                         </select>
                         @error('priority') <p class="text-[10px] text-red-500 mt-1 font-black uppercase tracking-widest">{{ $message }}</p> @enderror
                     </div>
@@ -67,10 +66,10 @@
                 {{-- Description --}}
                 <div class="space-y-2.5">
                     <label class="block text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-[0.2em] ml-1">Deskripsi Masalah <span class="text-red-500">*</span></label>
-                    <textarea name="description" rows="8" required
+                    <textarea name="message" rows="8" required
                               placeholder="Jelaskan masalah Anda secara detail:&#10;- Apa yang terjadi?&#10;- Kapan pertama kali terjadi?&#10;- Langkah-langkah untuk mereproduksi masalah?&#10;- Pesan error yang muncul (jika ada)?"
-                              class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-[2rem] text-sm font-bold text-slate-700 dark:text-white placeholder-slate-300 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-500 focus:border-transparent resize-none transition-all @error('description') border-red-300 dark:border-red-500/50 bg-red-50 dark:bg-red-500/10 @enderror leading-relaxed">{{ old('description') }}</textarea>
-                    @error('description') <p class="text-[10px] text-red-500 mt-1 font-black uppercase tracking-widest">{{ $message }}</p> @enderror
+                              class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-[2rem] text-sm font-bold text-slate-700 dark:text-white placeholder-slate-300 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-500 focus:border-transparent resize-none transition-all @error('message') border-red-300 dark:border-red-500/50 bg-red-50 dark:bg-red-500/10 @enderror leading-relaxed">{{ old('message') }}</textarea>
+                    @error('message') <p class="text-[10px] text-red-500 mt-1 font-black uppercase tracking-widest">{{ $message }}</p> @enderror
                     <div class="flex items-center gap-2 text-[10px] font-bold text-slate-400 dark:text-slate-500 mt-2 uppercase tracking-widest ml-1">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         Minimal 20 karakter. Semakin detail, semakin cepat kami membantu.

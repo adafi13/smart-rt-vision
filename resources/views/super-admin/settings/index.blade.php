@@ -14,48 +14,6 @@
         <form action="{{ route('super-admin.settings.update') }}" method="POST" class="space-y-6">
             @csrf
 
-            <!-- General Settings -->
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                <h2 class="text-base font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2">Informasi Aplikasi</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="label">Nama Aplikasi</label>
-                        <input type="text" name="settings[general][app_name]" value="{{ $settings['general']['app_name'] ?? config('app.name') }}" class="input-field" required>
-                    </div>
-                    <div>
-                        <label class="label">Email Support</label>
-                        <input type="email" name="settings[general][support_email]" value="{{ $settings['general']['support_email'] ?? 'support@kakaai.id' }}" class="input-field" required>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="label">Alamat Kantor</label>
-                        <textarea name="settings[general][address]" rows="2" class="input-field">{{ $settings['general']['address'] ?? '' }}</textarea>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Trial Policies -->
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                <h2 class="text-base font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2">Kebijakan Free Trial</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="label">Masa Trial Default (Hari)</label>
-                        <input type="number" name="settings[trial][duration_days]" value="{{ $settings['trial']['duration_days'] ?? 14 }}" class="input-field" required min="1">
-                        <p class="text-xs text-gray-500 mt-1">Lama waktu tenant dapat mencoba gratis.</p>
-                    </div>
-                    <div>
-                        <label class="label">Maksimal Upload KK (Trial)</label>
-                        <input type="number" name="settings[trial][max_kk]" value="{{ $settings['trial']['max_kk'] ?? 20 }}" class="input-field" required min="1">
-                        <p class="text-xs text-gray-500 mt-1">Batas kuota KK saat masa trial.</p>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="label">Pesan Expired Trial</label>
-                        <textarea name="settings[trial][expired_message]" rows="2" class="input-field">{{ $settings['trial']['expired_message'] ?? 'Masa percobaan Anda telah berakhir. Silakan pilih paket langganan untuk melanjutkan.' }}</textarea>
-                    </div>
-                </div>
-            </div>
-
             <!-- Finance Settings -->
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                 <h2 class="text-base font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2">Pengaturan Keuangan & AI</h2>

@@ -29,31 +29,44 @@ class TicketController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'subject' => 'required|string|max:255',
-            'message' => 'required|string',
-            'priority' => 'required|in:low,normal,high,urgent',
-            'category' => 'required|in:technical,billing,general,feature_request',
+            'subject'    => 'required|string|max:255',
+            'message'    => 'required|string|min:10',
+            'priority'   => 'required|in:low,normal,high',
+            'category'   => 'required|in:technical,billing,general,feature_request',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,zip|max:10240',
         ]);
 
         DB::transaction(function () use ($request) {
+            // Generate ticket number (padded by latest ticket id)
+            $lastId    = Ticket::max('id') ?? 0;
+            $ticketNo  = 'TKT-' . now()->format('Ymd') . '-' . str_pad($lastId + 1, 4, '0', STR_PAD_LEFT);
+
             $ticket = Ticket::create([
-                'tenant_id' => auth()->user()->tenant_id,
-                'user_id' => Auth::id(),
-                'ticket_number' => 'TKT-'.now()->format('Ymd').'-'.str_pad(Ticket::max('id') + 1, 4, '0', STR_PAD_LEFT),
-                'category' => $request->category,
-                'subject' => $request->subject,
-                'priority' => $request->priority,
-                'status' => 'open',
+                'tenant_id'     => auth()->user()->tenant_id,
+                'user_id'       => Auth::id(),
+                'ticket_number' => $ticketNo,
+                'category'      => $request->category,
+                'subject'       => $request->subject,
+                'priority'      => $request->priority,
+                'status'        => 'open',
             ]);
 
+            // Handle optional attachment
+            $attachmentPath = null;
+            if ($request->hasFile('attachment') && $request->file('attachment')->isValid()) {
+                $attachmentPath = $request->file('attachment')->store('ticket-attachments', 'public');
+            }
+
             TicketReply::create([
-                'ticket_id' => $ticket->id,
-                'user_id' => Auth::id(),
-                'message' => $request->message,
+                'ticket_id'      => $ticket->id,
+                'user_id'        => Auth::id(),
+                'message'        => $request->message,
+                'is_staff_reply' => false,
+                'attachment'     => $attachmentPath,
             ]);
         });
 
-        return redirect()->route('admin.tickets.index')->with('success', 'Tiket bantuan berhasil dibuat.');
+        return redirect()->route('admin.tickets.index')->with('success', 'Tiket bantuan berhasil dibuat. Tim kami akan segera menghubungi Anda.');
     }
 
     public function show(Ticket $ticket)
