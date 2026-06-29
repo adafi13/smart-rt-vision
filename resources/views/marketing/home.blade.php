@@ -636,55 +636,73 @@
     </section>
 
     <!-- ===================== FOOTER ===================== -->
-    <footer class="bg-[#0a0915] text-slate-400 pt-16 pb-8">
+    <footer class="bg-[#0b0e14] text-slate-400 pt-16 pb-12 font-sans border-t border-slate-800">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-                <div class="lg:col-span-1">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden bg-[#0a0915] border border-white/20">
-                            <img src="{{ asset('logo.png') }}" alt="SmartRT Vision" class="w-full h-full object-cover">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:gap-8 gap-y-10 lg:gap-12">
+                <!-- COL 1 -->
+                <div class="md:col-span-1">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="w-8 h-8 rounded bg-white flex items-center justify-center p-1">
+                            <img src="{{ asset('logo.png') }}" alt="SmartRT Vision" class="w-full h-full object-contain">
                         </div>
-                        <span class="text-sm font-bold text-white">{{ config('app.name', 'SmartRT Vision') }}</span>
+                        <span class="text-sm font-bold text-white tracking-wide">{{ config('app.name', 'SmartRT Vision') }}</span>
                     </div>
-                    <p class="text-xs text-slate-500 mt-4 leading-relaxed">
-                        Platform SaaS untuk pengurus RT/RW — ekstraksi data KK otomatis dengan AI, portal mandiri warga, dan transparansi kas.
+                    <p class="text-[13px] text-slate-500 leading-relaxed pr-4">
+                        Platform manajemen warga modern yang dirancang untuk mempercepat pelayanan, memastikan ketersediaan data, dan menyederhanakan pelaporan operasional RT/RW.
                     </p>
                 </div>
 
+                <!-- COL 2 -->
                 <div>
-                    <p class="text-xs font-bold text-white uppercase tracking-wider mb-4">Produk</p>
-                    <ul class="space-y-3 text-xs">
-                        <li><a href="#fitur" class="hover:text-white transition-colors">Fitur</a></li>
-                        <li><a href="#cara-kerja" class="hover:text-white transition-colors">Cara Kerja</a></li>
-                        <li><a href="#harga" class="hover:text-white transition-colors">Harga</a></li>
-                        <li><a href="#faq" class="hover:text-white transition-colors">FAQ</a></li>
+                    <h4 class="text-[11px] font-bold text-white uppercase tracking-wider mb-5">Produk</h4>
+                    <ul class="space-y-3.5 text-[13px]">
+                        <li><a href="#fitur" class="text-slate-400 hover:text-white transition-colors">Fitur Utama</a></li>
+                        <li><a href="#cara-kerja" class="text-slate-400 hover:text-white transition-colors">Cara Kerja</a></li>
+                        <li><a href="#harga" class="text-slate-400 hover:text-white transition-colors">Paket & Harga</a></li>
+                        <li><a href="{{ route('register') }}" class="text-slate-400 hover:text-white transition-colors">Coba Gratis</a></li>
                     </ul>
                 </div>
 
+                <!-- COL 3 -->
                 <div>
-                    <p class="text-xs font-bold text-white uppercase tracking-wider mb-4">Akun</p>
-                    <ul class="space-y-3 text-xs">
-                        <li><a href="{{ route('register') }}" class="hover:text-white transition-colors">Daftar Gratis</a></li>
-                        <li><a href="{{ route('login') }}" class="hover:text-white transition-colors">Masuk Pengurus</a></li>
+                    <h4 class="text-[11px] font-bold text-white uppercase tracking-wider mb-5">Dukungan</h4>
+                    <ul class="space-y-3.5 text-[13px]">
+                        <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Panduan Sistem Khusus</a></li>
+                        <li><a href="#faq" class="text-slate-400 hover:text-white transition-colors">FAQ & Troubleshooting</a></li>
+                        <li><a href="{{ route('login') }}" class="text-slate-400 hover:text-white transition-colors">Masuk Pengurus</a></li>
+                        <li><a href="https://wa.me/6285156412702" target="_blank" class="text-slate-400 hover:text-white transition-colors">Hubungi Layanan Konsumen</a></li>
                     </ul>
                 </div>
 
+                <!-- COL 4 -->
                 <div>
-                    <p class="text-xs font-bold text-white uppercase tracking-wider mb-4">Tentang</p>
-                    <ul class="space-y-3 text-xs">
-                        <li class="text-slate-500">Dikembangkan oleh PT. Sekawan Putra Pratama</li>
+                    <h4 class="text-[11px] font-bold text-white uppercase tracking-wider mb-5">Legal</h4>
+                    <ul class="space-y-3.5 text-[13px]">
+                        <li><a href="{{ url('/kebijakan-privasi') }}" class="text-slate-400 hover:text-white transition-colors">Kebijakan Privasi Data Warga</a></li>
+                        <li><a href="{{ url('/syarat-dan-ketentuan') }}" class="text-slate-400 hover:text-white transition-colors">Syarat & Ketentuan Layanan</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Lisensi Teknologi</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div class="border-t border-white/10 mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <p class="text-xs text-slate-400">
-                    &copy; {{ date('Y') }} <strong class="text-slate-200 font-semibold">PT. Sekawan Putra Pratama</strong>. Seluruh Hak Cipta Dilindungi.
-                </p>
-                <div class="flex items-center gap-4 text-xs text-slate-500">
-                    <a href="{{ url('/kebijakan-privasi') }}" class="hover:text-slate-300 transition-colors">Kebijakan Privasi</a>
-                    <span>·</span>
-                    <a href="{{ url('/syarat-dan-ketentuan') }}" class="hover:text-slate-300 transition-colors">Syarat & Ketentuan</a>
+            <!-- FOOTER BOTTOM -->
+            <div class="border-t border-slate-800/60 mt-16 pt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div>
+                    <p class="text-[12px] text-slate-400 mb-1.5">
+                        &copy; {{ date('Y') }} <span class="text-slate-300 font-semibold">PT. Sekawan Putra Pratama</span>. Seluruh Hak Cipta Dilindungi.
+                    </p>
+                    <p class="text-[11px] text-slate-500 max-w-2xl">
+                        SmartRT Vision adalah platform sistem informasi terintegrasi yang dikembangkan oleh PT. Sekawan Putra Pratama untuk mendukung digitalisasi warga.
+                    </p>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <a href="#" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    </a>
+                    <a href="https://sekawanputrapratama.com" target="_blank" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
+                    </a>
                 </div>
             </div>
         </div>
