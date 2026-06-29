@@ -150,24 +150,33 @@
         <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(60% 50% at 50% 100%, rgba(10,9,21,0.9), transparent);"></div>
         <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(55% 65% at 50% 42%, rgba(10,9,21,0.65) 0%, rgba(10,9,21,0.25) 55%, transparent 75%);"></div>
 
-        <div class="relative z-10 max-w-4xl mx-auto px-5 sm:px-6 text-center py-20 sm:py-24">
-            <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold text-indigo-200 border border-indigo-400/30 bg-indigo-500/10 mb-5 sm:mb-6 whitespace-nowrap">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
-                <span>Platform Enterprise-Grade</span>
-            </span>
-            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.15] sm:leading-[1.1] tracking-tight text-white">
+        <div class="relative z-10 max-w-4xl mx-auto px-5 sm:px-6 text-center py-20 sm:py-24 flex flex-col items-center">
+            <!-- Enterprise Badge -->
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-6 sm:mb-8">
+                <div class="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.8)]"></div>
+                <span class="text-[11px] sm:text-xs font-medium text-slate-300 tracking-widest uppercase">Platform Enterprise-Grade</span>
+            </div>
+            
+            <!-- Enterprise Headline -->
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 leading-[1.1] sm:leading-[1.1] mb-6">
                 Data Warga Otomatis.<br>
-                <span class="text-indigo-400">Manajemen Transparan.</span>
+                Manajemen Transparan.
             </h1>
-            <p class="mt-4 sm:mt-5 text-sm sm:text-lg text-slate-300 max-w-2xl mx-auto">
+            
+            <!-- Enterprise Subtitle -->
+            <p class="text-sm sm:text-lg text-slate-400 max-w-2xl mx-auto font-normal leading-relaxed mb-10">
                 Platform digital untuk pengurus RT/RW: data warga terisi otomatis dari foto Kartu Keluarga, lengkap dengan portal mandiri warga dan transparansi kas — tanpa perlu tim IT.
             </p>
-            <div class="mt-7 sm:mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-                <a href="{{ route('register') }}" class="btn-primary justify-center">
+            
+            <!-- Enterprise CTA Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto">
+                <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-white text-slate-900 font-bold text-sm hover:bg-slate-100 hover:scale-[1.02] transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)]">
                     Mulai Gratis 14 Hari
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                 </a>
-                <a href="#cara-kerja" class="btn-ghost justify-center">Lihat Cara Kerjanya</a>
+                <a href="#cara-kerja" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-white/5 text-slate-300 font-semibold text-sm border border-white/10 hover:bg-white/10 hover:text-white transition-all">
+                    Lihat Cara Kerjanya
+                </a>
             </div>
             
             <!-- Social Proof -->
