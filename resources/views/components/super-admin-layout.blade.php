@@ -198,15 +198,24 @@
                         return;
                     }
                     this.loading = true;
-                    fetch('{{ route('super-admin.search') }}?q=' + encodeURIComponent(value))
-                        .then(res => res.json())
-                        .then(data => {
-                            this.results = data;
-                            this.loading = false;
-                        })
-                        .catch(err => {
-                            this.loading = false;
-                        });
+                    fetch('{{ route('super-admin.search') }}?q=' + encodeURIComponent(value), {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(res => {
+                        if (!res.ok) throw new Error('API Error');
+                        return res.json();
+                    })
+                    .then(data => {
+                        this.results = Array.isArray(data) ? data : [];
+                        this.loading = false;
+                    })
+                    .catch(err => {
+                        this.results = [];
+                        this.loading = false;
+                    });
                 });
             }
          }"

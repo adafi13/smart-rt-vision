@@ -4,6 +4,8 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Tenant;
+use App\Models\Plan;
 
 class SearchController extends Controller
 {
@@ -43,7 +45,7 @@ class SearchController extends Controller
                 'type' => 'Paket',
                 'icon' => '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>',
                 'title' => $plan->name,
-                'subtitle' => 'Rp ' . number_format($plan->price, 0, ',', '.'),
+                'subtitle' => 'Rp ' . number_format($plan->price_monthly, 0, ',', '.'),
                 'url' => route('super-admin.plans.index')
             ];
         }
