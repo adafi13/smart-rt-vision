@@ -259,7 +259,9 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
 
     Route::prefix('admin/dokumen')->name('admin.documents.')->middleware('rt_role:owner,sekretaris')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'store'])->name('store');
+        Route::get('/{document}/edit', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'edit'])->name('edit');
         Route::put('/{document}', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'update'])->name('update');
         Route::delete('/{document}', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'destroy'])->name('destroy');
         Route::get('/{document}/download', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'download'])->name('download');

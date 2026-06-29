@@ -19,6 +19,11 @@ class AdminDocumentController extends Controller
         return view('admin.documents.index', compact('documents'));
     }
 
+    public function create()
+    {
+        return view('admin.documents.create');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -41,7 +46,15 @@ class AdminDocumentController extends Controller
             'is_public' => $request->has('is_public'),
         ]);
 
-        return back()->with('success', 'Dokumen berhasil diunggah.');
+        return redirect()->route('admin.documents.index')->with('success', 'Dokumen berhasil diunggah.');
+    }
+
+    public function edit(Document $document)
+    {
+        if ($document->tenant_id !== auth()->user()->tenant_id) {
+            abort(403);
+        }
+        return view('admin.documents.edit', compact('document'));
     }
 
     public function update(Request $request, Document $document)
@@ -73,7 +86,7 @@ class AdminDocumentController extends Controller
         $document->is_public = $request->has('is_public');
         $document->save();
 
-        return back()->with('success', 'Detail dokumen berhasil diperbarui.');
+        return redirect()->route('admin.documents.index')->with('success', 'Detail dokumen berhasil diperbarui.');
     }
 
     public function destroy(Document $document)

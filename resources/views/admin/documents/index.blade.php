@@ -15,10 +15,10 @@
                             <h3 class="text-lg font-bold">Arsip Dokumen</h3>
                             <p class="text-sm text-gray-500">Penyimpanan cloud untuk dokumen penting kepengurusan RT.</p>
                         </div>
-                        <button @click="$dispatch('open-modal', 'upload-document')" class="btn-primary">
+                        <a href="{{ route('admin.documents.create') }}" class="btn-primary flex items-center">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                             Upload Dokumen
-                        </button>
+                        </a>
                     </div>
 
                     @if(session('success'))
@@ -68,9 +68,9 @@
                                         Download
                                     </a>
                                     <div class="flex items-center gap-1">
-                                        <button @click="$dispatch('open-modal', 'edit-doc-{{ $doc->id }}')" class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                                        <a href="{{ route('admin.documents.edit', $doc->id) }}" class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors inline-block">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                        </button>
+                                        </a>
                                         <button @click="$dispatch('open-modal', 'delete-doc-{{ $doc->id }}')" class="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                         </button>
@@ -78,48 +78,7 @@
                                 </div>
                             </div>
 
-                            <!-- Edit Modal -->
-                            <x-modal name="edit-doc-{{ $doc->id }}" :show="false" maxWidth="md">
-                                <div class="p-6">
-                                    <h2 class="text-lg font-bold text-gray-900 mb-4">Edit Info Dokumen</h2>
-                                    <form action="{{ route('admin.documents.update', $doc) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-                                        @csrf
-                                        @method('PUT')
-                                        <div>
-                                            <label class="label">Nama Dokumen</label>
-                                            <input type="text" name="title" value="{{ $doc->title }}" class="input-field" required>
-                                        </div>
-                                        <div>
-                                            <label class="label">Kategori</label>
-                                            <select name="category" class="input-field" required>
-                                                <option value="sk" {{ $doc->category == 'sk' ? 'selected' : '' }}>Surat Keputusan (SK)</option>
-                                                <option value="notulen" {{ $doc->category == 'notulen' ? 'selected' : '' }}>Notulen Rapat</option>
-                                                <option value="laporan" {{ $doc->category == 'laporan' ? 'selected' : '' }}>Laporan (Keuangan/Kegiatan)</option>
-                                                <option value="surat_masuk" {{ $doc->category == 'surat_masuk' ? 'selected' : '' }}>Surat Masuk</option>
-                                                <option value="surat_keluar" {{ $doc->category == 'surat_keluar' ? 'selected' : '' }}>Surat Keluar</option>
-                                                <option value="umum" {{ $doc->category == 'umum' ? 'selected' : '' }}>Umum / Lainnya</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label class="label">Ganti File (Opsional)</label>
-                                            <input type="file" name="file" class="input-field text-sm" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
-                                            <p class="text-xs text-gray-500 mt-1">Biarkan kosong jika tidak ingin mengganti file lama.</p>
-                                        </div>
-                                        <div>
-                                            <label class="label">Deskripsi Tambahan (Opsional)</label>
-                                            <textarea name="description" class="input-field" rows="2">{{ $doc->description }}</textarea>
-                                        </div>
-                                        <div class="flex items-center gap-2 mt-2">
-                                            <input type="checkbox" name="is_public" id="is_public_edit_{{ $doc->id }}" value="1" {{ $doc->is_public ? 'checked' : '' }} class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                            <label for="is_public_edit_{{ $doc->id }}" class="text-sm text-gray-700 cursor-pointer">Bisa dilihat/diunduh oleh Warga (Publik)</label>
-                                        </div>
-                                        <div class="mt-6 flex justify-end gap-3">
-                                            <button type="button" @click="$dispatch('close')" class="px-4 py-2 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
-                                            <button type="submit" class="btn-primary">Simpan</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </x-modal>
+
 
                             <!-- Delete Modal -->
                             <x-modal name="delete-doc-{{ $doc->id }}" :show="false" maxWidth="sm">
@@ -153,45 +112,4 @@
         </div>
     </div>
 
-    <!-- Add Modal -->
-    <x-modal name="upload-document" :show="false" maxWidth="md">
-        <div class="p-6">
-            <h2 class="text-lg font-bold text-gray-900 mb-4">Upload Dokumen Baru</h2>
-            <form action="{{ route('admin.documents.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-                @csrf
-                <div>
-                    <label class="label">Nama Dokumen</label>
-                    <input type="text" name="title" class="input-field" required placeholder="Contoh: SK Kelurahan 2026">
-                </div>
-                <div>
-                    <label class="label">Kategori</label>
-                    <select name="category" class="input-field" required>
-                        <option value="sk">Surat Keputusan (SK)</option>
-                        <option value="notulen">Notulen Rapat</option>
-                        <option value="laporan">Laporan (Keuangan/Kegiatan)</option>
-                        <option value="surat_masuk">Surat Masuk</option>
-                        <option value="surat_keluar">Surat Keluar</option>
-                        <option value="umum">Umum / Lainnya</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="label">File Dokumen</label>
-                    <input type="file" name="file" class="input-field text-sm" required accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
-                    <p class="text-[11px] text-gray-500 mt-1">Maksimal 10MB.</p>
-                </div>
-                <div>
-                    <label class="label">Deskripsi Tambahan (Opsional)</label>
-                    <textarea name="description" class="input-field" rows="2" placeholder="Keterangan singkat..."></textarea>
-                </div>
-                <div class="flex items-center gap-2 mt-2 bg-yellow-50 p-3 rounded-lg border border-yellow-100">
-                    <input type="checkbox" name="is_public" id="is_public_new" value="1" class="rounded border-yellow-300 text-yellow-600 shadow-sm focus:border-yellow-300 focus:ring focus:ring-yellow-200 focus:ring-opacity-50">
-                    <label for="is_public_new" class="text-sm font-medium text-yellow-800 cursor-pointer">Bisa dilihat & diunduh oleh Warga (Publik)</label>
-                </div>
-                <div class="mt-6 flex justify-end gap-3">
-                    <button type="button" @click="$dispatch('close')" class="px-4 py-2 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
-                    <button type="submit" class="btn-primary">Upload</button>
-                </div>
-            </form>
-        </div>
-    </x-modal>
 </x-app-layout>
