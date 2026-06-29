@@ -63,8 +63,8 @@
                             </svg>
                         </div>
                         <div>
-                            <p class="text-sm font-bold text-gray-900">Klik atau Sentuh di sini</p>
-                            <p class="text-[11px] font-medium text-gray-500 mt-1">Pilih dari Galeri atau jepret langsung dengan Kamera (Max. 8MB)</p>
+                            <p class="text-sm font-bold text-gray-900">Seret & Lepas atau Klik di sini</p>
+                            <p class="text-[11px] font-medium text-gray-500 mt-1">Pilih dari Galeri, Jepret Kamera, atau Drag & Drop (Max. 8MB)</p>
                         </div>
                     </div>
 
@@ -99,7 +99,36 @@
     </div>
 
     <script>
-        document.getElementById('foto_kk').addEventListener('change', function() {
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('foto_kk');
+
+        // Setup Drag & Drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('bg-indigo-50', 'border-indigo-400', 'scale-[1.02]'));
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('bg-indigo-50', 'border-indigo-400', 'scale-[1.02]'));
+        });
+
+        dropZone.addEventListener('drop', function(e) {
+            const dt = e.dataTransfer;
+            if (dt.files && dt.files.length > 0) {
+                fileInput.files = dt.files;
+                fileInput.dispatchEvent(new Event('change'));
+            }
+        });
+
+        fileInput.addEventListener('change', function() {
             const [file] = this.files;
             if (file) {
                 // Validation: Must be image
@@ -132,7 +161,6 @@
                 document.getElementById('preview-wrap').classList.remove('hidden');
                 
                 // Change border styling
-                const dropZone = document.getElementById('drop-zone');
                 dropZone.classList.remove('border-gray-300', 'border-dashed', 'bg-gray-50/50');
                 dropZone.classList.add('border-indigo-400', 'border-solid', 'bg-indigo-50/50');
                 
