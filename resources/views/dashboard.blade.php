@@ -228,32 +228,60 @@
                         Sistem ekstraksi teks otomatis dari pindaian Kartu Keluarga. Mempercepat proses input data warga dengan akurasi tinggi.
                     </p>
                     
+                    @php
+                        $tenant = app('currentTenant');
+                        $plan = $tenant->effectivePlan();
+                        $used = $tenant->ai_extractions_used ?? 0;
+                        $max = $plan ? $plan->max_ai_extractions_per_month : 0;
+                        $isUnlimited = $plan && $plan->isUnlimitedAi();
+                        
+                        if ($isUnlimited) {
+                            $percentage = 0;
+                            $label = 'Tidak Terbatas';
+                        } else {
+                            $percentage = $max > 0 ? min(100, round(($used / $max) * 100)) : 100;
+                            $label = "{$used} / {$max} Scan";
+                        }
+                        
+                        $isExhausted = !$isUnlimited && $used >= $max;
+                        $isLow = !$isUnlimited && $percentage >= 80 && !$isExhausted;
+                        
+                        $barColor = $isExhausted ? 'bg-red-500' : ($isLow ? 'bg-amber-400' : 'bg-emerald-400');
+                        $textColor = $isExhausted ? 'text-red-400' : ($isLow ? 'text-amber-400' : 'text-emerald-400');
+                    @endphp
+
                     <!-- Progress bars styled like health pulse -->
                     <div class="space-y-3 mb-6">
                         <div>
                             <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
-                                <span>AKURASI BACA</span>
-                                <span class="text-emerald-400">98%</span>
+                                <span>KUOTA AI BULAN INI</span>
+                                <span class="{{ $textColor }}">{{ $label }}</span>
                             </div>
                             <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                                <div class="w-[98%] h-full bg-emerald-400 rounded-full"></div>
+                                @if($isUnlimited)
+                                <div class="w-full h-full bg-indigo-500 rounded-full" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px);"></div>
+                                @else
+                                <div class="h-full {{ $barColor }} rounded-full transition-all duration-500" style="width: {{ $percentage }}%"></div>
+                                @endif
                             </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
-                                <span>KECEPATAN PROSES</span>
-                                <span class="text-indigo-400">&lt; 3 Detik</span>
-                            </div>
-                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                                <div class="w-[85%] h-full bg-indigo-400 rounded-full"></div>
-                            </div>
+                            @if($isExhausted)
+                            <p class="text-[10px] text-red-400 mt-2 font-medium">
+                                Kuota telah habis. Silakan upgrade paket untuk melanjutkan penggunaan fitur AI.
+                            </p>
+                            @endif
                         </div>
                     </div>
                 </div>
 
+                @if($isExhausted)
+                <a href="{{ route('billing.index') }}" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl text-sm font-bold text-white transition-colors">
+                    Upgrade Paket Anda
+                </a>
+                @else
                 <a href="{{ route('kk.upload') }}" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-500 hover:bg-indigo-600 rounded-xl text-sm font-bold text-white transition-colors">
                     Upload & Pindai KK Baru
                 </a>
+                @endif
             </div>
         </div>
 
