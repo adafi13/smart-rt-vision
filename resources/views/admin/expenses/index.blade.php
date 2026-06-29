@@ -44,10 +44,10 @@
             </form>
 
             <div class="flex gap-2">
-                <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'tambah-pengeluaran')" class="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold transition-colors shadow-sm">
+                <a href="{{ route('admin.pengeluaran.create') }}" class="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold transition-colors shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     Catat Pengeluaran
-                </button>
+                </a>
             </div>
         </div>
 
@@ -96,9 +96,9 @@
                         </td>
                         <td class="px-6 py-4 text-right whitespace-nowrap">
                             <div class="flex justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'edit-pengeluaran-{{ $e->id }}')" class="p-2 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 transition-colors" title="Edit">
+                                <a href="{{ route('admin.pengeluaran.edit', $e) }}" class="inline-flex items-center p-2 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 transition-colors" title="Edit">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                </button>
+                                </a>
                                 <form action="{{ route('admin.pengeluaran.destroy', $e) }}" method="POST" class="inline" onsubmit="return confirm('Hapus data pengeluaran ini?')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="p-2 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus">
@@ -138,10 +138,10 @@
                         <div class="flex-1 flex items-center justify-center py-1.5 border border-dashed border-gray-200 text-gray-400 text-[11px] font-medium rounded-lg">Tanpa Nota</div>
                     @endif
 
-                    <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'edit-pengeluaran-{{ $e->id }}')" class="flex-1 flex items-center justify-center gap-1.5 py-1.5 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 text-indigo-700 text-[11px] font-bold rounded-lg transition-colors">
+                    <a href="{{ route('admin.pengeluaran.edit', $e) }}" class="flex-1 flex items-center justify-center gap-1.5 py-1.5 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 text-indigo-700 text-[11px] font-bold rounded-lg transition-colors">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                         Edit
-                    </button>
+                    </a>
 
                     <form action="{{ route('admin.pengeluaran.destroy', $e) }}" method="POST" class="flex-1" onsubmit="return confirm('Hapus data pengeluaran ini?')">
                         @csrf @method('DELETE')
@@ -167,143 +167,14 @@
             </div>
             <h3 class="text-sm font-bold text-gray-900 mb-1">Belum Ada Pengeluaran</h3>
             <p class="text-xs text-gray-500 max-w-sm mx-auto mb-5">Sistem belum mendeteksi catatan pengeluaran kas RT. Klik "Catat Pengeluaran" untuk mulai.</p>
-            <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'tambah-pengeluaran')" class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors">
+            <a href="{{ route('admin.pengeluaran.create') }}" class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Catat Pengeluaran Pertama
-            </button>
+            </a>
         </div>
         @endif
 
     </div>
 
-    <!-- MODAL TAMBAH PENGELUARAN -->
-    <x-modal name="tambah-pengeluaran" focusable>
-        <form action="{{ route('admin.pengeluaran.store') }}" method="POST" enctype="multipart/form-data" class="p-6">
-            @csrf
-            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
-                <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-600 flex-shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                </div>
-                <div>
-                    <h2 class="text-lg font-bold text-gray-900">Catat Pengeluaran</h2>
-                    <p class="text-xs text-gray-500">Form untuk mencatat arus kas keluar RT</p>
-                </div>
-            </div>
-
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Keterangan / Rincian <span class="text-red-500">*</span></label>
-                    <input type="text" name="keterangan" required class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm" placeholder="Contoh: Pembayaran Tukang Sampah Bulan Februari">
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Jumlah (Rp) <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="text-gray-500 text-sm font-medium">Rp</span>
-                            </div>
-                            <input type="number" name="jumlah" required min="0" step="1000" class="w-full pl-9 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm font-semibold text-rose-600" placeholder="0">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Kategori <span class="text-red-500">*</span></label>
-                        <select name="kategori" required class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
-                            <option value="">-- Pilih Kategori --</option>
-                            <option value="Kebersihan">Kebersihan</option>
-                            <option value="Keamanan">Keamanan</option>
-                            <option value="Sosial & Warga">Sosial & Warga</option>
-                            <option value="Infrastruktur">Infrastruktur</option>
-                            <option value="Operasional RT">Operasional RT</option>
-                            <option value="Lainnya">Lainnya</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Keluar <span class="text-red-500">*</span></label>
-                        <input type="date" name="tanggal_keluar" required value="{{ date('Y-m-d') }}" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Upload Bukti Nota/Struk</label>
-                        <input type="file" name="bukti_nota" accept="image/*" class="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-gray-300 rounded-xl cursor-pointer">
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end gap-3">
-                <button type="button" x-on:click="$dispatch('close')" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">Batal</button>
-                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 transition-colors shadow-sm">Simpan Data</button>
-            </div>
-        </form>
-    </x-modal>
-
-    <!-- MODAL EDIT PENGELUARAN -->
-    @foreach($expenses as $e)
-    <x-modal name="edit-pengeluaran-{{ $e->id }}" focusable>
-        <form action="{{ route('admin.pengeluaran.update', $e) }}" method="POST" enctype="multipart/form-data" class="p-6">
-            @csrf @method('PUT')
-            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
-                <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 flex-shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                </div>
-                <div>
-                    <h2 class="text-lg font-bold text-gray-900">Ubah Data Pengeluaran</h2>
-                    <p class="text-xs text-gray-500">Perbarui rincian arus kas keluar</p>
-                </div>
-            </div>
-
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Keterangan / Rincian <span class="text-red-500">*</span></label>
-                    <input type="text" name="keterangan" required value="{{ $e->keterangan }}" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Jumlah (Rp) <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="text-gray-500 text-sm font-medium">Rp</span>
-                            </div>
-                            <input type="number" name="jumlah" required min="0" step="1000" value="{{ $e->jumlah }}" class="w-full pl-9 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm font-semibold text-rose-600">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Kategori <span class="text-red-500">*</span></label>
-                        <select name="kategori" required class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
-                            <option value="Kebersihan" @selected($e->kategori == 'Kebersihan')>Kebersihan</option>
-                            <option value="Keamanan" @selected($e->kategori == 'Keamanan')>Keamanan</option>
-                            <option value="Sosial & Warga" @selected($e->kategori == 'Sosial & Warga')>Sosial & Warga</option>
-                            <option value="Infrastruktur" @selected($e->kategori == 'Infrastruktur')>Infrastruktur</option>
-                            <option value="Operasional RT" @selected($e->kategori == 'Operasional RT')>Operasional RT</option>
-                            <option value="Lainnya" @selected($e->kategori == 'Lainnya')>Lainnya</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Keluar <span class="text-red-500">*</span></label>
-                        <input type="date" name="tanggal_keluar" required value="{{ $e->tanggal_keluar->format('Y-m-d') }}" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Upload Bukti Baru (opsional)</label>
-                        <input type="file" name="bukti_nota" accept="image/*" class="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-gray-300 rounded-xl cursor-pointer">
-                        @if($e->bukti_nota)
-                            <p class="text-[10px] text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah <a href="{{ asset('storage/'.$e->bukti_nota) }}" target="_blank" class="text-indigo-600 font-bold hover:underline">bukti saat ini</a>.</p>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end gap-3">
-                <button type="button" x-on:click="$dispatch('close')" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">Batal</button>
-                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-sm">Simpan Perubahan</button>
-            </div>
-        </form>
-    </x-modal>
-    @endforeach
-
+    </div>
 </x-app-layout>

@@ -25,6 +25,16 @@ class ExpenseController extends Controller
         return view('admin.expenses.index', compact('expenses'));
     }
 
+    public function create()
+    {
+        return view('admin.expenses.create');
+    }
+
+    public function edit(Expense $expense)
+    {
+        return view('admin.expenses.edit', compact('expense'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -61,7 +71,7 @@ class ExpenseController extends Controller
                     'user_agent' => request()->userAgent(),
                 ]);
             });
-            return back()->with('success', 'Data pengeluaran berhasil ditambahkan.');
+            return redirect()->route('admin.pengeluaran.index')->with('success', 'Data pengeluaran berhasil ditambahkan.');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menyimpan pengeluaran: ' . $e->getMessage());
         }
@@ -109,7 +119,7 @@ class ExpenseController extends Controller
                     'user_agent' => request()->userAgent(),
                 ]);
             });
-            return back()->with('success', 'Data pengeluaran berhasil diperbarui.');
+            return redirect()->route('admin.pengeluaran.index')->with('success', 'Data pengeluaran berhasil diperbarui.');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal memperbarui pengeluaran: ' . $e->getMessage());
         }

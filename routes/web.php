@@ -145,7 +145,9 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
 
     Route::prefix('admin/pengeluaran')->name('admin.pengeluaran.')->middleware('rt_role:owner,bendahara')->group(function () {
         Route::get('/', [AdminExpenseController::class, 'index'])->name('index');
+        Route::get('/create', [AdminExpenseController::class, 'create'])->name('create');
         Route::post('/', [AdminExpenseController::class, 'store'])->name('store');
+        Route::get('/{expense}/edit', [AdminExpenseController::class, 'edit'])->name('edit');
         Route::put('/{expense}', [AdminExpenseController::class, 'update'])->name('update');
         Route::delete('/{expense}', [AdminExpenseController::class, 'destroy'])->name('destroy');
     });
