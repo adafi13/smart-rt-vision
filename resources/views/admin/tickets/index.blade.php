@@ -1,149 +1,107 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Helpdesk') }}
-        </h2>
-    </x-slot>
-    <div class="max-w-6xl mx-auto space-y-6" x-data="{ openCreateModal: false }">
+<x-app-layout title="Tiket Support Saya" header="Pusat Bantuan & Support">
+    <div class="space-y-6 py-4 animate-fade-in-up min-h-screen transition-colors duration-300">
+
+        {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h1 class="text-xl font-bold text-gray-900">Helpdesk</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Hubungi dukungan KakaAI jika Anda mengalami kendala atau butuh bantuan.</p>
+                <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mt-1">Pantau & kelola semua permintaan bantuan Anda</p>
             </div>
-            <button @click="openCreateModal = true" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <a href="{{ route('admin.tickets.create') }}"
+               class="inline-flex items-center gap-2 px-6 py-3.5 bg-slate-900 dark:bg-emerald-600 text-white rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.15em] hover:bg-emerald-600 dark:hover:bg-emerald-500 transition-all shadow-xl shadow-slate-900/20 dark:shadow-none dark:shadow-emerald-500/10">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
                 Buat Tiket Baru
-            </button>
+            </a>
         </div>
 
-        @if(session('success'))
-            <div class="px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium">
-                {{ session('success') }}
+        {{-- Stats Cards --}}
+        @php
+            $myOpen     = \App\Models\SupportTicket::forUser(auth()->id())->where('status', 'open')->count();
+            $myProgress = \App\Models\SupportTicket::forUser(auth()->id())->whereIn('status', ['in_progress','waiting_reply'])->count();
+            $myResolved = \App\Models\SupportTicket::forUser(auth()->id())->whereIn('status', ['resolved','closed'])->count();
+        @endphp
+        <div class="grid grid-cols-3 gap-4">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl border {{ $myOpen > 0 ? 'border-amber-200 dark:border-amber-700' : 'border-slate-200 dark:border-slate-700' }} p-4 text-center">
+                <p class="text-2xl font-black {{ $myOpen > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-800 dark:text-slate-100' }}">{{ $myOpen }}</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Menunggu</p>
             </div>
-        @endif
+            <div class="bg-white dark:bg-slate-800 rounded-2xl border {{ $myProgress > 0 ? 'border-sky-200 dark:border-sky-700' : 'border-slate-200 dark:border-slate-700' }} p-4 text-center">
+                <p class="text-2xl font-black {{ $myProgress > 0 ? 'text-sky-600 dark:text-sky-400' : 'text-slate-800 dark:text-slate-100' }}">{{ $myProgress }}</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Diproses</p>
+            </div>
+            <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 text-center">
+                <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400">{{ $myResolved }}</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Selesai</p>
+            </div>
+        </div>
 
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50 border-b border-gray-100 text-[11px] uppercase tracking-wider font-bold text-gray-500">
-                            <th class="px-5 py-4">ID</th>
-                            <th class="px-5 py-4">Subjek</th>
-                            <th class="px-5 py-4">Prioritas</th>
-                            <th class="px-5 py-4">Status</th>
-                            <th class="px-5 py-4">Terakhir Diupdate</th>
-                            <th class="px-5 py-4 text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-50 text-sm">
-                        @forelse($tickets as $ticket)
-                            <tr class="hover:bg-gray-50/50 transition-colors">
-                                <td class="px-5 py-3">
-                                    <span class="text-xs font-mono font-bold text-gray-500">#{{ $ticket->id }}</span>
-                                </td>
-                                <td class="px-5 py-3 font-medium text-gray-700">
-                                    {{ Str::limit($ticket->subject, 40) }}
-                                </td>
-                                <td class="px-5 py-3">
-                                    @php
-                                        $pClass = [
-                                            'low' => 'bg-gray-100 text-gray-600',
-                                            'normal' => 'bg-indigo-50 text-indigo-600',
-                                            'high' => 'bg-rose-50 text-rose-600'
-                                        ][$ticket->priority] ?? 'bg-gray-100 text-gray-600';
-                                    @endphp
-                                    <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase {{ $pClass }}">{{ $ticket->priority }}</span>
-                                </td>
-                                <td class="px-5 py-3">
-                                    @php
-                                        $sClass = [
-                                            'open' => 'bg-rose-50 text-rose-600 border-rose-200',
-                                            'answered' => 'bg-amber-50 text-amber-600 border-amber-200',
-                                            'resolved' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
-                                            'closed' => 'bg-gray-100 text-gray-500 border-gray-200',
-                                        ][$ticket->status] ?? 'bg-gray-100 text-gray-500';
-                                    @endphp
-                                    <span class="inline-flex px-2.5 py-1 rounded-lg border text-[10px] font-bold uppercase {{ $sClass }}">{{ $ticket->status }}</span>
-                                </td>
-                                <td class="px-5 py-3 text-gray-500 text-xs">
-                                    {{ $ticket->updated_at->diffForHumans() }}
-                                </td>
-                                <td class="px-5 py-3 text-right">
-                                    <a href="{{ route('admin.tickets.show', $ticket) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 text-xs font-bold text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                                        Lihat
-                                    </a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="px-5 py-12 text-center text-gray-500 text-sm">
-                                    Belum ada tiket bantuan.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+        {{-- Tickets Table --}}
+        <div class="bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/40 dark:shadow-none overflow-hidden transition-colors">
+            <div class="p-8 border-b border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/50">
+                <h3 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.25em]">Semua Tiket ({{ $tickets->total() }})</h3>
             </div>
+
+            <div class="divide-y divide-slate-50 dark:divide-slate-700">
+                @forelse($tickets as $ticket)
+                    @php $status = $ticket->status_label; $priority = $ticket->priority_label; @endphp
+                    <a href="{{ route('admin.tickets.show', $ticket) }}"
+                       class="flex flex-col sm:flex-row sm:items-center gap-4 p-6 hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-all group">
+
+                        {{-- Priority Dot --}}
+                        <div class="shrink-0 w-3 h-3 rounded-full {{ $priority['dot'] }} ring-4 ring-current ring-opacity-20 mt-1 sm:mt-0 self-start sm:self-center transition-transform group-hover:scale-125"></div>
+
+                        {{-- Content --}}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ $ticket->ticket_number }}</span>
+                                <span class="text-[9px] font-black {{ $status['text'] }} {{ $status['bg'] }} dark:bg-opacity-20 px-2.5 py-0.5 rounded-full uppercase tracking-wider">{{ $status['label'] }}</span>
+                                <span class="text-[9px] font-black {{ $priority['text'] }} {{ $priority['bg'] }} dark:bg-opacity-20 px-2.5 py-0.5 rounded-full uppercase tracking-wider">{{ $priority['label'] }}</span>
+                            </div>
+                            <p class="text-sm font-black text-slate-900 dark:text-white truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors uppercase tracking-tight">{{ $ticket->subject }}</p>
+                            <div class="flex items-center gap-4 mt-1.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                                <span class="flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                                    {{ $ticket->category_label }}
+                                </span>
+                                <span class="flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                                    {{ $ticket->replies->count() }}
+                                </span>
+                                <span class="flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    {{ $ticket->created_at->diffForHumans() }}
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- Arrow --}}
+                        <div class="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 group-hover:translate-x-1 transition-all">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                        </div>
+                    </a>
+                @empty
+                    <div class="py-32 text-center">
+                        <div class="flex flex-col items-center gap-6">
+                            <div class="w-24 h-24 bg-emerald-50 dark:bg-emerald-500/10 rounded-[2.5rem] flex items-center justify-center ring-1 ring-emerald-100 dark:ring-emerald-500/20 shadow-xl shadow-emerald-500/10 dark:shadow-none">
+                                <svg class="w-12 h-12 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                            </div>
+                            <div>
+                                <p class="text-base font-black text-slate-900 dark:text-white mb-1 uppercase tracking-tight">Belum Ada Tiket</p>
+                                <p class="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-widest">Butuh bantuan? Buat tiket pertama Anda sekarang.</p>
+                            </div>
+                            <a href="{{ route('admin.tickets.create') }}"
+                               class="px-8 py-3.5 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-emerald-700 dark:hover:bg-emerald-500 transition-all shadow-xl shadow-emerald-500/20 dark:shadow-none">
+                                + Buat Tiket Pertama
+                            </a>
+                        </div>
+                    </div>
+                @endforelse
+            </div>
+
             @if($tickets->hasPages())
-            <div class="px-5 py-3 border-t border-gray-100">
-                {{ $tickets->links() }}
-            </div>
+                <div class="px-8 py-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 transition-colors">
+                    {{ $tickets->links() }}
+                </div>
             @endif
         </div>
-
-        {{-- ===== MODAL BUAT TIKET ===== --}}
-        <div x-show="openCreateModal" style="display:none;" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="openCreateModal = false"
-                 x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                 x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
-
-            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg"
-                 x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-                 x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95">
-
-                <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
-                    <div>
-                        <h3 class="text-sm font-black text-gray-900">Buat Tiket Bantuan</h3>
-                        <p class="text-xs text-gray-500">Jelaskan kendala Anda sejelas mungkin.</p>
-                    </div>
-                    <button type="button" @click="openCreateModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                </div>
-
-                <form action="{{ route('admin.tickets.store') }}" method="POST">
-                    @csrf
-                    <div class="px-6 py-5 space-y-4">
-                        <div>
-                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Subjek Kendala</label>
-                            <input type="text" name="subject" required class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition font-semibold" placeholder="Contoh: Kesalahan sistem saat tambah KK">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Prioritas</label>
-                            <select name="priority" required class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition font-semibold">
-                                <option value="low">Rendah (Pertanyaan umum)</option>
-                                <option value="normal" selected>Normal (Bug minor)</option>
-                                <option value="high">Tinggi (Sistem tidak bisa digunakan / Kritis)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Pesan Detail</label>
-                            <textarea name="message" rows="5" required class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition" placeholder="Jelaskan detail kendala, langkah-langkah untuk menemukannya, dll..."></textarea>
-                        </div>
-                    </div>
-                    <div class="px-6 py-4 bg-gray-50 rounded-b-2xl flex justify-end gap-2">
-                        <button type="button" @click="openCreateModal = false"
-                            class="px-5 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                            Batal
-                        </button>
-                        <button type="submit"
-                            class="px-5 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors shadow-sm">
-                            Kirim Tiket
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
     </div>
 </x-app-layout>

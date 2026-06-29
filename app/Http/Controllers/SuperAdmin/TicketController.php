@@ -12,21 +12,44 @@ class TicketController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Ticket::with(['tenant', 'user'])->latest();
+        $query = Ticket::with(['tenant', 'user', 'assignedTo', 'replies'])->latest();
 
-        if ($request->status) {
-            $query->where('status', $request->status);
+        $search = $request->input('search');
+        $status = $request->input('status', 'all');
+        $priority = $request->input('priority', 'all');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('ticket_number', 'like', "%{$search}%")
+                  ->orWhere('subject', 'like', "%{$search}%");
+            });
         }
 
-        $tickets = $query->paginate(20);
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
 
-        return view('super-admin.tickets.index', compact('tickets'));
+        if ($priority !== 'all') {
+            $query->where('priority', $priority);
+        }
+
+        $tickets = $query->paginate(20)->withQueryString();
+
+        $stats = [
+            'open' => Ticket::where('status', 'open')->count(),
+            'in_progress' => Ticket::whereIn('status', ['open', 'answered'])->count(), // using answered as in_progress
+            'waiting' => Ticket::where('status', 'answered')->count(),
+            'resolved' => Ticket::where('status', 'resolved')->count(),
+        ];
+
+        return view('super-admin.tickets.index', compact('tickets', 'search', 'status', 'priority', 'stats'));
     }
 
     public function show(Ticket $ticket)
     {
-        $ticket->load(['tenant', 'user', 'replies.user']);
-        return view('super-admin.tickets.show', compact('ticket'));
+        $ticket->load(['tenant', 'user', 'replies.user', 'assignedTo']);
+        $admins = User::where('role', 'owner')->get(); // Super admins
+        return view('super-admin.tickets.show', compact('ticket', 'admins'));
     }
 
     public function reply(Request $request, Ticket $ticket)
@@ -40,15 +63,48 @@ class TicketController extends Controller
             'ticket_id' => $ticket->id,
             'user_id' => Auth::id(),
             'message' => $request->message,
+            'is_staff_reply' => true,
         ]);
 
+        $updateData = [];
         if ($request->status && $request->status !== $ticket->status) {
-            $ticket->update(['status' => $request->status]);
+            $updateData['status'] = $request->status;
         } else {
-            // Auto update to answered if super admin replies
-            $ticket->update(['status' => 'answered']);
+            // Auto update to answered if super admin replies and status is waiting_reply or open
+            $updateData['status'] = 'answered';
+        }
+        
+        if (!empty($updateData)) {
+            $ticket->update($updateData);
         }
 
         return back()->with('success', 'Balasan berhasil dikirim.');
+    }
+
+    public function updateStatus(Request $request, Ticket $ticket)
+    {
+        $request->validate([
+            'status' => 'required|in:open,answered,resolved,closed',
+        ]);
+
+        $updateData = ['status' => $request->status];
+
+        if ($request->status === 'resolved' || $request->status === 'closed') {
+            $updateData['resolved_at'] = now();
+        }
+
+        $ticket->update($updateData);
+
+        return back()->with('success', 'Status tiket berhasil diubah.');
+    }
+
+    public function assign(Request $request, Ticket $ticket)
+    {
+        $ticket->update([
+            'assigned_to' => Auth::id(),
+            'status' => $ticket->status === 'open' ? 'answered' : $ticket->status,
+        ]);
+
+        return back()->with('success', 'Tiket berhasil diambil alih.');
     }
 }

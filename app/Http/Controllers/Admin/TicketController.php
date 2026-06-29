@@ -26,13 +26,16 @@ class TicketController extends Controller
         $request->validate([
             'subject' => 'required|string|max:255',
             'message' => 'required|string',
-            'priority' => 'required|in:low,normal,high',
+            'priority' => 'required|in:low,normal,high,urgent',
+            'category' => 'required|in:technical,billing,general,feature_request',
         ]);
 
         DB::transaction(function () use ($request) {
             $ticket = Ticket::create([
                 'tenant_id' => res_tenant()->id,
                 'user_id' => Auth::id(),
+                'ticket_number' => 'TKT-'.now()->format('Ymd').'-'.str_pad(Ticket::max('id') + 1, 4, '0', STR_PAD_LEFT),
+                'category' => $request->category,
                 'subject' => $request->subject,
                 'priority' => $request->priority,
                 'status' => 'open',

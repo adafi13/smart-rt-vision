@@ -295,6 +295,8 @@ Route::middleware(['auth', 'super_admin'])->prefix('super-admin')->name('super-a
     // Helpdesk / Sistem Tiket (Super Admin)
     Route::resource('tickets', \App\Http\Controllers\SuperAdmin\TicketController::class)->only(['index', 'show']);
     Route::post('tickets/{ticket}/reply', [\App\Http\Controllers\SuperAdmin\TicketController::class, 'reply'])->name('tickets.reply');
+    Route::patch('tickets/{ticket}/status', [\App\Http\Controllers\SuperAdmin\TicketController::class, 'updateStatus'])->name('tickets.status');
+    Route::patch('tickets/{ticket}/assign', [\App\Http\Controllers\SuperAdmin\TicketController::class, 'assign'])->name('tickets.assign');
 
     // Impersonation (start only — leave is outside this group)
     Route::post('impersonate/{tenant}', [\App\Http\Controllers\SuperAdmin\ImpersonationController::class, 'impersonate'])->name('impersonate');
