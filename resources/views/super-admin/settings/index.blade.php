@@ -74,17 +74,17 @@
                 </div>
             </div>
 
-            <div class="flex justify-end gap-3">
-                <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl">Simpan Pengaturan Utama</button>
+            <div class="flex flex-col sm:flex-row justify-end gap-3">
+                <button type="submit" class="btn-primary w-full sm:w-auto px-6 py-2.5 rounded-xl">Simpan Pengaturan Utama</button>
             </div>
         </form>
 
         <hr class="border-gray-200">
 
         <!-- Global Announcement — Pindah ke halaman sendiri -->
-        <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100 shadow-sm p-6 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
+        <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100 shadow-sm p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-start sm:items-center gap-4">
+                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0 mt-1 sm:mt-0">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
                 </div>
                 <div>
@@ -92,39 +92,43 @@
                     <p class="text-xs text-gray-500 mt-0.5">Kelola, buat, dan jadwalkan pengumuman untuk seluruh Mitra RT aktif.</p>
                 </div>
             </div>
-            <a href="{{ route('super-admin.announcements.index') }}" class="btn-primary flex-shrink-0 px-4 py-2 rounded-xl text-sm inline-flex items-center gap-2">
+            <a href="{{ route('super-admin.announcements.index') }}" class="btn-primary w-full sm:w-auto justify-center flex-shrink-0 px-4 py-2.5 rounded-xl text-sm inline-flex items-center gap-2">
                 Kelola Pengumuman
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </a>
         </div>
 
         <!-- Maintenance Mode -->
-        <div class="bg-white rounded-2xl border border-rose-100 shadow-sm p-6 relative overflow-hidden">
+        <div class="bg-white rounded-2xl border border-rose-100 shadow-sm p-5 sm:p-6 relative overflow-hidden">
             <div class="absolute right-0 top-0 w-32 h-32 bg-rose-50 rounded-bl-full pointer-events-none"></div>
-            <h2 class="text-base font-bold text-rose-900 mb-2">Mode Perbaikan (Maintenance)</h2>
-            <p class="text-sm text-gray-600 mb-4">Gunakan fitur ini jika Anda sedang melakukan pembaruan sistem besar-besaran. Semua pengguna (selain Super Admin) tidak akan bisa mengakses SmartRT Vision.</p>
-            
-            <form action="{{ route('super-admin.settings.maintenance') }}" method="POST">
-                @csrf
-                @if($isMaintenance)
-                <div class="flex items-center gap-4 bg-rose-50 p-4 rounded-xl">
-                    <span class="flex h-3 w-3 relative">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
-                    </span>
-                    <p class="text-sm font-bold text-rose-700 flex-1">Sistem sedang dalam Mode Perbaikan!</p>
-                    <button type="submit" class="px-5 py-2 rounded-xl text-sm font-bold bg-white text-emerald-600 hover:bg-emerald-50 border border-emerald-200 shadow-sm transition-colors">Normalkan Sistem</button>
-                </div>
-                @else
-                <div class="flex items-center justify-between">
-                    <p class="text-sm font-medium text-emerald-600 flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        Sistem Berjalan Normal
-                    </p>
-                    <button type="submit" onclick="return confirm('Yakin ingin mengaktifkan mode perbaikan? Semua RT akan terputus aksesnya.')" class="px-5 py-2 rounded-xl text-sm font-bold bg-rose-100 text-rose-700 hover:bg-rose-200 transition-colors">Aktifkan Maintenance</button>
-                </div>
-                @endif
-            </form>
+            <div class="relative z-10">
+                <h2 class="text-base font-bold text-rose-900 mb-2">Mode Perbaikan (Maintenance)</h2>
+                <p class="text-sm text-gray-600 mb-4 sm:mb-6">Gunakan fitur ini jika Anda sedang melakukan pembaruan sistem besar-besaran. Semua pengguna (selain Super Admin) tidak akan bisa mengakses SmartRT Vision.</p>
+                
+                <form action="{{ route('super-admin.settings.maintenance') }}" method="POST">
+                    @csrf
+                    @if($isMaintenance)
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-4 bg-rose-50 p-4 rounded-xl border border-rose-100">
+                        <div class="flex items-center gap-3 flex-1">
+                            <span class="flex h-3 w-3 relative flex-shrink-0">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+                            </span>
+                            <p class="text-sm font-bold text-rose-700">Sistem sedang dalam Mode Perbaikan!</p>
+                        </div>
+                        <button type="submit" class="w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-bold bg-white text-emerald-600 hover:bg-emerald-50 border border-emerald-200 shadow-sm transition-colors text-center">Normalkan Sistem</button>
+                    </div>
+                    @else
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <p class="text-sm font-medium text-emerald-600 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Sistem Berjalan Normal
+                        </p>
+                        <button type="submit" onclick="return confirm('Yakin ingin mengaktifkan mode perbaikan? Semua RT akan terputus aksesnya.')" class="w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-bold bg-rose-100 text-rose-700 hover:bg-rose-200 transition-colors text-center">Aktifkan Maintenance</button>
+                    </div>
+                    @endif
+                </form>
+            </div>
         </div>
     </div>
 </x-super-admin-layout>
