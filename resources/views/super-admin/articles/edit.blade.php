@@ -1,21 +1,19 @@
 <x-super-admin-layout>
     <x-slot name="title">Edit Artikel Blog</x-slot>
 
-    <!-- TinyMCE CDN -->
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <!-- TinyMCE CDN (Open Source Version) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
       tinymce.init({
         selector: '#content',
         plugins: 'lists link image table code help wordcount',
         toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | code',
         height: 500,
-        content_style: 'body { font-family:Inter,sans-serif; font-size:16px }'
+        content_style: 'body { font-family:Inter,sans-serif; font-size:16px }',
+        promotion: false,
+        branding: false
       });
     </script>
-    <style>
-        /* Sembunyikan warning API Key TinyMCE */
-        .tox-notifications-container { display: none !important; }
-    </style>
 
     <div class="mb-6 flex justify-between items-center">
         <div>
