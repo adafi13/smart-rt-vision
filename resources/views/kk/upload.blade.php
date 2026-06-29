@@ -102,6 +102,28 @@
         document.getElementById('foto_kk').addEventListener('change', function() {
             const [file] = this.files;
             if (file) {
+                // Validation: Must be image
+                if (!file.type.startsWith('image/')) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire('Format Salah!', 'File yang Anda pilih bukan gambar. Silakan unggah foto.', 'error');
+                    } else {
+                        alert('Format Salah! File harus berupa gambar.');
+                    }
+                    this.value = '';
+                    return;
+                }
+
+                // Validation: Max 8MB
+                if (file.size > 8 * 1024 * 1024) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire('Ukuran Terlalu Besar!', 'Ukuran foto maksimal adalah 8MB. Silakan kompres atau pilih foto lain.', 'error');
+                    } else {
+                        alert('Ukuran Terlalu Besar! Ukuran foto maksimal adalah 8MB.');
+                    }
+                    this.value = '';
+                    return;
+                }
+
                 document.getElementById('preview').src = URL.createObjectURL(file);
                 document.getElementById('file-name').textContent = file.name;
                 
