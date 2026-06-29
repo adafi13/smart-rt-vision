@@ -117,6 +117,7 @@
                         ($isOwner || $isSekretaris) ? ['route' => 'admin.organisasi.index', 'match' => 'admin.organisasi.*', 'label' => 'Struktur Organisasi'] : null,
                         $isOwner ? ['route' => 'admin.staff.index', 'match' => 'admin.staff.*', 'label' => 'Manajemen Staff (Akun)'] : null,
                         ($isOwner || $isBendahara) ? ['route' => 'billing.index', 'match' => 'billing.*', 'label' => 'Paket & Tagihan'] : null,
+                        $isOwner ? ['route' => 'admin.tickets.index', 'match' => 'admin.tickets.*', 'label' => 'Helpdesk / Bantuan'] : null,
                     ]),
                 ],
             ];

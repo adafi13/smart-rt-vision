@@ -71,6 +71,7 @@ class SuperAdminController extends Controller
             'active'             => Tenant::where('status', 'active')->count(),
             'expired'            => Tenant::whereIn('status', ['expired', 'suspended'])->count(),
             'mrr'                => Subscription::where('status', 'active')->where('current_period_end', '>', now())
+                ->where('amount', '>', 0)
                 ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')->sum('plans.price_monthly'),
             'churn_rate'         => round($churnRate, 1),
             'total_revenue'      => Subscription::whereNotNull('paid_at')->sum('amount'),
@@ -81,12 +82,13 @@ class SuperAdminController extends Controller
             'total_members'      => $totalMembers,
             'total_families'     => $totalFamilies,
             'logs_today'         => $logsToday,
+            'total_ai_scans'     => Tenant::sum('ai_extractions_used'),
         ];
 
         // Build revenue chart data (last 6 months)
         $revenueChartData = [];
         for ($i = 5; $i >= 0; $i--) {
-            $month = now()->subMonths($i);
+            $month = now()->startOfMonth()->subMonths($i);
             $revenueChartData[] = [
                 'label' => $month->translatedFormat('M Y'),
                 'total' => Subscription::whereNotNull('paid_at')
@@ -103,10 +105,8 @@ class SuperAdminController extends Controller
     public function tenants(Request $request)
     {
         $query = Tenant::with([
-            'subscriptions' => fn($q) => $q->latest()->limit(1)->with('plan'),
-            'users' => fn($q) => $q->where('role', 'admin_rt')
-                ->where(fn($q2) => $q2->where('tenant_role', 'owner')->orWhereNull('tenant_role'))
-                ->limit(1),
+            'latestSubscription.plan',
+            'owner',
         ])->withCount('families');
 
         if ($search = $request->input('search')) {

@@ -97,8 +97,8 @@
                 <tbody class="divide-y divide-gray-50 text-sm">
                     @forelse($tenants as $tenant)
                     @php
-                        $owner = $tenant->users->first();
-                        $sub   = $tenant->subscriptions->first();
+                        $owner = $tenant->owner;
+                        $sub   = $tenant->latestSubscription;
                         $statusConfig = [
                             'trial'     => ['label' => 'Trial',     'dot' => 'bg-amber-400',   'badge' => 'bg-amber-50 text-amber-700 border border-amber-200'],
                             'active'    => ['label' => 'Aktif',     'dot' => 'bg-emerald-400', 'badge' => 'bg-emerald-50 text-emerald-700 border border-emerald-200'],
@@ -211,8 +211,8 @@
         <div class="md:hidden divide-y divide-gray-50">
             @forelse($tenants as $tenant)
             @php
-                $owner = $tenant->users->first();
-                $sub   = $tenant->subscriptions->first();
+                $owner = $tenant->owner;
+                $sub   = $tenant->latestSubscription;
                 $statusConfig = [
                     'trial'     => ['label' => 'Trial',     'dot' => 'bg-amber-400',   'badge' => 'bg-amber-50 text-amber-700'],
                     'active'    => ['label' => 'Aktif',     'dot' => 'bg-emerald-400', 'badge' => 'bg-emerald-50 text-emerald-700'],

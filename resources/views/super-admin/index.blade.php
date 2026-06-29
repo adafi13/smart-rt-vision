@@ -136,6 +136,16 @@
                     <span class="text-xs text-gray-500">Churn Rate</span>
                     <span class="text-xs font-black {{ $stats['churn_rate'] > 5 ? 'text-rose-600' : 'text-emerald-600' }}">{{ $stats['churn_rate'] }}%</span>
                 </div>
+                <div class="flex justify-between items-center border-t border-gray-100 pt-2.5 mt-2.5">
+                    <span class="text-xs text-gray-500 flex items-center gap-1">
+                        <svg class="w-3 h-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        AI Scans (Beban)
+                    </span>
+                    <div class="text-right">
+                        <span class="text-xs font-black text-purple-600">{{ number_format($stats['total_ai_scans']) }}x</span>
+                        <p class="text-[9px] font-bold text-gray-400 mt-0.5">Est. Rp{{ number_format($stats['total_ai_scans'] * 15, 0, ',', '.') }}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

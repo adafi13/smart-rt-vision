@@ -10,7 +10,9 @@ class PlanController extends Controller
 {
     public function index()
     {
-        $plans = Plan::orderBy('sort_order')->get();
+        $plans = Plan::withCount(['subscriptions' => function ($query) {
+            $query->where('status', 'active')->where('current_period_end', '>', now());
+        }])->orderBy('sort_order')->get();
         return view('super-admin.plans.index', compact('plans'));
     }
 

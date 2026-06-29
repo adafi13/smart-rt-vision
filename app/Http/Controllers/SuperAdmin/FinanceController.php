@@ -26,10 +26,11 @@ class FinanceController extends Controller
             ->whereYear('paid_at', now()->subMonth()->year)
             ->sum('amount');
 
-        // Build last 12 months array (loop per-month query — SQLite-compatible)
+        // Build last 12 months array
         $months = [];
         for ($i = 11; $i >= 0; $i--) {
-            $month = now()->subMonths($i);
+            // Gunakan startOfMonth agar tidak ada bug lompat bulan pada tanggal 31
+            $month = now()->startOfMonth()->subMonths($i);
             $months[] = [
                 'label' => $month->translatedFormat('M Y'),
                 'total' => Subscription::whereNotNull('paid_at')
@@ -46,9 +47,12 @@ class FinanceController extends Controller
             ->groupBy('plan_id')
             ->get();
 
-        // MRR
+        // MRR (Monthly Recurring Revenue)
+        // Hanya hitung langganan aktif yang benar-benar berbayar (amount > 0)
+        // dan menghindari langganan manual (bypass) yang amount = 0
         $mrr = Subscription::where('status', 'active')
             ->where('current_period_end', '>', now())
+            ->where('amount', '>', 0)
             ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
             ->sum('plans.price_monthly');
 

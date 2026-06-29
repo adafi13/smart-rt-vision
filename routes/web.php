@@ -257,6 +257,13 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::put('/{cctv}', [\App\Http\Controllers\Admin\AdminCctvController::class, 'update'])->name('update');
         Route::delete('/{cctv}', [\App\Http\Controllers\Admin\AdminCctvController::class, 'destroy'])->name('destroy');
     });
+
+    Route::prefix('admin/tickets')->name('admin.tickets.')->middleware('rt_role:owner')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\TicketController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Admin\TicketController::class, 'store'])->name('store');
+        Route::get('/{ticket}', [\App\Http\Controllers\Admin\TicketController::class, 'show'])->name('show');
+        Route::post('/{ticket}/reply', [\App\Http\Controllers\Admin\TicketController::class, 'reply'])->name('reply');
+    });
 });
 
 Route::middleware('auth')->group(function () {
@@ -276,9 +283,18 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'super_admin'])->prefix('super-admin')->name('super-admin.')->group(function () {
     Route::get('/', [SuperAdminController::class, 'index'])->name('index');
     Route::get('/tenants', [SuperAdminController::class, 'tenants'])->name('tenants.index');
+    Route::get('/search', [\App\Http\Controllers\SuperAdmin\SearchController::class, 'search'])->name('search');
     
     // Manajemen Paket Langganan
     Route::resource('plans', \App\Http\Controllers\SuperAdmin\PlanController::class)->except('show');
+    
+    // Manajemen Kupon / Diskon
+    Route::resource('coupons', \App\Http\Controllers\SuperAdmin\CouponController::class)->only(['index', 'store', 'destroy']);
+    Route::post('coupons/{coupon}/toggle', [\App\Http\Controllers\SuperAdmin\CouponController::class, 'toggleActive'])->name('coupons.toggle');
+
+    // Helpdesk / Sistem Tiket (Super Admin)
+    Route::resource('tickets', \App\Http\Controllers\SuperAdmin\TicketController::class)->only(['index', 'show']);
+    Route::post('tickets/{ticket}/reply', [\App\Http\Controllers\SuperAdmin\TicketController::class, 'reply'])->name('tickets.reply');
 
     // Impersonation (start only — leave is outside this group)
     Route::post('impersonate/{tenant}', [\App\Http\Controllers\SuperAdmin\ImpersonationController::class, 'impersonate'])->name('impersonate');

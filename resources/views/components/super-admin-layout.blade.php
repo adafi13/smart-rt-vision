@@ -56,6 +56,15 @@
 
             <!-- Navigation -->
             <nav class="flex-1 p-3 overflow-y-auto">
+                
+                <!-- Search Button (Fake Input) -->
+                <button type="button" @click="$dispatch('open-search')" class="w-full flex items-center justify-between px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 rounded-lg transition-colors border border-slate-700/50 hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 mb-4 group">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        <span class="text-xs font-medium">Pencarian Cepat</span>
+                    </div>
+                    <kbd class="hidden md:inline-block text-[10px] font-sans font-semibold text-slate-500 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 group-hover:text-slate-400">Ctrl+K</kbd>
+                </button>
 
                 <!-- SAAS ADMIN PANEL -->
                 <p class="sa-nav-group">SaaS Admin Panel</p>
@@ -74,9 +83,17 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
                     Paket (Tiering)
                 </a>
+                <a href="{{ route('super-admin.coupons.index') }}" class="sa-nav-item {{ request()->routeIs('super-admin.coupons.*') ? 'active' : '' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                    Kupon / Diskon
+                </a>
                 <a href="{{ route('super-admin.transactions.index') }}" class="sa-nav-item {{ request()->routeIs('super-admin.transactions.*') ? 'active' : '' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                     Billing / Tagihan
+                </a>
+                <a href="{{ route('super-admin.tickets.index') }}" class="sa-nav-item {{ request()->routeIs('super-admin.tickets.*') ? 'active' : '' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    Helpdesk / Tiket
                 </a>
                 @endif
 
@@ -152,7 +169,11 @@
                     </button>
                     <span class="text-sm font-bold text-white">SmartRT Vision Super</span>
                 </div>
-                <form method="POST" action="{{ route('logout') }}">
+                <div class="flex items-center gap-2">
+                    <button @click="$dispatch('open-search')" class="text-slate-300 hover:text-white p-1.5 rounded-lg bg-slate-800">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </button>
+                    <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="text-xs font-bold text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-md">Logout</button>
                 </form>
@@ -161,6 +182,89 @@
             <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
                 {{ $slot }}
             </main>
+        </div>
+    </div>
+
+    <!-- Global Search Modal (Ctrl + K) -->
+    <div x-data="{ 
+            open: false, 
+            query: '', 
+            results: [], 
+            loading: false,
+            init() {
+                this.$watch('query', value => {
+                    if (value.length < 2) {
+                        this.results = [];
+                        return;
+                    }
+                    this.loading = true;
+                    fetch('{{ route('super-admin.search') }}?q=' + encodeURIComponent(value))
+                        .then(res => res.json())
+                        .then(data => {
+                            this.results = data;
+                            this.loading = false;
+                        });
+                });
+            }
+         }"
+         @keydown.window.prevent.ctrl.k="open = true; setTimeout(() => $refs.searchInput.focus(), 50)"
+         @keydown.window.prevent.cmd.k="open = true; setTimeout(() => $refs.searchInput.focus(), 50)"
+         @open-search.window="open = true; setTimeout(() => $refs.searchInput.focus(), 50)"
+         @keydown.escape.window="open = false"
+         x-show="open" 
+         class="fixed inset-0 z-[100] overflow-y-auto p-4 sm:p-6 md:p-20"
+         style="display: none;">
+        
+        <div x-show="open" x-transition.opacity class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="open = false"></div>
+
+        <div x-show="open" 
+             x-transition.enter="ease-out duration-300"
+             x-transition.enter-start="opacity-0 scale-95"
+             x-transition.enter-end="opacity-100 scale-100"
+             x-transition.leave="ease-in duration-200"
+             x-transition.leave-start="opacity-100 scale-100"
+             x-transition.leave-end="opacity-0 scale-95"
+             class="mx-auto max-w-xl transform divide-y divide-slate-100 overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 transition-all relative z-[101]">
+            
+            <div class="relative">
+                <svg class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+                </svg>
+                <input x-ref="searchInput" x-model="query" type="text" class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-slate-900 placeholder:text-slate-400 focus:ring-0 sm:text-sm" placeholder="Cari RT, Paket, Staff..." role="combobox" aria-expanded="false" aria-controls="options">
+                
+                <div x-show="loading" class="absolute right-4 top-3.5">
+                    <svg class="animate-spin h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <ul x-show="results.length > 0" class="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-slate-800" id="options" role="listbox">
+                <template x-for="item in results" :key="item.url">
+                    <li class="cursor-pointer select-none px-4 py-2 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+                        <a :href="item.url" class="flex items-center gap-3">
+                            <div class="flex h-8 w-8 flex-none items-center justify-center rounded-lg bg-slate-100 group-hover:bg-indigo-100 text-slate-500 group-hover:text-indigo-600" x-html="item.icon"></div>
+                            <div class="flex-auto">
+                                <p class="font-semibold text-slate-900 truncate" x-text="item.title"></p>
+                                <p class="text-xs text-slate-500 truncate" x-text="item.subtitle"></p>
+                            </div>
+                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase" x-text="item.type"></span>
+                        </a>
+                    </li>
+                </template>
+            </ul>
+
+            <!-- Empty state -->
+            <div x-show="query.length >= 2 && results.length === 0 && !loading" class="px-6 py-14 text-center text-sm sm:px-14">
+                <svg class="mx-auto h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <p class="mt-4 font-semibold text-slate-900">Tidak ada hasil ditemukan</p>
+                <p class="mt-2 text-slate-500">Coba gunakan kata kunci lain (misal: "022" atau "Premium").</p>
+            </div>
+            
+            <div class="flex flex-wrap items-center bg-slate-50 px-4 py-2.5 text-xs text-slate-500 border-t border-slate-100">
+                <span>Tekan <kbd class="font-sans font-semibold text-slate-900 bg-white border border-slate-200 rounded px-1.5 py-0.5 mx-1 shadow-sm">ESC</kbd> untuk menutup</span>
+            </div>
         </div>
     </div>
 

@@ -38,11 +38,12 @@
             <table class="min-w-full">
                 <thead>
                     <tr class="border-b border-gray-100 bg-gray-50/50">
+                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Trx ID</th>
                         <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tenant (RT)</th>
                         <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Paket</th>
                         <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nominal</th>
-                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal</th>
+                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tgl Dibuat / Dibayar</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -56,6 +57,9 @@
                         }; 
                     @endphp
                     <tr class="hover:bg-gray-50/50 transition-colors">
+                        <td class="px-5 py-4 whitespace-nowrap text-sm font-mono text-gray-600">
+                            #{{ $trx->id }}
+                        </td>
                         <td class="px-5 py-4 whitespace-nowrap">
                             <p class="text-sm font-bold text-gray-900">{{ $trx->tenant->name }}</p>
                             <p class="text-xs text-gray-500">{{ $trx->tenant->slug }}</p>
@@ -64,19 +68,25 @@
                             {{ $trx->plan->name ?? '-' }}
                         </td>
                         <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold border {{ $badge }}">
-                                {{ strtoupper(str_replace('_', ' ', $trx->status)) }}
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border {{ $badge }}">
+                                {{ str_replace('_', ' ', $trx->status) }}
                             </span>
                         </td>
-                        <td class="px-5 py-4 whitespace-nowrap font-bold text-gray-900">
-                            Rp {{ number_format($trx->amount, 0, ',', '.') }}
+                        <td class="px-5 py-4 whitespace-nowrap">
+                            <p class="font-bold text-gray-900">Rp {{ number_format($trx->amount, 0, ',', '.') }}</p>
+                            @if($trx->amount == 0 && $trx->status == 'active')
+                                <span class="text-[10px] text-gray-400 font-medium">Bypass / Manual</span>
+                            @endif
                         </td>
-                        <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $trx->created_at->translatedFormat('d M Y H:i') }}
+                        <td class="px-5 py-4 whitespace-nowrap text-sm">
+                            <p class="text-gray-900">{{ $trx->created_at->translatedFormat('d M Y H:i') }}</p>
+                            @if($trx->paid_at)
+                                <p class="text-xs text-emerald-600 font-semibold mt-0.5">Paid: {{ $trx->paid_at->translatedFormat('d M Y H:i') }}</p>
+                            @endif
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="5" class="py-12 text-center text-sm text-gray-400">Belum ada data transaksi.</td></tr>
+                    <tr><td colspan="6" class="py-12 text-center text-sm text-gray-400">Belum ada data transaksi.</td></tr>
                     @endforelse
                 </tbody>
             </table>

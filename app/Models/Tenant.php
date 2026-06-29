@@ -38,6 +38,21 @@ class Tenant extends Model
         return $this->hasMany(Subscription::class);
     }
 
+    public function latestSubscription()
+    {
+        return $this->hasOne(Subscription::class)->latestOfMany();
+    }
+
+    public function owner()
+    {
+        return $this->hasOne(User::class)
+            ->where('role', 'admin_rt')
+            ->where(function($q) {
+                $q->where('tenant_role', 'owner')->orWhereNull('tenant_role');
+            })
+            ->ofMany('id', 'min');
+    }
+
     public function activeSubscription(): ?Subscription
     {
         return $this->subscriptions()

@@ -13,8 +13,12 @@ class TransactionController extends Controller
         $query = Subscription::with(['tenant', 'plan'])->latest();
 
         if ($search = $request->input('search')) {
-            $query->whereHas('tenant', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
+            $query->where(function($q) use ($search) {
+                $q->where('id', 'like', "%{$search}%")
+                  ->orWhereHas('tenant', function($t) use ($search) {
+                      $t->where('name', 'like', "%{$search}%")
+                        ->orWhere('slug', 'like', "%{$search}%");
+                  });
             });
         }
 
@@ -26,7 +30,7 @@ class TransactionController extends Controller
 
         $stats = [
             'total' => Subscription::count(),
-            'paid' => Subscription::where('status', 'active')->sum('amount'),
+            'paid' => Subscription::whereNotNull('paid_at')->sum('amount'),
             'pending' => Subscription::where('status', 'pending_payment')->count(),
         ];
 
