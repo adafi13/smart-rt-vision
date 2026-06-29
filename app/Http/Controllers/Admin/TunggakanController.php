@@ -29,7 +29,7 @@ class TunggakanController extends Controller
             ->whereMonth('periode', $month)
             ->pluck('jumlah', 'family_id'); // family_id => jumlah
 
-        $bulanan = $families->map(function ($family) use ($contributionsThisMonth) {
+        $bulanan = $families->map(function ($family) use ($contributionsThisMonth, $nominalIuran) {
             $hasPaid = $contributionsThisMonth->has($family->id);
             return (object) [
                 'family' => $family,
@@ -55,7 +55,7 @@ class TunggakanController extends Controller
                 })->unique()->toArray();
             });
 
-        $tahunan = $families->map(function ($family) use ($yearlyContributions, $monthsToCount) {
+        $tahunan = $families->map(function ($family) use ($yearlyContributions, $monthsToCount, $nominalIuran) {
             $paidMonths = $yearlyContributions->has($family->id) ? $yearlyContributions[$family->id] : [];
             
             $monthsOwed = 0;
