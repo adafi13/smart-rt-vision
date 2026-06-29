@@ -1,12 +1,12 @@
 <x-super-admin-layout title="User Management">
     <div class="space-y-5">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl font-bold text-gray-900">User Management</h1>
                 <p class="text-sm text-gray-500 mt-0.5">Kelola akun internal tim Super Admin SmartRT Vision.</p>
             </div>
-            <a href="{{ route('super-admin.staff.create') }}" class="btn-primary">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <a href="{{ route('super-admin.staff.create') }}" class="btn-primary w-full sm:w-auto justify-center">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Tambah Staff
             </a>
         </div>
