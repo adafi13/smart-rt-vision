@@ -151,10 +151,10 @@
         <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(55% 65% at 50% 42%, rgba(10,9,21,0.65) 0%, rgba(10,9,21,0.25) 55%, transparent 75%);"></div>
 
         <!-- Single responsive layout -->
-        <div class="relative z-10 w-full max-w-6xl mx-auto px-6 sm:px-10 lg:px-12 pt-28 pb-16 lg:pt-36 lg:pb-24 flex flex-col lg:flex-row lg:items-center lg:gap-16">
+        <div class="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 lg:pt-36 lg:pb-24 flex flex-col lg:flex-row lg:items-center lg:gap-16">
 
             <!-- LEFT: Text Content -->
-            <div class="flex-1 text-left">
+            <div class="flex-1 flex flex-col items-center text-center lg:items-start lg:text-left">
                 <p class="text-xs sm:text-sm font-semibold text-indigo-300 tracking-widest uppercase mb-4">
                     Platform manajemen RT/RW — dari data warga hingga kas, dalam satu sistem.
                 </p>
@@ -171,14 +171,14 @@
                 </p>
 
                 <!-- CTA Buttons -->
-                <div class="mb-10 mt-2">
-                    <a href="#cara-kerja" class="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-2xl font-bold text-sm text-slate-900 bg-indigo-400 hover:bg-indigo-300 transition-all hover:scale-[1.05] shadow-lg shadow-indigo-500/30">
+                <div class="mb-10 mt-2 w-full max-w-xs sm:max-w-none">
+                    <a href="#cara-kerja" class="flex sm:inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-2xl font-bold text-sm text-slate-900 bg-indigo-400 hover:bg-indigo-300 transition-all hover:scale-[1.05] shadow-lg shadow-indigo-500/30">
                         LIHAT DEMO FITUR →
                     </a>
                 </div>
 
                 <!-- Social Proof -->
-                <div class="flex flex-wrap items-center gap-4 sm:gap-6">
+                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 w-full">
                     <div class="flex items-center gap-3">
                         <div class="flex -space-x-2">
                             <img class="w-8 h-8 rounded-full border-2 border-[#0f0d24] object-cover" src="https://i.pravatar.cc/100?img=11" alt="">
