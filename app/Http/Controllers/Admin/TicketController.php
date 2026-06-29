@@ -13,12 +13,17 @@ class TicketController extends Controller
 {
     public function index()
     {
-        $tickets = Ticket::where('tenant_id', res_tenant()->id)
+        $tickets = Ticket::where('tenant_id', auth()->user()->tenant_id)
             ->with('user')
             ->latest()
             ->paginate(15);
 
         return view('admin.tickets.index', compact('tickets'));
+    }
+
+    public function create()
+    {
+        return view('admin.tickets.create');
     }
 
     public function store(Request $request)
@@ -32,7 +37,7 @@ class TicketController extends Controller
 
         DB::transaction(function () use ($request) {
             $ticket = Ticket::create([
-                'tenant_id' => res_tenant()->id,
+                'tenant_id' => auth()->user()->tenant_id,
                 'user_id' => Auth::id(),
                 'ticket_number' => 'TKT-'.now()->format('Ymd').'-'.str_pad(Ticket::max('id') + 1, 4, '0', STR_PAD_LEFT),
                 'category' => $request->category,
@@ -53,7 +58,7 @@ class TicketController extends Controller
 
     public function show(Ticket $ticket)
     {
-        if ($ticket->tenant_id !== res_tenant()->id) {
+        if ($ticket->tenant_id !== auth()->user()->tenant_id) {
             abort(404);
         }
 
@@ -63,7 +68,7 @@ class TicketController extends Controller
 
     public function reply(Request $request, Ticket $ticket)
     {
-        if ($ticket->tenant_id !== res_tenant()->id) {
+        if ($ticket->tenant_id !== auth()->user()->tenant_id) {
             abort(404);
         }
 

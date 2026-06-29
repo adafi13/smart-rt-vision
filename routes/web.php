@@ -260,6 +260,7 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
 
     Route::prefix('admin/tickets')->name('admin.tickets.')->middleware('rt_role:owner')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\TicketController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\TicketController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Admin\TicketController::class, 'store'])->name('store');
         Route::get('/{ticket}', [\App\Http\Controllers\Admin\TicketController::class, 'show'])->name('show');
         Route::post('/{ticket}/reply', [\App\Http\Controllers\Admin\TicketController::class, 'reply'])->name('reply');

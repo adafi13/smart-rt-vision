@@ -15,9 +15,9 @@
 
         {{-- Stats Cards --}}
         @php
-            $myOpen     = \App\Models\SupportTicket::forUser(auth()->id())->where('status', 'open')->count();
-            $myProgress = \App\Models\SupportTicket::forUser(auth()->id())->whereIn('status', ['in_progress','waiting_reply'])->count();
-            $myResolved = \App\Models\SupportTicket::forUser(auth()->id())->whereIn('status', ['resolved','closed'])->count();
+            $myOpen     = \App\Models\Ticket::where('tenant_id', auth()->user()->tenant_id)->where('status', 'open')->count();
+            $myProgress = \App\Models\Ticket::where('tenant_id', auth()->user()->tenant_id)->whereIn('status', ['answered'])->count();
+            $myResolved = \App\Models\Ticket::where('tenant_id', auth()->user()->tenant_id)->whereIn('status', ['resolved','closed'])->count();
         @endphp
         <div class="grid grid-cols-3 gap-4">
             <div class="bg-white dark:bg-slate-800 rounded-2xl border {{ $myOpen > 0 ? 'border-amber-200 dark:border-amber-700' : 'border-slate-200 dark:border-slate-700' }} p-4 text-center">
