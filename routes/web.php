@@ -273,6 +273,10 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::post('/{ticket}/reply', [\App\Http\Controllers\Admin\TicketController::class, 'reply'])->name('reply');
         Route::post('/{ticket}/close', [\App\Http\Controllers\Admin\TicketController::class, 'close'])->name('close');
     });
+
+    Route::prefix('admin/logs')->name('admin.logs.')->middleware('rt_role:owner')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AuditLogController::class, 'index'])->name('index');
+    });
 });
 
 Route::middleware('auth')->group(function () {
