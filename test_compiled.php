@@ -7,42 +7,45 @@
     <meta name="keywords" content="aplikasi rt rw, software pengurus rt, bayar iuran rt, aplikasi kas rt, platform warga rt, manajemen rukun tetangga, ekstraksi kk ai, smart rt, rt digital, aplikasi warga">
     <meta name="author" content="Sekawan Putra Pratama">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="canonical" href="<?php echo e(url()->current()); ?>">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="{{ config('app.name', 'SmartRT Vision') }} — Kelola RT Lebih Mudah dengan AI">
+    <meta property="og:url" content="<?php echo e(url()->current()); ?>">
+    <meta property="og:title" content="<?php echo e(config('app.name', 'SmartRT Vision')); ?> — Kelola RT Lebih Mudah dengan AI">
     <meta property="og:description" content="Platform SaaS terbaik untuk pengurus RT/RW. Ekstraksi data KK otomatis, portal mandiri warga, dan manajemen keuangan transparan.">
-    <meta property="og:image" content="{{ asset('logo.png') }}">
-    <meta property="og:site_name" content="{{ config('app.name', 'SmartRT Vision') }}">
+    <meta property="og:image" content="<?php echo e(asset('logo.png')); ?>">
+    <meta property="og:site_name" content="<?php echo e(config('app.name', 'SmartRT Vision')); ?>">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="{{ url()->current() }}">
-    <meta name="twitter:title" content="{{ config('app.name', 'SmartRT Vision') }} — Kelola RT Lebih Mudah dengan AI">
+    <meta name="twitter:url" content="<?php echo e(url()->current()); ?>">
+    <meta name="twitter:title" content="<?php echo e(config('app.name', 'SmartRT Vision')); ?> — Kelola RT Lebih Mudah dengan AI">
     <meta name="twitter:description" content="Platform SaaS terbaik untuk pengurus RT/RW. Ekstraksi data KK otomatis, portal mandiri warga, dan manajemen keuangan transparan.">
-    <meta name="twitter:image" content="{{ asset('logo.png') }}">
+    <meta name="twitter:image" content="<?php echo e(asset('logo.png')); ?>">
 
-    <title>{{ config('app.name', 'SmartRT Vision') }} — Kelola RT Lebih Mudah dengan AI</title>
-    <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
+    <title><?php echo e(config('app.name', 'SmartRT Vision')); ?> — Kelola RT Lebih Mudah dengan AI</title>
+    <link rel="icon" type="image/png" href="<?php echo e(asset('logo.png')); ?>">
 
     <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
     {
-      "@@context": "https://schema.org",
-      "@@type": "SoftwareApplication",
+      "<?php $__contextArgs = [];
+if (context()->has($__contextArgs[0])) :
+if (isset($value)) { $__contextPrevious[] = $value; }
+$value = context()->get($__contextArgs[0]); ?>": "https://schema.org",
+      "@type": "SoftwareApplication",
       "name": "SmartRT Vision",
       "operatingSystem": "WebBrowser",
       "applicationCategory": "BusinessApplication",
       "offers": {
-        "@@type": "Offer",
+        "@type": "Offer",
         "price": "0",
         "priceCurrency": "IDR"
       },
       "description": "Platform SaaS cerdas untuk pengurus RT/RW. Fitur ekstraksi data KK otomatis dengan AI, manajemen iuran, dan portal warga.",
       "creator": {
-        "@@type": "Organization",
+        "@type": "Organization",
         "name": "Sekawan Putra Pratama"
       }
     }
@@ -51,9 +54,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <link rel="manifest" href="<?php echo e(asset('manifest.json')); ?>">
     <meta name="theme-color" content="#0a0915">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -108,11 +111,11 @@
     <!-- ===================== NAVBAR ===================== -->
     <header :class="scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-200' : 'glass-dark border-b border-white/10'" class="fixed top-0 inset-x-0 z-40 transition-all duration-300">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <a href="{{ route('marketing.home') }}" class="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <a href="<?php echo e(route('marketing.home')); ?>" class="flex items-center gap-2 sm:gap-2.5 min-w-0">
                 <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 transition-colors duration-300" :class="scrolled ? 'bg-slate-100 border border-slate-200' : 'bg-white/10 backdrop-blur border border-white/20'">
-                    <img src="{{ asset('logo.png') }}" alt="SmartRT Vision" class="w-full h-full object-cover">
+                    <img src="<?php echo e(asset('logo.png')); ?>" alt="SmartRT Vision" class="w-full h-full object-cover">
                 </div>
-                <span class="font-bold text-sm sm:text-base truncate transition-colors duration-300" :class="scrolled ? 'text-slate-900' : 'text-white'">{{ config('app.name', 'SmartRT Vision') }}</span>
+                <span class="font-bold text-sm sm:text-base truncate transition-colors duration-300" :class="scrolled ? 'text-slate-900' : 'text-white'"><?php echo e(config('app.name', 'SmartRT Vision')); ?></span>
             </a>
 
             <nav class="hidden md:flex items-center gap-6 text-sm font-medium transition-colors duration-300" :class="scrolled ? 'text-slate-600' : 'text-slate-300'">
@@ -123,9 +126,9 @@
             </nav>
 
             <div class="flex items-center gap-2 flex-shrink-0">
-                <a href="{{ route('login') }}" class="hidden sm:inline-flex text-sm font-semibold px-3 py-2 transition-colors duration-300" :class="scrolled ? 'text-slate-600 hover:text-indigo-600' : 'text-slate-300 hover:text-white'">Masuk</a>
+                <a href="<?php echo e(route('login')); ?>" class="hidden sm:inline-flex text-sm font-semibold px-3 py-2 transition-colors duration-300" :class="scrolled ? 'text-slate-600 hover:text-indigo-600' : 'text-slate-300 hover:text-white'">Masuk</a>
                 
-                <a href="{{ route('register') }}" :class="scrolled ? 'btn-primary' : 'btn-ghost'" class="!py-2 !px-3 sm:!px-4 text-xs sm:text-sm whitespace-nowrap transition-all duration-300">Daftar Gratis</a>
+                <a href="<?php echo e(route('register')); ?>" :class="scrolled ? 'btn-primary' : 'btn-ghost'" class="!py-2 !px-3 sm:!px-4 text-xs sm:text-sm whitespace-nowrap transition-all duration-300">Daftar Gratis</a>
                 
                 <button type="button" @click="navOpen = !navOpen" class="md:hidden p-2 rounded-lg transition-colors duration-300" :class="scrolled ? 'text-slate-600 hover:bg-slate-100' : 'text-slate-300 hover:text-white hover:bg-white/10'">
                     <svg x-show="!navOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -140,7 +143,7 @@
             <a href="#cara-kerja" class="px-2 py-2.5 rounded-lg transition-colors" :class="scrolled ? 'hover:bg-slate-50 hover:text-indigo-600' : 'hover:bg-white/5 hover:text-white'">Cara Kerja</a>
             <a href="#harga" class="px-2 py-2.5 rounded-lg transition-colors" :class="scrolled ? 'hover:bg-slate-50 hover:text-indigo-600' : 'hover:bg-white/5 hover:text-white'">Harga</a>
             <a href="#faq" class="px-2 py-2.5 rounded-lg transition-colors" :class="scrolled ? 'hover:bg-slate-50 hover:text-indigo-600' : 'hover:bg-white/5 hover:text-white'">FAQ</a>
-            <a href="{{ route('login') }}" class="px-2 py-2.5 rounded-lg transition-colors" :class="scrolled ? 'hover:bg-slate-50 hover:text-indigo-600' : 'hover:bg-white/5 hover:text-white'">Masuk</a>
+            <a href="<?php echo e(route('login')); ?>" class="px-2 py-2.5 rounded-lg transition-colors" :class="scrolled ? 'hover:bg-slate-50 hover:text-indigo-600' : 'hover:bg-white/5 hover:text-white'">Masuk</a>
         </div>
     </header>
 
@@ -163,7 +166,7 @@
                 Platform digital untuk pengurus RT/RW: data warga terisi otomatis dari foto Kartu Keluarga, lengkap dengan portal mandiri warga dan transparansi kas — tanpa perlu tim IT.
             </p>
             <div class="mt-7 sm:mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-                <a href="{{ route('register') }}" class="btn-primary justify-center">
+                <a href="<?php echo e(route('register')); ?>" class="btn-primary justify-center">
                     Mulai Gratis 14 Hari
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                 </a>
@@ -357,18 +360,18 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
-            @php $steps = [
+            <?php $steps = [
                 ['n' => '01', 'title' => 'Daftar Workspace RT', 'desc' => 'Isi nama RT dan buat akun pengurus. Trial 14 hari langsung aktif, tanpa kartu kredit.', 'color' => '#6366f1'],
                 ['n' => '02', 'title' => 'Foto KK atau Import Excel', 'desc' => 'Upload foto Kartu Keluarga satu-per-satu (AI yang baca), atau import data lama lewat Excel sekaligus.', 'color' => '#0891b2'],
                 ['n' => '03', 'title' => 'Warga Langsung Bisa Akses', 'desc' => 'Portal mandiri warga otomatis aktif di alamat RT Anda sendiri — siap dipakai untuk cek NIK, ajukan surat, dan lainnya.', 'color' => '#059669'],
-            ]; @endphp
-            @foreach($steps as $s)
+            ]; ?>
+            <?php $__currentLoopData = $steps; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <div class="relative">
-                <span class="text-5xl font-black" style="color: {{ $s['color'] }}; opacity: 0.15;">{{ $s['n'] }}</span>
-                <h3 class="text-base font-bold text-gray-900 mt-1">{{ $s['title'] }}</h3>
-                <p class="text-sm text-gray-500 mt-2 leading-relaxed">{{ $s['desc'] }}</p>
+                <span class="text-5xl font-black" style="color: <?php echo e($s['color']); ?>; opacity: 0.15;"><?php echo e($s['n']); ?></span>
+                <h3 class="text-base font-bold text-gray-900 mt-1"><?php echo e($s['title']); ?></h3>
+                <p class="text-sm text-gray-500 mt-2 leading-relaxed"><?php echo e($s['desc']); ?></p>
             </div>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
     </section>
 
@@ -487,9 +490,9 @@
     </section>
 
     <!-- ===================== HARGA ===================== -->
-    {{-- Inject plan data as a global JS variable (safe from HTML encoding issues) --}}
+    
     <script>
-        window.__pricingPlans = {!! json_encode($plans->map(fn($p) => ['slug' => $p->slug, 'name' => $p->name, 'max_kk' => $p->max_kk])->values()) !!};
+        window.__pricingPlans = <?php echo json_encode($plans->map(fn($p) => ['slug' => $p->slug, 'name' => $p->name, 'max_kk' => $p->max_kk])->values()); ?>;
     </script>
     <section id="harga" class="max-w-6xl mx-auto px-4 sm:px-6 py-4 pb-20 sm:pb-24" x-data="pricingSlider()">
         <div class="text-center max-w-xl mx-auto mb-8 reveal">
@@ -536,67 +539,70 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5 reveal">
-            @foreach($plans as $plan)
+            <?php $__currentLoopData = $plans; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $plan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <div class="pricing-card rounded-2xl border p-6 relative bg-white"
-                 :data-recommended="recommendedPlan === '{{ $plan->slug }}'"
-                 :style="recommendedPlan === '{{ $plan->slug }}'
+                 :data-recommended="recommendedPlan === '<?php echo e($plan->slug); ?>'"
+                 :style="recommendedPlan === '<?php echo e($plan->slug); ?>'
                     ? 'border-color:#6366f1; box-shadow:0 0 0 4px rgba(99,102,241,0.18),0 8px 30px rgba(99,102,241,0.15); transform:scale(1.04); z-index:10; opacity:1;'
                     : 'border-color:#e5e7eb; box-shadow:0 1px 4px rgba(0,0,0,0.06); transform:scale(0.97); opacity:0.55;'">
-                @if($plan->is_popular)
+                <?php if($plan->is_popular): ?>
                 <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[11px] font-bold text-white whitespace-nowrap" style="background: linear-gradient(135deg,#6366f1,#a855f7);">PALING POPULER</span>
-                @endif
-                <p class="text-sm font-bold text-gray-500 uppercase tracking-wide">{{ $plan->name }}</p>
-                {{-- HARGA --}}
-                {{-- Bulanan --}}
+                <?php endif; ?>
+                <p class="text-sm font-bold text-gray-500 uppercase tracking-wide"><?php echo e($plan->name); ?></p>
+                
+                
                 <div x-show="!isYearly">
-                    <p class="text-3xl font-black text-gray-900 mt-2">Rp {{ number_format($plan->price_monthly, 0, ',', '.') }}</p>
+                    <p class="text-3xl font-black text-gray-900 mt-2">Rp <?php echo e(number_format($plan->price_monthly, 0, ',', '.')); ?></p>
                     <p class="text-xs text-gray-400">/bulan</p>
                 </div>
 
-                {{-- Tahunan (tampilkan harga coret + harga hemat) --}}
+                
                 <div x-show="isYearly" style="display:none;">
                     <div class="flex items-center gap-2 mt-2 flex-wrap">
-                        <p class="text-3xl font-black text-gray-900">Rp {{ number_format($plan->price_yearly, 0, ',', '.') }}</p>
-                        <span style="font-size:10px; font-weight:800; padding:2px 8px; border-radius:99px; background:#dcfce7; color:#16a34a; white-space:nowrap;">HEMAT Rp {{ number_format($plan->price_monthly, 0, ',', '.') }}</span>
+                        <p class="text-3xl font-black text-gray-900">Rp <?php echo e(number_format($plan->price_yearly, 0, ',', '.')); ?></p>
+                        <span style="font-size:10px; font-weight:800; padding:2px 8px; border-radius:99px; background:#dcfce7; color:#16a34a; white-space:nowrap;">HEMAT Rp <?php echo e(number_format($plan->price_monthly, 0, ',', '.')); ?></span>
                     </div>
                     <div class="flex items-center gap-2">
                         <p class="text-xs text-gray-400">/tahun</p>
-                        <span class="text-xs line-through text-gray-300">Rp {{ number_format($plan->price_monthly * 12, 0, ',', '.') }}</span>
+                        <span class="text-xs line-through text-gray-300">Rp <?php echo e(number_format($plan->price_monthly * 12, 0, ',', '.')); ?></span>
                     </div>
-                    <p class="text-xs text-emerald-600 font-bold mt-1">≈ Rp {{ number_format(intdiv($plan->price_yearly, 12), 0, ',', '.') }}/bln</p>
+                    <p class="text-xs text-emerald-600 font-bold mt-1">≈ Rp <?php echo e(number_format(intdiv($plan->price_yearly, 12), 0, ',', '.')); ?>/bln</p>
                 </div>
 
                 <ul class="mt-5 space-y-2.5">
-                    {{-- Batas KK --}}
+                    
                     <li class="flex items-start gap-2 text-sm text-gray-600">
                         <svg class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        {{ $plan->isUnlimitedKk() ? 'Kartu Keluarga tanpa batas' : 'Hingga ' . number_format($plan->max_kk) . ' Kartu Keluarga' }}
+                        <?php echo e($plan->isUnlimitedKk() ? 'Kartu Keluarga tanpa batas' : 'Hingga ' . number_format($plan->max_kk) . ' Kartu Keluarga'); ?>
+
                     </li>
                     
-                    {{-- Batas AI --}}
+                    
                     <li class="flex items-start gap-2 text-sm text-gray-600">
                         <svg class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        {{ $plan->isUnlimitedAi() ? 'Scan Ekstraksi AI tanpa batas' : number_format($plan->max_ai_extractions_per_month) . ' Scan Ekstraksi AI / bln' }}
+                        <?php echo e($plan->isUnlimitedAi() ? 'Scan Ekstraksi AI tanpa batas' : number_format($plan->max_ai_extractions_per_month) . ' Scan Ekstraksi AI / bln'); ?>
+
                     </li>
                     
-                    {{-- Batas Pengurus --}}
+                    
                     <li class="flex items-start gap-2 text-sm text-gray-600">
                         <svg class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        {{ $plan->isUnlimitedUsers() ? 'Akun Pengurus tanpa batas' : 'Hingga ' . number_format($plan->max_users) . ' Akun Pengurus' }}
+                        <?php echo e($plan->isUnlimitedUsers() ? 'Akun Pengurus tanpa batas' : 'Hingga ' . number_format($plan->max_users) . ' Akun Pengurus'); ?>
+
                     </li>
 
-                    {{-- Akses Penuh --}}
+                    
                     <li class="flex items-start gap-2 text-sm text-gray-600">
                         <svg class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                         Akses Penuh ke Seluruh Fitur Modul
                     </li>
                 </ul>
 
-                <a href="{{ route('register') }}" class="block w-full mt-6 py-2.5 rounded-xl text-sm font-semibold text-center transition-all {{ $plan->is_popular ? 'text-white' : 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100' }}" @if($plan->is_popular) style="background: linear-gradient(135deg,#6366f1,#a855f7);" @endif >
+                <a href="<?php echo e(route('register')); ?>" class="block w-full mt-6 py-2.5 rounded-xl text-sm font-semibold text-center transition-all <?php echo e($plan->is_popular ? 'text-white' : 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100'); ?>" <?php if($plan->is_popular): ?> style="background: linear-gradient(135deg,#6366f1,#a855f7);" <?php endif; ?> >
                     Coba Gratis 14 Hari
                 </a>
             </div>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
     </section>
 
@@ -608,22 +614,22 @@
         </div>
 
         <div class="space-y-3 reveal">
-            @php $faqs = [
+            <?php $faqs = [
                 ['q' => 'Apakah data warga aman?', 'a' => 'Foto KK disimpan di penyimpanan privat, hanya bisa diakses pengurus yang login. Data antar-RT juga terisolasi penuh — RT lain tidak bisa melihat data RT Anda sama sekali.'],
                 ['q' => 'Bagaimana foto KK diproses AI?', 'a' => 'Foto dikirim ke Google Gemini API untuk diekstrak otomatis menjadi data terstruktur. Hasilnya tetap perlu diverifikasi pengurus sebelum disimpan, jadi tetap akurat.'],
                 ['q' => 'Apakah warga perlu install aplikasi?', 'a' => 'Tidak. Portal warga berbasis web, bisa diakses langsung dari browser HP tanpa instalasi apa pun.'],
                 ['q' => 'Bisa pindah dari sistem pencatatan manual?', 'a' => 'Bisa. Gunakan fitur Import Excel untuk memasukkan data warga lama sekaligus, atau foto satu-per-satu dengan AI untuk data baru.'],
                 ['q' => 'Bagaimana kalau ingin berhenti berlangganan?', 'a' => 'Anda bisa berhenti kapan saja tanpa kontrak jangka panjang. Data Anda tetap bisa diekspor ke Excel/PDF sebelum berhenti.'],
-            ]; @endphp
-            @foreach($faqs as $f)
+            ]; ?>
+            <?php $__currentLoopData = $faqs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $f): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <details class="card p-5 group">
                 <summary class="flex items-center justify-between gap-3">
-                    <span class="text-sm font-semibold text-gray-900">{{ $f['q'] }}</span>
+                    <span class="text-sm font-semibold text-gray-900"><?php echo e($f['q']); ?></span>
                     <svg class="faq-chevron w-4 h-4 text-gray-400 flex-shrink-0 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </summary>
-                <p class="text-sm text-gray-500 mt-3 leading-relaxed">{{ $f['a'] }}</p>
+                <p class="text-sm text-gray-500 mt-3 leading-relaxed"><?php echo e($f['a']); ?></p>
             </details>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
     </section>
 
@@ -632,7 +638,7 @@
         <div class="rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden reveal" style="background: linear-gradient(135deg, #1e1b4b, #4338ca 60%, #6d28d9);">
             <h2 class="text-2xl sm:text-3xl font-black text-white">Siap digitalisasi RT Anda?</h2>
             <p class="text-indigo-200 text-sm mt-2 max-w-md mx-auto">Mulai trial 14 hari sekarang, tanpa kartu kredit.</p>
-            <a href="{{ route('register') }}" class="btn-primary mt-6 justify-center inline-flex">Daftar Gratis Sekarang</a>
+            <a href="<?php echo e(route('register')); ?>" class="btn-primary mt-6 justify-center inline-flex">Daftar Gratis Sekarang</a>
         </div>
     </section>
 
@@ -643,9 +649,9 @@
                 <div class="lg:col-span-1">
                     <div class="flex items-center gap-2.5">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden bg-[#0a0915] border border-white/20">
-                            <img src="{{ asset('logo.png') }}" alt="SmartRT Vision" class="w-full h-full object-cover">
+                            <img src="<?php echo e(asset('logo.png')); ?>" alt="SmartRT Vision" class="w-full h-full object-cover">
                         </div>
-                        <span class="text-sm font-bold text-white">{{ config('app.name', 'SmartRT Vision') }}</span>
+                        <span class="text-sm font-bold text-white"><?php echo e(config('app.name', 'SmartRT Vision')); ?></span>
                     </div>
                     <p class="text-xs text-slate-500 mt-4 leading-relaxed">
                         Platform SaaS untuk pengurus RT/RW — ekstraksi data KK otomatis dengan AI, portal mandiri warga, dan transparansi kas.
@@ -665,8 +671,8 @@
                 <div>
                     <p class="text-xs font-bold text-white uppercase tracking-wider mb-4">Akun</p>
                     <ul class="space-y-3 text-xs">
-                        <li><a href="{{ route('register') }}" class="hover:text-white transition-colors">Daftar Gratis</a></li>
-                        <li><a href="{{ route('login') }}" class="hover:text-white transition-colors">Masuk Pengurus</a></li>
+                        <li><a href="<?php echo e(route('register')); ?>" class="hover:text-white transition-colors">Daftar Gratis</a></li>
+                        <li><a href="<?php echo e(route('login')); ?>" class="hover:text-white transition-colors">Masuk Pengurus</a></li>
                     </ul>
                 </div>
 
@@ -680,12 +686,12 @@
 
             <div class="border-t border-white/10 mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <p class="text-xs text-slate-400">
-                    &copy; {{ date('Y') }} <strong class="text-slate-200 font-semibold">PT. Sekawan Putra Pratama</strong>. Seluruh Hak Cipta Dilindungi.
+                    &copy; <?php echo e(date('Y')); ?> <strong class="text-slate-200 font-semibold">PT. Sekawan Putra Pratama</strong>. Seluruh Hak Cipta Dilindungi.
                 </p>
                 <div class="flex items-center gap-4 text-xs text-slate-500">
-                    <a href="{{ url('/kebijakan-privasi') }}" class="hover:text-slate-300 transition-colors">Kebijakan Privasi</a>
+                    <a href="<?php echo e(url('/kebijakan-privasi')); ?>" class="hover:text-slate-300 transition-colors">Kebijakan Privasi</a>
                     <span>·</span>
-                    <a href="{{ url('/syarat-dan-ketentuan') }}" class="hover:text-slate-300 transition-colors">Syarat & Ketentuan</a>
+                    <a href="<?php echo e(url('/syarat-dan-ketentuan')); ?>" class="hover:text-slate-300 transition-colors">Syarat & Ketentuan</a>
                 </div>
             </div>
         </div>
