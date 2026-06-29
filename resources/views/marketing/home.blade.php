@@ -27,6 +27,27 @@
     <title>{{ config('app.name', 'SmartRT Vision') }} — Kelola RT Lebih Mudah dengan AI</title>
     <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
 
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "SmartRT Vision",
+      "operatingSystem": "WebBrowser",
+      "applicationCategory": "BusinessApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "IDR"
+      },
+      "description": "Platform SaaS cerdas untuk pengurus RT/RW. Fitur ekstraksi data KK otomatis dengan AI, manajemen iuran, dan portal warga.",
+      "creator": {
+        "@type": "Organization",
+        "name": "Sekawan Putra Pratama"
+      }
+    }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
