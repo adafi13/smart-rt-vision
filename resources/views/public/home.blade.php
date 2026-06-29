@@ -101,11 +101,13 @@
                         <span>PORTAL CERDAS WARGA &middot; {{ strtoupper($tenant->name ?? config('app.name', 'SmartRT Vision')) }}</span>
                     </div>
                     
-                    <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tighter text-white mb-6">
-                        Sistem Layanan Mandiri <br class="hidden sm:block"/>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
-                            {{ $tenant->name ?? 'Lingkungan RT/RW' }}
-                        </span>
+                    <h1 class="text-[2.5rem] sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight text-white mb-6">
+                        Layanan Mandiri <br class="hidden sm:block"/>
+                        <span class="relative inline-block">
+                            <span class="relative z-10 text-white">Warga</span>
+                            <span class="absolute bottom-1.5 sm:bottom-2 left-0 w-full h-3 sm:h-4 bg-indigo-500/60 -z-10 -rotate-2 rounded-sm"></span>
+                        </span> 
+                        <span class="whitespace-nowrap text-slate-300">{{ $tenant->name ?? 'Lingkungan' }}</span>
                     </h1>
                     
                     <p class="text-base sm:text-lg md:text-xl text-slate-400 font-medium leading-relaxed mb-10 max-w-xl">
