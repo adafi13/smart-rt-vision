@@ -247,6 +247,7 @@
                 ['modal'=>'cek-laporan','title'=>'Lacak Tiket Bantuan','desc'=>'Cek status penyelesaian laporan yang telah Anda kirimkan.','color'=>'#d97706','bg'=>'bg-amber-50','icon'=>'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'],
                 ['modal'=>'titip-rumah','title'=>'Penjagaan Rumah Kosong','desc'=>'Lapor titip pengawasan rumah kosong saat sedang mudik/dinas.','color'=>'#4f46e5','bg'=>'bg-indigo-50','icon'=>'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
                 ['modal'=>'lapor-peristiwa','title'=>'Catatan Sipil Warga','desc'=>'Laporkan peristiwa kelahiran, kematian, atau warga pindah.','color'=>'#7c3aed','bg'=>'bg-purple-50','icon'=>'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'],
+                ['modal'=>'pinjam-inventaris-list','title'=>'Pinjam Inventaris RT','desc'=>'Lihat daftar inventaris barang RT yang dapat dipinjam gratis.','color'=>'#3b82f6','bg'=>'bg-blue-50','icon'=>'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'],
             ]; @endphp
             
             @foreach($actions as $a)
@@ -888,51 +889,7 @@
         @endif
     </section>
 
-    <!-- ===================== INVENTARIS RT ===================== -->
-    <section id="inventaris" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60 bg-slate-50">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-            <div>
-                <h2 class="text-sm font-black tracking-[0.2em] text-indigo-600 uppercase mb-3">Fasilitas Bersama</h2>
-                <h3 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Inventaris Warga</h3>
-            </div>
-            <p class="text-slate-500 font-medium max-w-sm">Barang dan peralatan yang dapat dipinjam secara gratis untuk keperluan warga.</p>
-        </div>
 
-        @if(isset($inventories) && $inventories->count() > 0)
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            @foreach($inventories as $item)
-            <div class="premium-card flex flex-col h-full bg-white rounded-3xl p-6 border border-slate-200 hover:-translate-y-2 transition-all">
-                <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-6">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                </div>
-                <h4 class="font-bold text-slate-900 text-lg mb-2">{{ $item->item_name }}</h4>
-                @if($item->description)
-                    <p class="text-sm text-slate-500 mb-4 line-clamp-2">{{ $item->description }}</p>
-                @endif
-                <div class="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-slate-400">Tersedia</p>
-                        <p class="font-black text-slate-900">{{ $item->available_quantity }} / {{ $item->total_quantity }} <span class="text-xs font-normal text-slate-500">Unit</span></p>
-                    </div>
-                    @if($item->available_quantity > 0)
-                        <button @click="modal = 'pinjam-inventaris'; $nextTick(() => { document.getElementById('inventory_id_input').value = '{{ $item->id }}'; document.getElementById('inventory_name_display').value = '{{ $item->item_name }}'; document.getElementById('qty_input').max = {{ $item->available_quantity }}; })" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold transition-colors">Pinjam</button>
-                    @else
-                        <span class="px-4 py-2 bg-slate-100 text-slate-400 rounded-xl text-sm font-bold">Habis</span>
-                    @endif
-                </div>
-            </div>
-            @endforeach
-        </div>
-        @else
-        <div class="text-center py-12 px-4 rounded-3xl border-2 border-dashed border-slate-200 bg-white">
-            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-            </div>
-            <h4 class="text-lg font-bold text-slate-900 mb-1">Belum ada Inventaris</h4>
-            <p class="text-sm text-slate-500 max-w-md mx-auto">Pengurus RT belum mendaftarkan barang inventaris yang dapat dipinjam.</p>
-        </div>
-        @endif
-    </section>
 
     <!-- ===================== MODALS ( ALPINE ) ===================== -->
     <div x-show="modal !== null" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" x-transition.opacity style="background: rgba(15,23,42,0.8); backdrop-filter: blur(8px);">
@@ -958,8 +915,42 @@
                         'trigger-panic': 'Laporan Darurat (PANIC)',
                         'pinjam-inventaris': 'Pinjam Barang Inventaris',
                         'cek-surat': 'Lacak Status Surat',
+                        'pinjam-inventaris-list': 'Daftar Inventaris RT',
                     }[modal]"></h3>
                     <p class="text-sm text-slate-500 mt-1 font-medium">Lengkapi form di bawah ini untuk melanjutkan.</p>
+                </div>
+
+                <!-- FORM: List Inventaris Warga -->
+                <div x-show="modal === 'pinjam-inventaris-list'">
+                    <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+                        @if(isset($inventories) && $inventories->count() > 0)
+                            @foreach($inventories as $item)
+                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex justify-between items-center gap-4">
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-bold text-slate-900 text-sm truncate">{{ $item->item_name }}</h4>
+                                    @if($item->description)
+                                        <p class="text-xs text-slate-500 line-clamp-1 mt-0.5">{{ $item->description }}</p>
+                                    @endif
+                                    <p class="text-[10px] text-slate-400 mt-2">
+                                        Tersedia: <span class="font-black text-slate-700">{{ $item->available_quantity }} / {{ $item->total_quantity }} Unit</span>
+                                    </p>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    @if($item->available_quantity > 0)
+                                        <button type="button" @click="modal = 'pinjam-inventaris'; $nextTick(() => { document.getElementById('inventory_id_input').value = '{{ $item->id }}'; document.getElementById('inventory_name_display').value = '{{ $item->item_name }}'; document.getElementById('qty_input').max = {{ $item->available_quantity }}; })" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm shadow-indigo-100">Pinjam</button>
+                                    @else
+                                        <span class="px-3.5 py-1.5 bg-slate-200 text-slate-400 rounded-xl text-xs font-bold">Habis</span>
+                                    @endif
+                                </div>
+                            </div>
+                            @endforeach
+                        @else
+                            <div class="text-center py-8 text-slate-400">
+                                <svg class="w-12 h-12 mx-auto mb-2 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                                <p class="text-xs">Belum ada barang inventaris yang dapat dipinjam.</p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
 
                 <!-- FORM: Pinjam Inventaris -->
@@ -988,7 +979,10 @@
                             <label class="label">No WhatsApp (Aktif)</label>
                             <input type="text" name="borrower_contact" required class="input-field" placeholder="Contoh: 08123456789">
                         </div>
-                        <button type="submit" class="btn-gradient w-full mt-2">Ajukan Peminjaman</button>
+                        <div class="flex gap-3 mt-6">
+                            <button type="button" @click="modal = 'pinjam-inventaris-list'" class="w-1/3 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-all">Kembali</button>
+                            <button type="submit" class="flex-1 py-3 btn-gradient">Ajukan Peminjaman</button>
+                        </div>
                     </form>
                     <div id="pinjam-inventaris-result" class="mt-4"></div>
                 </div>
