@@ -131,7 +131,9 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
     // ===== MODUL ADMIN RT =====
     Route::prefix('admin/iuran')->name('admin.iuran.')->middleware('rt_role:owner,bendahara')->group(function () {
         Route::get('/', [AdminContributionController::class, 'index'])->name('index');
+        Route::get('/create', [AdminContributionController::class, 'create'])->name('create');
         Route::post('/', [AdminContributionController::class, 'store'])->name('store');
+        Route::get('/{contribution}/edit', [AdminContributionController::class, 'edit'])->name('edit');
         Route::put('/{contribution}', [AdminContributionController::class, 'update'])->name('update');
         Route::delete('/{contribution}', [AdminContributionController::class, 'destroy'])->name('destroy');
     });

@@ -44,10 +44,10 @@
             </form>
 
             <div class="flex gap-2">
-                <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'tambah-iuran')" class="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-colors shadow-sm">
+                <a href="{{ route('admin.iuran.create') }}" class="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-colors shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     Tambah Iuran
-                </button>
+                </a>
             </div>
         </div>
 
@@ -93,9 +93,9 @@
                         </td>
                         <td class="px-6 py-4 text-right whitespace-nowrap">
                             <div class="flex justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'edit-iuran-{{ $c->id }}')" class="p-2 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 transition-colors" title="Edit">
+                                <a href="{{ route('admin.iuran.edit', $c) }}" class="p-2 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 transition-colors" title="Edit">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                </button>
+                                </a>
                                 <form action="{{ route('admin.iuran.destroy', $c) }}" method="POST" class="inline" onsubmit="return confirm('Hapus riwayat pembayaran iuran ini?')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="p-2 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus">
@@ -148,10 +148,10 @@
                     @endif
 
                     <div class="flex gap-2">
-                        <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'edit-iuran-{{ $c->id }}')" class="flex-1 flex items-center justify-center gap-1 py-2 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-xl transition-colors">
+                        <a href="{{ route('admin.iuran.edit', $c) }}" class="flex-1 flex items-center justify-center gap-1 py-2 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-xl transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                             Edit
-                        </button>
+                        </a>
                         <form action="{{ route('admin.iuran.destroy', $c) }}" method="POST" class="flex-1" onsubmit="return confirm('Hapus riwayat pembayaran iuran ini?')">
                             @csrf @method('DELETE')
                             <button type="submit" class="w-full flex items-center justify-center gap-1 py-2 bg-rose-50 border border-rose-100 hover:bg-rose-100 text-rose-700 text-xs font-semibold rounded-xl transition-colors">
@@ -177,144 +177,12 @@
             </div>
             <h3 class="text-sm font-bold text-gray-900 mb-1">Belum Ada Transaksi Iuran</h3>
             <p class="text-xs text-gray-500 max-w-sm mx-auto mb-5">Sistem belum mendeteksi riwayat pembayaran iuran. Klik "Tambah Iuran" untuk mencatat pembayaran warga.</p>
-            <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'tambah-iuran')" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors">
+            <a href="{{ route('admin.iuran.create') }}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Tambah Iuran Pertama
-            </button>
+            </a>
         </div>
         @endif
 
     </div>
-
-    <!-- MODAL TAMBAH IURAN -->
-    <x-modal name="tambah-iuran" focusable>
-        <form action="{{ route('admin.iuran.store') }}" method="POST" class="p-6">
-            @csrf
-            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
-                <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 flex-shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                </div>
-                <div>
-                    <h2 class="text-lg font-bold text-gray-900">Catat Pembayaran Kas</h2>
-                    <p class="text-xs text-gray-500">Isi detail iuran yang diterima dari warga</p>
-                </div>
-            </div>
-
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Kartu Keluarga (Pembayar) <span class="text-red-500">*</span></label>
-                    <select name="family_id" required class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
-                        <option value="">-- Pilih Kepala Keluarga --</option>
-                        @foreach($families as $f)
-                            <option value="{{ $f->id }}">{{ $f->nomor_kk }} — {{ $f->nama_kepala_keluarga }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Jenis Iuran <span class="text-red-500">*</span></label>
-                        <input type="text" name="jenis_iuran" required class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm" placeholder="Contoh: Kebersihan">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Jumlah (Rp) <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="text-gray-500 text-sm font-medium">Rp</span>
-                            </div>
-                            <input type="number" name="jumlah" required min="0" step="1000" class="w-full pl-9 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm font-semibold text-emerald-700" placeholder="0">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Periode Bulan <span class="text-red-500">*</span></label>
-                        <input type="date" name="periode" required class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Bayar <span class="text-red-500">*</span></label>
-                        <input type="date" name="tanggal_bayar" required value="{{ date('Y-m-d') }}" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Keterangan (Opsional)</label>
-                    <textarea name="keterangan" rows="2" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm" placeholder="Catatan tambahan bila ada..."></textarea>
-                </div>
-            </div>
-
-            <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end gap-3">
-                <button type="button" x-on:click="$dispatch('close')" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">Batal</button>
-                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-sm">Simpan Iuran</button>
-            </div>
-        </form>
-    </x-modal>
-
-    <!-- MODAL EDIT IURAN DI LOOPING TERPISAH -->
-    @foreach($contributions as $c)
-    <x-modal name="edit-iuran-{{ $c->id }}" focusable>
-        <form action="{{ route('admin.iuran.update', $c) }}" method="POST" class="p-6">
-            @csrf @method('PUT')
-            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
-                <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 flex-shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                </div>
-                <div>
-                    <h2 class="text-lg font-bold text-gray-900">Ubah Data Iuran</h2>
-                    <p class="text-xs text-gray-500">Perbarui rincian transaksi kas</p>
-                </div>
-            </div>
-
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Kartu Keluarga (Pembayar) <span class="text-red-500">*</span></label>
-                    <select name="family_id" required class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
-                        @foreach($families as $f)
-                            <option value="{{ $f->id }}" @selected($c->family_id === $f->id)>{{ $f->nomor_kk }} — {{ $f->nama_kepala_keluarga }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Jenis Iuran <span class="text-red-500">*</span></label>
-                        <input type="text" name="jenis_iuran" required value="{{ $c->jenis_iuran }}" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Jumlah (Rp) <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="text-gray-500 text-sm font-medium">Rp</span>
-                            </div>
-                            <input type="number" name="jumlah" required min="0" step="1000" value="{{ $c->jumlah }}" class="w-full pl-9 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm font-semibold text-emerald-700">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Periode Bulan <span class="text-red-500">*</span></label>
-                        <input type="date" name="periode" required value="{{ $c->periode->format('Y-m-d') }}" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Bayar <span class="text-red-500">*</span></label>
-                        <input type="date" name="tanggal_bayar" required value="{{ $c->tanggal_bayar->format('Y-m-d') }}" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Keterangan (Opsional)</label>
-                    <textarea name="keterangan" rows="2" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">{{ $c->keterangan }}</textarea>
-                </div>
-            </div>
-
-            <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end gap-3">
-                <button type="button" x-on:click="$dispatch('close')" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">Batal</button>
-                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-sm">Simpan Perubahan</button>
-            </div>
-        </form>
-    </x-modal>
-    @endforeach
-
 </x-app-layout>

@@ -26,6 +26,18 @@ class ContributionController extends Controller
         return view('admin.contributions.index', compact('contributions', 'families'));
     }
 
+    public function create()
+    {
+        $families = Family::orderBy('nama_kepala_keluarga')->get(['id', 'nomor_kk', 'nama_kepala_keluarga']);
+        return view('admin.contributions.create', compact('families'));
+    }
+
+    public function edit(Contribution $contribution)
+    {
+        $families = Family::orderBy('nama_kepala_keluarga')->get(['id', 'nomor_kk', 'nama_kepala_keluarga']);
+        return view('admin.contributions.edit', compact('contribution', 'families'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -52,9 +64,9 @@ class ContributionController extends Controller
                     'user_agent' => request()->userAgent(),
                 ]);
             });
-            return back()->with('success', 'Data iuran berhasil ditambahkan.');
+            return redirect()->route('admin.iuran.index')->with('success', 'Data iuran berhasil ditambahkan.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal menyimpan iuran: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menyimpan iuran: ' . $e->getMessage())->withInput();
         }
     }
 
@@ -86,9 +98,9 @@ class ContributionController extends Controller
                     'user_agent' => request()->userAgent(),
                 ]);
             });
-            return back()->with('success', 'Data iuran berhasil diperbarui.');
+            return redirect()->route('admin.iuran.index')->with('success', 'Data iuran berhasil diperbarui.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal memperbarui iuran: ' . $e->getMessage());
+            return back()->with('error', 'Gagal memperbarui iuran: ' . $e->getMessage())->withInput();
         }
     }
 
