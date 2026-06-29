@@ -14,6 +14,7 @@ class SettingController extends Controller
         $settings = [
             'general' => Setting::where('group', 'general')->pluck('value', 'key')->toArray(),
             'trial'   => Setting::where('group', 'trial')->pluck('value', 'key')->toArray(),
+            'finance' => Setting::where('group', 'finance')->pluck('value', 'key')->toArray(),
         ];
         
         $isMaintenance = file_exists(storage_path('framework/down'));

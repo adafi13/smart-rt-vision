@@ -56,6 +56,24 @@
                 </div>
             </div>
 
+            <!-- Finance Settings -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h2 class="text-base font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2">Pengaturan Keuangan & AI</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="label">Estimasi Biaya Dasar AI / Scan (Rp)</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium text-sm">Rp</span>
+                            <input type="number" name="settings[finance][ai_cost_per_scan]" value="{{ $settings['finance']['ai_cost_per_scan'] ?? 150 }}" class="input-field pl-10" required min="0" step="1">
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2 leading-relaxed">
+                            Nilai ini digunakan di halaman <b>Finance</b> untuk menghitung estimasi tagihan API OpenAI/Gemini berdasarkan total <code>ai_extractions_used</code> bulan ini.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <div class="flex justify-end gap-3">
                 <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl">Simpan Pengaturan Utama</button>
             </div>

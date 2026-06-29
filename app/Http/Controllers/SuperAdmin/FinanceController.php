@@ -56,7 +56,17 @@ class FinanceController extends Controller
             ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
             ->sum('plans.price_monthly');
 
-        $stats = compact('totalRevenue', 'revenueThisMonth', 'revenueLastMonth', 'mrr', 'months', 'byPlan');
+        // AI Cost Analytics
+        $aiCostPerScan = (int) \App\Models\Setting::get('ai_cost_per_scan', 150, 'finance');
+        $totalAiScans = Tenant::sum('ai_extractions_used');
+        $estimatedAiCost = $totalAiScans * $aiCostPerScan;
+
+        $topAiTenants = Tenant::where('ai_extractions_used', '>', 0)
+            ->orderByDesc('ai_extractions_used')
+            ->take(5)
+            ->get();
+
+        $stats = compact('totalRevenue', 'revenueThisMonth', 'revenueLastMonth', 'mrr', 'months', 'byPlan', 'totalAiScans', 'estimatedAiCost', 'aiCostPerScan', 'topAiTenants');
 
         return view('super-admin.finance.index', compact('stats'));
     }
