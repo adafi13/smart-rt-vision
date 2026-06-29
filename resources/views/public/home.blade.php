@@ -78,118 +78,128 @@
     @include('partials.public-nav')
 
     <!-- ===================== HERO 3D DYNAMIC ===================== -->
-    <section id="hero" class="relative min-h-[100dvh] flex items-center overflow-hidden bg-slate-900">
-        <!-- Abstract Animated Background -->
-        <div class="absolute inset-0 z-0 overflow-hidden">
-            <div class="ambient-glow w-[600px] h-[600px] bg-indigo-600/40 -top-[200px] -right-[100px] animate-float"></div>
-            <div class="ambient-glow w-[500px] h-[500px] bg-purple-600/30 bottom-[100px] -left-[100px] animate-float-delayed"></div>
-            <div class="ambient-glow w-[400px] h-[400px] bg-cyan-500/20 top-[30%] left-[40%] animate-float" style="animation-duration: 9s;"></div>
-            
-            <!-- Grid Pattern -->
-            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNykiLz48L3N2Zz4=')] [mask-image:linear-gradient(to_bottom,white,transparent)]"></div>
+    <section id="hero" class="relative min-h-[100dvh] flex items-center overflow-hidden bg-[#09090b]">
+        <!-- Modern Clean Background Pattern -->
+        <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <!-- Sleek Radial Gradient for depth (not generic blobs) -->
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.15),rgba(255,255,255,0))]"></div>
+            <!-- Ultra-faint grid pattern -->
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiPjxwYXRoIGQ9Ik0wIDI0VjBIMjQiLz48L2c+PC9zdmc+')] [mask-image:linear-gradient(to_bottom,white,transparent_80%)]"></div>
         </div>
 
-        <div class="relative z-10 max-w-5xl mx-auto px-5 sm:px-6 text-center py-20 sm:py-24 mt-10">
-            <!-- Premium Badge -->
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-indigo-100 border border-indigo-400/20 bg-white/5 backdrop-blur-md mb-8 shadow-2xl">
-                <span class="relative flex h-2 w-2">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-                <span>Portal Cerdas Warga &middot; {{ strtoupper($tenant->name ?? config('app.name', 'SmartRT Vision')) }}</span>
-            </div>
-            
-            <!-- Hero Typography -->
-            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.1] tracking-tight text-white mb-6">
-                Sistem Layanan Mandiri <br class="hidden sm:block"/>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 drop-shadow-sm">{{ $tenant->name ?? 'Lingkungan RT/RW' }}</span>
-            </h1>
-            <p class="text-base sm:text-xl text-slate-300 max-w-2xl mx-auto font-medium leading-relaxed mb-8">
-                Lupakan cara lama. Pantau kas RT secara real-time, ajukan surat pengantar, laporkan keluhan, dan cek jadwal ronda dari genggaman tangan Anda.
-            </p>
-
-            @php 
-                // Ambil pimpinan: cari yg ada kata "ketua", kalau tidak ada ambil yg order_level paling kecil
-                $ketua = isset($rt_staffs) && $rt_staffs->count() > 0
-                    ? ($rt_staffs->filter(fn($s) => stripos($s->position, 'ketua') !== false)->first() 
-                       ?? $rt_staffs->sortBy('order_level')->first())
-                    : null;
-            @endphp
-
-            {{-- Badge Pimpinan RT: selalu tampil, desain premium --}}
-            <div class="mb-10 flex justify-center">
-                <div class="relative inline-flex items-center gap-4 px-6 py-4 rounded-2xl shadow-2xl border border-white/10 overflow-hidden" 
-                     style="background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(139,92,246,0.2)); backdrop-filter: blur(20px);">
-                    {{-- Shimmer effect --}}
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 py-24 md:py-32 w-full mt-10 sm:mt-0">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8">
+                
+                <!-- Left: Typography & Actions -->
+                <div class="w-full lg:w-1/2 text-center lg:text-left flex flex-col items-center lg:items-start">
+                    <!-- Premium Badge -->
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold text-indigo-200 border border-indigo-500/30 bg-indigo-500/10 backdrop-blur-md mb-6 transition-all hover:bg-indigo-500/20">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                        </span>
+                        <span>PORTAL CERDAS WARGA &middot; {{ strtoupper($tenant->name ?? config('app.name', 'SmartRT Vision')) }}</span>
+                    </div>
                     
-                    {{-- Avatar --}}
-                    <div class="relative flex-shrink-0">
-                        @if($ketua && $ketua->photo)
-                            <img src="{{ asset('storage/'.$ketua->photo) }}" class="w-14 h-14 rounded-xl object-cover border-2 border-white/20 shadow-lg" alt="{{ $ketua->name }}">
-                        @else
-                            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg border border-white/10">
-                                <svg class="w-7 h-7 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                            </div>
-                        @endif
-                        {{-- Online dot --}}
-                        <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-400 border-2 border-slate-900 shadow"></span>
-                    </div>
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tighter text-white mb-6">
+                        Sistem Layanan Mandiri <br class="hidden sm:block"/>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
+                            {{ $tenant->name ?? 'Lingkungan RT/RW' }}
+                        </span>
+                    </h1>
+                    
+                    <p class="text-base sm:text-lg md:text-xl text-slate-400 font-medium leading-relaxed mb-10 max-w-xl">
+                        Lupakan cara lama. Pantau kas RT secara real-time, ajukan surat pengantar, laporkan keluhan, dan cek jadwal ronda langsung dari genggaman tangan Anda.
+                    </p>
 
-                    {{-- Info --}}
-                    <div class="text-left relative z-10">
-                        <p class="text-[11px] font-black text-indigo-300 uppercase tracking-widest leading-none mb-1.5">
-                            {{ $ketua ? $ketua->position : 'Pimpinan RT' }}
-                        </p>
-                        <p class="text-base font-black text-white leading-tight">
-                            {{ $ketua ? $ketua->name : ($tenant->name ?? 'Belum diisi') }}
-                        </p>
-                        @if($ketua && $ketua->phone)
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $ketua->phone) }}" target="_blank"
-                           class="inline-flex items-center gap-1 mt-1.5 text-[11px] font-bold text-emerald-400 hover:text-emerald-300 transition-colors">
-                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
-                            Hubungi via WA
+                    <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                        <a href="#layanan" class="group relative inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-slate-950 text-sm font-bold rounded-2xl overflow-hidden transition-transform hover:scale-105 active:scale-95">
+                            <span class="relative z-10">Jelajahi Layanan</span>
+                            <svg class="w-4 h-4 relative z-10 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            <div class="absolute inset-0 bg-slate-100 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         </a>
-                        @endif
+                        <a href="#kas" class="inline-flex items-center justify-center px-8 py-4 bg-slate-900 border border-slate-800 hover:bg-slate-800 hover:border-slate-700 text-white text-sm font-bold rounded-2xl transition-all hover:scale-105 active:scale-95">
+                            Lihat Laporan Kas
+                        </a>
                     </div>
+                </div>
 
-                    {{-- Divider + Label --}}
-                    <div class="relative z-10 pl-4 border-l border-white/10 text-center hidden sm:block">
-                        <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-widest mb-1">Lingkungan</p>
-                        <p class="text-sm font-black text-white">{{ $tenant->name ?? 'RT' }}</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a href="#layanan" class="btn-gradient w-full sm:w-auto">
-                    <span>Jelajahi Layanan Warga</span>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
-                </a>
-                <a href="#kas" class="btn-outline-glow w-full sm:w-auto">
-                    Buka Laporan Kas
-                </a>
-            </div>
+                <!-- Right: Bento Grid (Desktop) / Stacked (Mobile) -->
+                <div class="w-full lg:w-1/2 relative mt-8 lg:mt-0">
+                    <!-- Subtle glow behind the grid -->
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-indigo-500/20 blur-[100px] rounded-full pointer-events-none"></div>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-4 relative z-10">
+                        
+                        <!-- Pimpinan RT Card (Spans full width on mobile/desktop, or 2 cols) -->
+                        @php 
+                            $ketua = isset($rt_staffs) && $rt_staffs->count() > 0
+                                ? ($rt_staffs->filter(fn($s) => stripos($s->position, 'ketua') !== false)->first() 
+                                   ?? $rt_staffs->sortBy('order_level')->first())
+                                : null;
+                        @endphp
+                        
+                        <div class="col-span-2 sm:col-span-3 lg:col-span-2 p-5 sm:p-6 rounded-3xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 hover:bg-slate-900/80 hover:border-slate-700 transition-colors">
+                            <div class="relative flex-shrink-0">
+                                @if($ketua && $ketua->photo)
+                                    <img src="{{ asset('storage/'.$ketua->photo) }}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-white/10" alt="{{ $ketua->name }}">
+                                @else
+                                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                    </div>
+                                @endif
+                                <span class="absolute -bottom-1 -right-1 flex h-4 w-4">
+                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                  <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-slate-900"></span>
+                                </span>
+                            </div>
+                            <div class="text-center sm:text-left flex-1">
+                                <p class="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-1">{{ $ketua ? $ketua->position : 'Pimpinan Lingkungan' }}</p>
+                                <p class="text-xl sm:text-2xl font-extrabold text-white leading-tight mb-2">{{ $ketua ? $ketua->name : ($tenant->name ?? 'Belum diisi') }}</p>
+                                <div class="flex flex-col sm:flex-row items-center sm:items-center gap-3">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-800 text-xs font-semibold text-slate-300 border border-slate-700">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Online
+                                    </span>
+                                    @if($ketua && $ketua->phone)
+                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $ketua->phone) }}" target="_blank" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors">
+                                        Hubungi via WhatsApp <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                    </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
 
-            <!-- Floating Stats Bar -->
-            <div class="mt-16 sm:mt-24 mx-auto inline-flex flex-wrap items-center justify-center gap-6 sm:gap-10 px-8 py-5 rounded-3xl glass-dark shadow-2xl">
-                <div class="text-left">
-                    <p class="text-2xl sm:text-3xl font-black text-white">{{ number_format($total_kk) }}</p>
-                    <p class="text-xs text-indigo-200 font-semibold uppercase tracking-wider mt-1">Kartu Keluarga</p>
-                </div>
-                <div class="w-px h-12 bg-white/10 hidden sm:block"></div>
-                <div class="text-left">
-                    <p class="text-2xl sm:text-3xl font-black text-white">{{ number_format($total_warga) }}</p>
-                    <p class="text-xs text-indigo-200 font-semibold uppercase tracking-wider mt-1">Total Penduduk</p>
-                </div>
-                <div class="w-px h-12 bg-white/10 hidden md:block"></div>
-                <div class="text-left hidden md:block">
-                    <div class="flex items-center gap-2">
-                        <p class="text-2xl sm:text-3xl font-black text-white whitespace-nowrap">Rp {{ number_format($saldo_kas, 0, ',', '.') }}</p>
+                        <!-- Stats Cards: Kartu Keluarga -->
+                        <div class="col-span-1 p-5 rounded-3xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl flex flex-col justify-center text-center hover:bg-slate-900/80 transition-colors">
+                            <p class="text-3xl sm:text-4xl font-black text-white mb-1">{{ number_format($total_kk) }}</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Kepala Keluarga</p>
+                        </div>
+
+                        <!-- Stats Cards: Penduduk -->
+                        <div class="col-span-1 p-5 rounded-3xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl flex flex-col justify-center text-center hover:bg-slate-900/80 transition-colors">
+                            <p class="text-3xl sm:text-4xl font-black text-white mb-1">{{ number_format($total_warga) }}</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Total Penduduk</p>
+                        </div>
+                        
+                        <!-- Stats Cards: Kas (Spans full width on mobile, 2 cols on desktop if needed, or fits in 3 col layout on tablet) -->
+                        <div class="col-span-2 sm:col-span-1 lg:col-span-2 p-5 rounded-3xl bg-gradient-to-br from-indigo-900/50 to-slate-900/60 border border-indigo-500/20 backdrop-blur-xl flex flex-col justify-center text-center sm:text-left hover:border-indigo-500/40 transition-colors">
+                            <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+                                <div>
+                                    <p class="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1 flex items-center justify-center sm:justify-start gap-1.5">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                        Kas Transparan
+                                    </p>
+                                    <p class="text-2xl sm:text-3xl font-black text-white tracking-tight">Rp {{ number_format($saldo_kas, 0, ',', '.') }}</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 8v2"/></svg>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                    <p class="text-xs text-emerald-300 font-semibold uppercase tracking-wider mt-1">Saldo Kas Aktif</p>
                 </div>
+
             </div>
         </div>
     </section>
