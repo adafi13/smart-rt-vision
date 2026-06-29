@@ -25,6 +25,11 @@ class ProductController extends Controller
         return view('admin.products.index', compact('products'));
     }
 
+    public function create()
+    {
+        return view('admin.products.create');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -45,7 +50,7 @@ class ProductController extends Controller
                     $path = $request->file('foto')->store('products', 'public');
                 }
 
-                $product = Product::create([
+                Product::create([
                     'tenant_id' => auth()->user()->tenant_id,
                     'nama_produk' => $request->nama_produk,
                     'penjual' => $request->penjual,
@@ -56,23 +61,17 @@ class ProductController extends Controller
                     'foto' => $path,
                     'is_ready' => $request->boolean('is_ready', true),
                 ]);
-
-                AuditLog::create([
-                    'tenant_id' => auth()->user()->tenant_id,
-                    'user_id' => auth()->id(),
-                    'action' => 'create_umkm_product',
-                    'model_type' => Product::class,
-                    'model_id' => $product->id,
-                    'new_values' => $product->toArray(),
-                    'ip_address' => request()->ip(),
-                    'user_agent' => request()->userAgent(),
-                ]);
             });
 
-            return back()->with('success', 'Produk berhasil ditambahkan.');
+            return redirect()->route('admin.umkm.index')->with('success', 'Produk berhasil ditambahkan.');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menambahkan produk: ' . $e->getMessage());
         }
+    }
+
+    public function edit(Product $product)
+    {
+        return view('admin.products.edit', compact('product'));
     }
 
     public function update(Request $request, Product $product)
@@ -90,7 +89,6 @@ class ProductController extends Controller
 
         try {
             DB::transaction(function () use ($request, $product) {
-                $oldValues = $product->only('nama_produk', 'penjual', 'whatsapp', 'harga', 'kategori', 'deskripsi', 'foto', 'is_ready');
                 $path = $product->foto;
                 
                 if ($request->hasFile('foto')) {
@@ -110,21 +108,9 @@ class ProductController extends Controller
                     'foto' => $path,
                     'is_ready' => $request->boolean('is_ready'),
                 ]);
-
-                AuditLog::create([
-                    'tenant_id' => $product->tenant_id ?? auth()->user()->tenant_id,
-                    'user_id' => auth()->id(),
-                    'action' => 'update_umkm_product',
-                    'model_type' => Product::class,
-                    'model_id' => $product->id,
-                    'old_values' => $oldValues,
-                    'new_values' => $product->only('nama_produk', 'penjual', 'whatsapp', 'harga', 'kategori', 'deskripsi', 'foto', 'is_ready'),
-                    'ip_address' => request()->ip(),
-                    'user_agent' => request()->userAgent(),
-                ]);
             });
 
-            return back()->with('success', 'Produk berhasil diperbarui.');
+            return redirect()->route('admin.umkm.index')->with('success', 'Produk berhasil diperbarui.');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal memperbarui produk: ' . $e->getMessage());
         }
@@ -134,24 +120,11 @@ class ProductController extends Controller
     {
         try {
             DB::transaction(function () use ($product) {
-                $oldValues = $product->toArray();
-                
                 if ($product->foto) {
                     Storage::disk('public')->delete($product->foto);
                 }
                 
                 $product->delete();
-
-                AuditLog::create([
-                    'tenant_id' => $product->tenant_id ?? auth()->user()->tenant_id,
-                    'user_id' => auth()->id(),
-                    'action' => 'delete_umkm_product',
-                    'model_type' => Product::class,
-                    'model_id' => $product->id,
-                    'old_values' => $oldValues,
-                    'ip_address' => request()->ip(),
-                    'user_agent' => request()->userAgent(),
-                ]);
             });
 
             return back()->with('success', 'Produk dihapus.');

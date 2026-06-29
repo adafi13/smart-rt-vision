@@ -8,10 +8,10 @@
                 <p class="text-sm text-gray-500 mt-0.5">Dukung usaha lokal warga. Produk akan tampil di halaman utama.</p>
             </div>
             
-            <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'tambah-produk')" class="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2">
+            <a href="{{ route('admin.umkm.create') }}" class="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Tambah Produk Baru
-            </button>
+            </a>
         </div>
 
         @if(session('success'))
@@ -101,9 +101,9 @@
 
                 <!-- Admin Action Buttons (Hover) -->
                 <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-[2px] z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                    <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'edit-produk-{{ $p->id }}')" class="w-12 h-12 bg-white text-indigo-600 rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform" title="Edit Produk">
+                    <a href="{{ route('admin.umkm.edit', $p->id) }}" class="w-12 h-12 bg-white text-indigo-600 rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform" title="Edit Produk">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                    </button>
+                    </a>
                     <form action="{{ route('admin.umkm.destroy', $p) }}" method="POST" onsubmit="return confirm('Hapus produk ini permanen?')">
                         @csrf @method('DELETE')
                         <button type="submit" class="w-12 h-12 bg-white text-rose-600 rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform" title="Hapus Produk">
@@ -130,200 +130,7 @@
         @endif
     </div>
 
-    <!-- MODAL TAMBAH PRODUK -->
-    <x-modal name="tambah-produk" focusable>
-        <form action="{{ route('admin.umkm.store') }}" method="POST" enctype="multipart/form-data" class="p-6">
-            @csrf
-            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
-                <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 flex-shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                </div>
-                <div>
-                    <h2 class="text-lg font-bold text-gray-900 leading-tight">Daftarkan Produk/Jasa</h2>
-                    <p class="text-[11px] font-semibold text-gray-500 mt-0.5">Bantu promosikan UMKM milik warga</p>
-                </div>
-            </div>
 
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Nama Produk / Jasa</label>
-                    <input type="text" name="nama_produk" required class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm font-semibold" placeholder="Contoh: Nasi Bakar Bu Tejo">
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Kategori</label>
-                        <select name="kategori" required class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm font-medium">
-                            <option value="">Pilih Kategori...</option>
-                            <option value="Makanan & Minuman">Makanan & Minuman</option>
-                            <option value="Jasa & Pelayanan">Jasa & Pelayanan</option>
-                            <option value="Pakaian & Fashion">Pakaian & Fashion</option>
-                            <option value="Kebutuhan Harian">Kebutuhan Harian</option>
-                            <option value="Lainnya">Lainnya</option>
-                        </select>
-                    </div>
-                    <div x-data="{ 
-                        rawVal: '', 
-                        formattedVal: '',
-                        formatNumber() {
-                            let val = this.formattedVal.replace(/\D/g, '');
-                            this.rawVal = val;
-                            this.formattedVal = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                        }
-                    }">
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Harga (Rp)</label>
-                        <input type="text" x-model="formattedVal" @input="formatNumber" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm font-bold text-indigo-600" placeholder="Kosongkan jika tidak pasti">
-                        <input type="hidden" name="harga" x-model="rawVal">
-                    </div>
-                </div>
-
-                <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <h4 class="text-[11px] font-bold text-gray-900 uppercase tracking-wider mb-3">Informasi Penjual</h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 tracking-wide mb-1.5">Nama Penjual</label>
-                            <input type="text" name="penjual" required class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm" placeholder="Nama Warga">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 tracking-wide mb-1.5">No. WhatsApp</label>
-                            <input type="text" name="whatsapp" required class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm" placeholder="Contoh: 08123456789">
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Deskripsi Produk (Opsional)</label>
-                    <textarea name="deskripsi" rows="2" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm custom-scrollbar" placeholder="Jelaskan keunggulan produk/jasa ini..."></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Foto Produk (Opsional)</label>
-                    <input type="file" name="foto" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-colors">
-                </div>
-
-                <div class="pt-2">
-                    <label class="flex items-start gap-3 p-3 rounded-xl border border-gray-200 bg-gray-50/50 cursor-pointer hover:bg-gray-50 transition-colors">
-                        <div class="flex items-center h-5">
-                            <input type="checkbox" name="is_ready" value="1" checked class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500">
-                        </div>
-                        <div>
-                            <span class="block text-sm font-bold text-gray-900">Status: Siap Jual / Tersedia</span>
-                            <span class="block text-[11px] text-gray-500 mt-0.5">Hilangkan centang jika stok produk sedang kosong.</span>
-                        </div>
-                    </label>
-                </div>
-            </div>
-
-            <div class="mt-8 pt-4 border-t border-gray-100 flex justify-end gap-3">
-                <button type="button" x-on:click="$dispatch('close')" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">Batal</button>
-                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-sm flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                    Tambahkan
-                </button>
-            </div>
-        </form>
-    </x-modal>
-
-    <!-- MODAL EDIT PRODUK -->
-    @foreach($products as $p)
-    <x-modal name="edit-produk-{{ $p->id }}" focusable>
-        <form action="{{ route('admin.umkm.update', $p) }}" method="POST" enctype="multipart/form-data" class="p-6">
-            @csrf @method('PUT')
-            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
-                <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 flex-shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                </div>
-                <div>
-                    <h2 class="text-lg font-bold text-gray-900 leading-tight">Edit Info UMKM</h2>
-                    <p class="text-[11px] font-semibold text-gray-500 mt-0.5">Perbarui detail produk atau stok</p>
-                </div>
-            </div>
-
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Nama Produk / Jasa</label>
-                    <input type="text" name="nama_produk" required value="{{ $p->nama_produk }}" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm font-semibold">
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Kategori</label>
-                        <select name="kategori" required class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm font-medium">
-                            <option value="">Pilih Kategori...</option>
-                            <option value="Makanan & Minuman" @selected($p->kategori === 'Makanan & Minuman')>Makanan & Minuman</option>
-                            <option value="Jasa & Pelayanan" @selected($p->kategori === 'Jasa & Pelayanan')>Jasa & Pelayanan</option>
-                            <option value="Pakaian & Fashion" @selected($p->kategori === 'Pakaian & Fashion')>Pakaian & Fashion</option>
-                            <option value="Kebutuhan Harian" @selected($p->kategori === 'Kebutuhan Harian')>Kebutuhan Harian</option>
-                            <option value="Lainnya" @selected(!in_array($p->kategori, ['Makanan & Minuman', 'Jasa & Pelayanan', 'Pakaian & Fashion', 'Kebutuhan Harian']))>Lainnya</option>
-                        </select>
-                    </div>
-                    <div x-data="{ 
-                        rawVal: '{{ $p->harga }}', 
-                        formattedVal: '{{ $p->harga ? number_format($p->harga, 0, '', '.') : '' }}',
-                        formatNumber() {
-                            let val = this.formattedVal.replace(/\D/g, '');
-                            this.rawVal = val;
-                            this.formattedVal = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                        }
-                    }">
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Harga (Rp)</label>
-                        <input type="text" x-model="formattedVal" @input="formatNumber" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm font-bold text-indigo-600" placeholder="Kosongkan jika tidak pasti">
-                        <input type="hidden" name="harga" x-model="rawVal">
-                    </div>
-                </div>
-
-                <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <h4 class="text-[11px] font-bold text-gray-900 uppercase tracking-wider mb-3">Informasi Penjual</h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 tracking-wide mb-1.5">Nama Penjual</label>
-                            <input type="text" name="penjual" required value="{{ $p->penjual }}" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 tracking-wide mb-1.5">No. WhatsApp</label>
-                            <input type="text" name="whatsapp" required value="{{ $p->whatsapp }}" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm">
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Deskripsi Produk</label>
-                    <textarea name="deskripsi" rows="2" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm custom-scrollbar">{{ $p->deskripsi }}</textarea>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Ganti Foto (Opsional)</label>
-                    @if($p->foto)
-                        <div class="mb-3 flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-lg bg-cover bg-center border border-gray-200" style="background-image: url('{{ asset('storage/'.$p->foto) }}')"></div>
-                            <span class="text-[10px] font-semibold text-gray-400">Foto saat ini terpasang.</span>
-                        </div>
-                    @endif
-                    <input type="file" name="foto" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-colors">
-                </div>
-
-                <div class="pt-2">
-                    <label class="flex items-start gap-3 p-3 rounded-xl border border-gray-200 bg-gray-50/50 cursor-pointer hover:bg-gray-50 transition-colors">
-                        <div class="flex items-center h-5">
-                            <input type="checkbox" name="is_ready" value="1" @checked($p->is_ready) class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500">
-                        </div>
-                        <div>
-                            <span class="block text-sm font-bold text-gray-900">Status: Siap Jual / Tersedia</span>
-                            <span class="block text-[11px] text-gray-500 mt-0.5">Hilangkan centang jika stok produk sedang kosong.</span>
-                        </div>
-                    </label>
-                </div>
-            </div>
-
-            <div class="mt-8 pt-4 border-t border-gray-100 flex justify-end gap-3">
-                <button type="button" x-on:click="$dispatch('close')" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">Batal</button>
-                <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-sm flex items-center gap-2">
-                    Simpan Perubahan
-                </button>
-            </div>
-        </form>
-    </x-modal>
-    @endforeach
 
 </x-app-layout>
 

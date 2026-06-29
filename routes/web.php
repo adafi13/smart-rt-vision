@@ -178,7 +178,9 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
 
     Route::prefix('admin/umkm')->name('admin.umkm.')->middleware('rt_role:owner,sekretaris,humas')->group(function () {
         Route::get('/', [AdminProductController::class, 'index'])->name('index');
+        Route::get('/create', [AdminProductController::class, 'create'])->name('create');
         Route::post('/', [AdminProductController::class, 'store'])->name('store');
+        Route::get('/{product}/edit', [AdminProductController::class, 'edit'])->name('edit');
         Route::put('/{product}', [AdminProductController::class, 'update'])->name('update');
         Route::delete('/{product}', [AdminProductController::class, 'destroy'])->name('destroy');
     });
