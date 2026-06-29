@@ -176,9 +176,6 @@
                 <a href="{{ route('register') }}" class="flex items-center justify-center py-4 rounded-2xl font-bold text-sm text-slate-900 bg-indigo-400 hover:bg-indigo-300 transition-all shadow-lg shadow-indigo-500/30">
                     MULAI GRATIS 14 HARI →
                 </a>
-                <a href="#cara-kerja" class="flex items-center justify-center py-4 rounded-2xl font-semibold text-sm text-slate-300 border border-white/20 bg-white/5">
-                    LIHAT DEMO FITUR
-                </a>
             </div>
 
             <!-- Social Proof Row -->
@@ -269,9 +266,6 @@
                 <div class="flex flex-row gap-3 mb-10">
                     <a href="{{ route('register') }}" class="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-sm text-slate-900 bg-indigo-400 hover:bg-indigo-300 transition-all hover:scale-[1.01] shadow-lg shadow-indigo-500/30">
                         MULAI GRATIS 14 HARI →
-                    </a>
-                    <a href="#cara-kerja" class="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-semibold text-sm text-slate-300 border border-white/20 bg-white/5 hover:bg-white/10 hover:text-white transition-all">
-                        LIHAT DEMO FITUR
                     </a>
                 </div>
 
@@ -791,10 +785,10 @@
                 <div>
                     <h4 class="text-[11px] font-bold text-white uppercase tracking-wider mb-5">Dukungan</h4>
                     <ul class="space-y-3.5 text-[13px]">
-                        <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Panduan Sistem Khusus</a></li>
+                        <li><a href="#cara-kerja" class="text-slate-400 hover:text-white transition-colors">Panduan Cara Kerja</a></li>
                         <li><a href="#faq" class="text-slate-400 hover:text-white transition-colors">FAQ & Troubleshooting</a></li>
                         <li><a href="{{ route('login') }}" class="text-slate-400 hover:text-white transition-colors">Masuk Pengurus</a></li>
-                        <li><a href="https://wa.me/6285156412702" target="_blank" class="text-slate-400 hover:text-white transition-colors">Hubungi Layanan Konsumen</a></li>
+                        <li><a href="https://wa.me/6285156412702" target="_blank" class="text-slate-400 hover:text-white transition-colors">Hubungi via WhatsApp</a></li>
                     </ul>
                 </div>
 
@@ -804,7 +798,6 @@
                     <ul class="space-y-3.5 text-[13px]">
                         <li><a href="{{ url('/kebijakan-privasi') }}" class="text-slate-400 hover:text-white transition-colors">Kebijakan Privasi Data Warga</a></li>
                         <li><a href="{{ url('/syarat-dan-ketentuan') }}" class="text-slate-400 hover:text-white transition-colors">Syarat & Ketentuan Layanan</a></li>
-                        <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Lisensi Teknologi</a></li>
                     </ul>
                 </div>
             </div>
