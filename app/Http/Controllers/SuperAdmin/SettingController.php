@@ -30,30 +30,13 @@ class SettingController extends Controller
 
         foreach ($request->settings as $group => $keys) {
             foreach ($keys as $key => $value) {
-                Setting::set($key, $value, 'string', $group);
+                Setting::set($key, $value, null, $group);
             }
         }
 
         return back()->with('success', 'Pengaturan global berhasil diperbarui.');
     }
 
-    public function updateAnnouncement(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string',
-            'message' => 'required|string',
-            'type' => 'required|in:info,warning,danger',
-        ]);
-
-        \App\Models\Announcement::create([
-            'title' => $request->title,
-            'message' => $request->message,
-            'type' => $request->type,
-            'is_active' => $request->has('is_active'),
-        ]);
-
-        return back()->with('success', 'Pengumuman global berhasil disiarkan.');
-    }
 
     public function toggleMaintenance(Request $request)
     {
@@ -64,7 +47,10 @@ class SettingController extends Controller
             \Illuminate\Support\Facades\Artisan::call('down', [
                 '--secret' => 'superadmin' // Allows bypassing maintenance via /superadmin path
             ]);
-            return back()->with('success', 'Mode Maintenance diaktifkan! Pengguna biasa tidak dapat mengakses sistem.');
+            
+            // Redirect ke secret URL agar browser mendapatkan cookie bypass, lalu Laravel akan mengarahkan ke '/'
+            // Ini mencegah Admin terkena layar 503 setelah mengaktifkan mode maintenance.
+            return redirect('/superadmin');
         }
     }
 }
