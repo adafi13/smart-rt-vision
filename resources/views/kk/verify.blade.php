@@ -32,9 +32,9 @@
                             </div>
                             @if($fotoPath)
                                 @if(\Illuminate\Support\Str::endsWith($fotoPath, '.pdf'))
-                                    <iframe src="{{ asset('storage/'.$fotoPath) }}" class="w-full h-[65vh] rounded-2xl border border-gray-100 bg-gray-50"></iframe>
+                                    <iframe src="{{ asset('storage/'.$fotoPath) }}" class="w-full h-[35vh] lg:h-[65vh] rounded-2xl border border-gray-100 bg-gray-50"></iframe>
                                 @else
-                                    <div class="overflow-auto max-h-[65vh] rounded-2xl border border-gray-100 bg-gray-50 flex items-center justify-center p-2">
+                                    <div class="overflow-auto max-h-[35vh] lg:max-h-[65vh] rounded-2xl border border-gray-100 bg-gray-50 flex items-center justify-center p-2">
                                         <img src="{{ asset('storage/'.$fotoPath) }}" class="max-w-full h-auto object-contain cursor-zoom-in" onclick="window.open(this.src)" title="Klik untuk memperbesar">
                                     </div>
                                 @endif

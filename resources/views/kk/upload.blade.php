@@ -362,7 +362,7 @@
             
             <!-- Video Viewport -->
             <div class="relative flex-1 bg-black flex items-center justify-center overflow-hidden min-h-[300px] sm:min-h-[400px]">
-                <video id="webcam" autoplay playsinline class="w-full h-full object-cover"></video>
+                <video id="webcam" autoplay playsinline class="w-full h-full object-contain"></video>
                 <!-- Guideline Box overlay -->
                 <div class="absolute inset-4 border-2 border-dashed border-indigo-400/60 rounded-2xl pointer-events-none flex items-center justify-center">
                     <div class="text-white/40 text-[10px] font-bold uppercase tracking-widest bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-sm">Posisikan KK di dalam kotak ini</div>
