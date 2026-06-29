@@ -406,7 +406,10 @@ class HomeController extends Controller
             'status' => 'Pending',
         ]);
 
-        return back()->with('success', 'Laporan tamu menginap/kos berhasil dikirim! Silakan tunggu verifikasi pengurus RT.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Laporan tamu menginap/kos berhasil dikirim! Silakan tunggu verifikasi pengurus RT.'
+        ]);
     }
 
     public function storeVacantHome(Request $request)
@@ -433,7 +436,10 @@ class HomeController extends Controller
             'status' => 'Aktif',
         ]);
 
-        return back()->with('success', 'Laporan rumah kosong berhasil dikirim. Pengurus/Keamanan akan memantau rumah Anda.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Laporan rumah kosong berhasil dikirim. Pengurus/Keamanan akan memantau rumah Anda.'
+        ]);
     }
 
     public function trackVacantHome(Request $request)

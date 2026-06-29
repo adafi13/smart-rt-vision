@@ -1214,7 +1214,7 @@
                     </div>
 
                     <div x-show="activeTab === 'lapor'">
-                        <form method="POST" action="{{ route('titip-rumah', ['tenant' => $tenant->slug]) }}" class="space-y-4">
+                        <form onsubmit="return submitForm(event, 'titip-rumah-form', '{{ route('titip-rumah', ['tenant' => $tenant->slug]) }}', 'POST')" id="titip-rumah-form" class="space-y-4">
                             @csrf
                             <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-2">
                                 <p class="text-xs text-indigo-800 leading-relaxed font-medium">Laporkan rumah kosong saat Anda mudik atau dinas luar kota. Keamanan RT akan memantau keamanan rumah Anda secara rutin dan melapor ke aplikasi.</p>
@@ -1248,6 +1248,7 @@
                             </div>
                             <button type="submit" class="btn-gradient w-full mt-2" style="background: linear-gradient(135deg, #4f46e5, #6366f1);">Kirim Laporan Titip Rumah</button>
                         </form>
+                        <div id="titip-rumah-result" class="mt-4"></div>
                     </div>
 
                     <div x-show="activeTab === 'cek'">
