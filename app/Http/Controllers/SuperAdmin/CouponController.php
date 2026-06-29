@@ -31,6 +31,23 @@ class CouponController extends Controller
         return redirect()->route('super-admin.coupons.index')->with('success', 'Kupon berhasil ditambahkan.');
     }
 
+    public function update(Request $request, Coupon $coupon)
+    {
+        $validated = $request->validate([
+            'code' => 'required|string|unique:coupons,code,' . $coupon->id,
+            'discount_type' => 'required|in:percent,fixed',
+            'discount_value' => 'required|numeric|min:0',
+            'max_uses' => 'nullable|integer|min:1',
+            'expires_at' => 'nullable|date',
+        ]);
+
+        $validated['code'] = strtoupper(trim($validated['code']));
+        
+        $coupon->update($validated);
+
+        return redirect()->route('super-admin.coupons.index')->with('success', 'Kupon berhasil diperbarui.');
+    }
+
     public function destroy(Coupon $coupon)
     {
         $coupon->delete();

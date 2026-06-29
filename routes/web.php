@@ -289,7 +289,7 @@ Route::middleware(['auth', 'super_admin'])->prefix('super-admin')->name('super-a
     Route::resource('plans', \App\Http\Controllers\SuperAdmin\PlanController::class)->except('show');
     
     // Manajemen Kupon / Diskon
-    Route::resource('coupons', \App\Http\Controllers\SuperAdmin\CouponController::class)->only(['index', 'store', 'destroy']);
+    Route::resource('coupons', \App\Http\Controllers\SuperAdmin\CouponController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::post('coupons/{coupon}/toggle', [\App\Http\Controllers\SuperAdmin\CouponController::class, 'toggleActive'])->name('coupons.toggle');
 
     // Helpdesk / Sistem Tiket (Super Admin)

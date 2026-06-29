@@ -68,6 +68,9 @@
                                     </form>
                                 </td>
                                 <td class="px-5 py-3 text-right">
+                                    <button onclick="openEditModal({{ $coupon->id }}, '{{ $coupon->code }}', '{{ $coupon->discount_type }}', '{{ $coupon->discount_type === 'fixed' ? intval($coupon->discount_value) : floatval($coupon->discount_value) }}', '{{ $coupon->max_uses }}', '{{ $coupon->expires_at ? $coupon->expires_at->format('Y-m-d\TH:i') : '' }}')" class="p-1.5 text-indigo-500 hover:bg-indigo-50 rounded transition-colors mr-1" title="Edit">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                    </button>
                                     <form action="{{ route('super-admin.coupons.destroy', $coupon) }}" method="POST" onsubmit="return confirm('Hapus kupon ini permanen?')" class="inline-block">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded transition-colors" title="Hapus">
@@ -156,4 +159,98 @@
             </form>
         </div>
     </div>
+
+    <!-- Modal Edit Kupon -->
+    <div id="editCouponModal" class="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm items-center justify-center" style="display: none;">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden m-4 relative animate-[fade-in-up_0.2s_ease-out]">
+            <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+                <h3 class="font-bold text-gray-900">Edit Kupon</h3>
+                <button type="button" onclick="document.getElementById('editCouponModal').style.display='none'" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <form id="editCouponForm" method="POST" class="p-5 space-y-4">
+                @csrf @method('PUT')
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Kode Kupon</label>
+                    <input type="text" id="edit_code" name="code" class="input-field" required style="text-transform: uppercase;">
+                </div>
+                <div class="grid grid-cols-2 gap-4" id="editDiscountData" x-data="{
+                    type: 'percent',
+                    displayValue: '',
+                    get realValue() {
+                        if (this.type === 'fixed') {
+                            return this.displayValue.replace(/\./g, '');
+                        }
+                        return this.displayValue.replace(/,/g, '.');
+                    },
+                    formatInput() {
+                        if (this.type === 'fixed') {
+                            let val = this.displayValue.replace(/[^0-9]/g, '');
+                            if(val !== '') {
+                                this.displayValue = parseInt(val, 10).toLocaleString('id-ID');
+                            }
+                        } else {
+                            let val = this.displayValue.replace(/[^0-9.,]/g, '');
+                            this.displayValue = val;
+                        }
+                    }
+                }">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Tipe Diskon</label>
+                        <select id="edit_discount_type" name="discount_type" x-model="type" @change="displayValue = ''; formatInput()" class="input-field" required>
+                            <option value="percent">Persentase (%)</option>
+                            <option value="fixed">Nominal (Rp)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Nilai Diskon</label>
+                        <input type="text" id="edit_discount_display" x-model="displayValue" @input="formatInput()" class="input-field" required>
+                        <input type="hidden" id="edit_discount_value" name="discount_value" :value="realValue">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Batas Pakai <span class="text-gray-400 font-normal">(Opsional)</span></label>
+                        <input type="number" id="edit_max_uses" name="max_uses" class="input-field" min="1">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Berlaku Sampai <span class="text-gray-400 font-normal">(Opsional)</span></label>
+                        <input type="datetime-local" id="edit_expires_at" name="expires_at" class="input-field">
+                    </div>
+                </div>
+                <div class="pt-2">
+                    <button type="submit" class="w-full btn-primary justify-center">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @push('scripts')
+    <script>
+        function openEditModal(id, code, type, value, maxUses, expiresAt) {
+            const form = document.getElementById('editCouponForm');
+            form.action = `/super-admin/coupons/${id}`;
+            
+            document.getElementById('edit_code').value = code;
+            
+            // Set values and trigger alpine reactivity
+            const alpineData = Alpine.$data(document.getElementById('editDiscountData'));
+            alpineData.type = type;
+            
+            if (type === 'fixed') {
+                alpineData.displayValue = parseInt(value, 10).toLocaleString('id-ID');
+            } else {
+                alpineData.displayValue = parseFloat(value).toString();
+            }
+            alpineData.formatInput();
+
+            document.getElementById('edit_max_uses').value = maxUses || '';
+            document.getElementById('edit_expires_at').value = expiresAt || '';
+            
+            document.getElementById('editCouponModal').style.display = 'flex';
+        }
+    </script>
+    @endpush
 </x-super-admin-layout>

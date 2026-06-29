@@ -27,7 +27,19 @@ class BillingController extends Controller
             ->latest()
             ->get();
 
-        return view('billing.index', compact('tenant', 'plans', 'subscription', 'histories'));
+        // Active Coupons to show promo banners
+        $activeCoupons = \App\Models\Coupon::where('is_active', true)
+            ->where(function($q) {
+                $q->whereNull('expires_at')
+                  ->orWhere('expires_at', '>', now());
+            })
+            ->where(function($q) {
+                $q->whereNull('max_uses')
+                  ->orWhereRaw('used_count < max_uses');
+            })
+            ->get();
+
+        return view('billing.index', compact('tenant', 'plans', 'subscription', 'histories', 'activeCoupons'));
     }
 
     public function checkout(Request $request, Plan $plan, XenditService $xendit)

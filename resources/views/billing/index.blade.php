@@ -131,7 +131,47 @@
             </div>
         </div>
 
-        {{-- ─── 2. PAKET ───────────────────────────────────── --}}
+        {{-- ─── 2. PROMO BANNER ──────────────────────────────── --}}
+        @if(isset($activeCoupons) && $activeCoupons->count() > 0)
+        <div class="mb-6 relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-[2px] shadow-lg">
+            <div class="relative bg-white/95 backdrop-blur-xl rounded-[14px] p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
+                <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-pink-500/10 rounded-full blur-2xl"></div>
+                
+                <div class="relative z-10 flex items-start gap-4">
+                    <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-lg font-bold text-slate-900 leading-tight">Promo Spesial Untuk Anda!</h3>
+                        <p class="text-[11px] sm:text-sm text-slate-500 mt-1">Gunakan kode di bawah ini saat memilih paket untuk mendapatkan diskon khusus.</p>
+                    </div>
+                </div>
+
+                <div class="relative z-10 flex flex-wrap md:flex-nowrap gap-2 w-full md:w-auto">
+                    @foreach($activeCoupons as $coupon)
+                        <div x-data="{ copied: false }" class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-lg p-2 sm:p-2.5 w-full sm:w-auto flex-shrink-0">
+                            <div class="flex-1">
+                                <p class="text-[9px] sm:text-[10px] font-bold text-indigo-600 uppercase tracking-wider mb-0.5">
+                                    Diskon {{ $coupon->discount_type === 'percent' ? floatval($coupon->discount_value).'%' : 'Rp '.number_format($coupon->discount_value, 0, ',', '.') }}
+                                </p>
+                                <p class="text-xs sm:text-sm font-mono font-bold text-slate-900 select-all">{{ $coupon->code }}</p>
+                            </div>
+                            <button @click="navigator.clipboard.writeText('{{ $coupon->code }}'); copied = true; setTimeout(() => copied = false, 2000)" 
+                                    class="p-1.5 sm:p-2 bg-white border border-slate-200 rounded-md transition-colors" 
+                                    :class="copied ? 'text-emerald-500 border-emerald-200 bg-emerald-50' : 'text-slate-400 hover:text-indigo-600 hover:border-indigo-200'"
+                                    title="Salin Kode">
+                                <svg x-show="!copied" class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                <svg x-show="copied" style="display: none;" class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- ─── 3. PAKET ───────────────────────────────────── --}}
         <div x-data="{ isYearly: false }">
 
             {{-- Section header + Toggle --}}
@@ -249,6 +289,9 @@
                         @else
                             <form :action="isYearly ? '{{ route('billing.checkout', $plan) }}?cycle=yearly' : '{{ route('billing.checkout', $plan) }}'" method="POST">
                                 @csrf
+                                <div class="mb-3">
+                                    <input type="text" name="coupon_code" placeholder="Punya Kode Promo?" class="w-full px-3 py-2.5 rounded-xl border border-dashed border-slate-300 bg-slate-50 text-xs font-bold text-slate-700 text-center uppercase tracking-wider focus:outline-none focus:border-indigo-500 focus:bg-white transition-all placeholder:normal-case placeholder:font-medium placeholder:text-slate-400">
+                                </div>
                                 @if($plan->is_popular)
                                 <button type="submit" style="width:100%; padding:13px; border-radius:12px; border:none; cursor:pointer; font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#fff; background:linear-gradient(135deg,#4f46e5,#7c3aed); box-shadow:0 4px 16px rgba(99,102,241,.35); transition:opacity .2s;" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
                                     @if($subscription && $subscription->isActive())
