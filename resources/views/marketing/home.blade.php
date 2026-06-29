@@ -150,18 +150,110 @@
         <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(60% 50% at 50% 100%, rgba(10,9,21,0.9), transparent);"></div>
         <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(55% 65% at 50% 42%, rgba(10,9,21,0.65) 0%, rgba(10,9,21,0.25) 55%, transparent 75%);"></div>
 
-        <!-- ApoApps-style: 2-col on desktop, stacked on mobile -->
-        <div class="relative z-10 w-full max-w-6xl mx-auto px-6 sm:px-10 lg:px-12 pt-28 pb-16 sm:pt-36 sm:pb-24 flex flex-col lg:flex-row lg:items-center lg:gap-16">
+        <!-- ===== MOBILE LAYOUT (hidden on lg+) ===== -->
+        <div class="lg:hidden relative z-10 w-full flex flex-col items-center text-center px-6 pt-24 pb-16">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-5">
+                <div class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></div>
+                <span class="text-[10px] font-semibold text-slate-300 tracking-widest uppercase">Platform Enterprise-Grade</span>
+            </div>
+
+            <!-- Headline -->
+            <h1 class="text-[2.4rem] font-black leading-[1.08] tracking-tight text-white mb-4">
+                Data Warga<br>
+                <span style="color: #818cf8;">Otomatis.</span><br>
+                <span style="color: #818cf8;">Manajemen</span><br>
+                Transparan.
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="text-sm text-slate-400 leading-relaxed max-w-xs mb-8">
+                Platform RT/RW digital: data warga otomatis dari KK, kas transparan, portal warga — tanpa tim IT.
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col gap-3 w-full max-w-xs">
+                <a href="{{ route('register') }}" class="flex items-center justify-center py-4 rounded-2xl font-bold text-sm text-slate-900 bg-indigo-400 hover:bg-indigo-300 transition-all shadow-lg shadow-indigo-500/30">
+                    MULAI GRATIS 14 HARI →
+                </a>
+                <a href="#cara-kerja" class="flex items-center justify-center py-4 rounded-2xl font-semibold text-sm text-slate-300 border border-white/20 bg-white/5">
+                    LIHAT DEMO FITUR
+                </a>
+            </div>
+
+            <!-- Social Proof Row -->
+            <div class="mt-8 flex items-center justify-center gap-5 flex-wrap">
+                <div class="flex items-center gap-2">
+                    <div class="flex -space-x-2">
+                        <img class="w-7 h-7 rounded-full border-2 border-[#0f0d24] object-cover" src="https://i.pravatar.cc/100?img=11" alt="">
+                        <img class="w-7 h-7 rounded-full border-2 border-[#0f0d24] object-cover" src="https://i.pravatar.cc/100?img=12" alt="">
+                        <img class="w-7 h-7 rounded-full border-2 border-[#0f0d24] object-cover" src="https://i.pravatar.cc/100?img=13" alt="">
+                    </div>
+                    <div class="text-left">
+                        <div class="text-[10px] text-amber-400">★★★★★</div>
+                        <div class="text-[10px] text-slate-400">500+ RT aktif</div>
+                    </div>
+                </div>
+                <div class="w-px h-6 bg-white/10"></div>
+                <div>
+                    <div class="text-base font-black text-white">10K+</div>
+                    <div class="text-[10px] text-slate-400">data/bulan</div>
+                </div>
+                <div class="w-px h-6 bg-white/10"></div>
+                <div>
+                    <div class="text-base font-black text-white">4.9/5</div>
+                    <div class="text-[10px] text-slate-400">pengguna aktif</div>
+                </div>
+            </div>
+
+            <!-- Mini Mockup Card (mobile only) -->
+            <div class="mt-10 w-full max-w-xs rounded-2xl overflow-hidden border border-white/10 shadow-xl" style="background: rgba(15,15,25,0.85); backdrop-filter: blur(20px);">
+                <div class="h-8 border-b border-white/10 flex items-center px-4 gap-1.5 bg-white/5">
+                    <div class="w-2 h-2 rounded-full bg-rose-500/80"></div>
+                    <div class="w-2 h-2 rounded-full bg-amber-500/80"></div>
+                    <div class="w-2 h-2 rounded-full bg-emerald-500/80"></div>
+                    <div class="ml-2 flex-1 h-3 bg-white/5 rounded max-w-[120px]"></div>
+                    <div class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold">AI Aktif</div>
+                </div>
+                <div class="p-4 space-y-3">
+                    <div class="h-16 rounded-lg border border-dashed border-indigo-500/30 bg-indigo-500/5 flex flex-col items-center justify-center gap-1 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-indigo-500/10 animate-pulse"></div>
+                        <svg class="w-5 h-5 text-indigo-400 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
+                        <span class="text-[10px] font-semibold text-indigo-300 relative z-10">Menganalisis KK...</span>
+                    </div>
+                    <div class="h-8 w-full bg-slate-800/70 rounded-lg border border-white/5 flex items-center px-3">
+                        <span class="text-[11px] font-mono text-emerald-400 blink-cursor">Aditya Novaldy</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="h-8 bg-slate-800/70 rounded-lg border border-white/5 flex items-center px-3">
+                            <span class="text-[11px] font-mono text-emerald-400">32731xxx</span>
+                        </div>
+                        <div class="h-8 bg-slate-800/70 rounded-lg border border-white/5 flex items-center px-3">
+                            <span class="text-[11px] font-mono text-emerald-400">Laki-laki</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                            <div class="h-full w-3/4 bg-gradient-to-r from-indigo-500 to-emerald-400 rounded-full"></div>
+                        </div>
+                        <span class="text-[9px] text-slate-400 font-mono">75%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== DESKTOP LAYOUT (hidden on mobile) ===== -->
+        <div class="hidden lg:flex relative z-10 w-full max-w-6xl mx-auto px-12 pt-36 pb-24 flex-row items-center gap-16">
 
             <!-- LEFT: Text Content -->
             <div class="flex-1 text-left">
                 <!-- Tagline -->
-                <p class="text-xs sm:text-sm font-semibold text-indigo-300 tracking-widest uppercase mb-4">
+                <p class="text-xs font-semibold text-indigo-300 tracking-widest uppercase mb-4">
                     Platform manajemen RT/RW — dari data warga hingga kas, dalam satu sistem.
                 </p>
 
-                <!-- Main Headline (ApoApps style: huge, bold, multi-color) -->
-                <h1 class="text-5xl sm:text-6xl lg:text-[5.5rem] font-black leading-[1.05] tracking-tight text-white mb-6">
+                <!-- Main Headline -->
+                <h1 class="text-[5.5rem] font-black leading-[1.05] tracking-tight text-white mb-6">
                     Data Warga<br>
                     <span style="color: #818cf8;">Otomatis.</span><br>
                     <span style="color: #818cf8;">Manajemen</span><br>
@@ -169,41 +261,41 @@
                 </h1>
 
                 <!-- Subtitle -->
-                <p class="text-base sm:text-lg text-slate-400 leading-relaxed max-w-lg mb-8">
+                <p class="text-lg text-slate-400 leading-relaxed max-w-lg mb-8">
                     Tinggalkan cara manual. Ekstrak data KK dengan AI, kelola iuran otomatis, dan hadirkan portal warga — tanpa perlu tim IT.
                 </p>
 
                 <!-- CTA Buttons -->
-                <div class="flex flex-col sm:flex-row gap-3 mb-10">
-                    <a href="{{ route('register') }}" class="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-2xl font-bold text-sm text-slate-900 bg-indigo-400 hover:bg-indigo-300 transition-all hover:scale-[1.01] shadow-lg shadow-indigo-500/30">
-                        MULAI GRATIS 14 HARI &nbsp;→
+                <div class="flex flex-row gap-3 mb-10">
+                    <a href="{{ route('register') }}" class="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-sm text-slate-900 bg-indigo-400 hover:bg-indigo-300 transition-all hover:scale-[1.01] shadow-lg shadow-indigo-500/30">
+                        MULAI GRATIS 14 HARI →
                     </a>
-                    <a href="#cara-kerja" class="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-2xl font-semibold text-sm text-slate-300 border border-white/20 bg-white/5 hover:bg-white/10 hover:text-white transition-all">
+                    <a href="#cara-kerja" class="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-semibold text-sm text-slate-300 border border-white/20 bg-white/5 hover:bg-white/10 hover:text-white transition-all">
                         LIHAT DEMO FITUR
                     </a>
                 </div>
 
-                <!-- Social Proof (Inline like ApoApps) -->
-                <div class="flex flex-wrap items-center gap-6">
+                <!-- Social Proof -->
+                <div class="flex items-center gap-6">
                     <div class="flex items-center gap-3">
                         <div class="flex -space-x-2">
-                            <img class="w-8 h-8 rounded-full border-2 border-[#0f0d24] object-cover" src="https://i.pravatar.cc/100?img=11" alt="User">
-                            <img class="w-8 h-8 rounded-full border-2 border-[#0f0d24] object-cover" src="https://i.pravatar.cc/100?img=12" alt="User">
-                            <img class="w-8 h-8 rounded-full border-2 border-[#0f0d24] object-cover" src="https://i.pravatar.cc/100?img=13" alt="User">
-                            <img class="w-8 h-8 rounded-full border-2 border-[#0f0d24] object-cover" src="https://i.pravatar.cc/100?img=14" alt="User">
+                            <img class="w-8 h-8 rounded-full border-2 border-[#0f0d24] object-cover" src="https://i.pravatar.cc/100?img=11" alt="">
+                            <img class="w-8 h-8 rounded-full border-2 border-[#0f0d24] object-cover" src="https://i.pravatar.cc/100?img=12" alt="">
+                            <img class="w-8 h-8 rounded-full border-2 border-[#0f0d24] object-cover" src="https://i.pravatar.cc/100?img=13" alt="">
+                            <img class="w-8 h-8 rounded-full border-2 border-[#0f0d24] object-cover" src="https://i.pravatar.cc/100?img=14" alt="">
                         </div>
                         <div>
                             <div class="text-[11px] text-amber-400">★★★★★</div>
                             <div class="text-[11px] text-slate-400 font-medium">500+ RT aktif</div>
                         </div>
                     </div>
-                    <div class="h-8 w-px bg-white/10 hidden sm:block"></div>
-                    <div class="text-center sm:text-left">
+                    <div class="h-8 w-px bg-white/10"></div>
+                    <div>
                         <div class="text-lg font-black text-white">10K+</div>
                         <div class="text-[11px] text-slate-400">data warga/bulan</div>
                     </div>
-                    <div class="h-8 w-px bg-white/10 hidden sm:block"></div>
-                    <div class="text-center sm:text-left">
+                    <div class="h-8 w-px bg-white/10"></div>
+                    <div>
                         <div class="text-lg font-black text-white">4.9/5</div>
                         <div class="text-[11px] text-slate-400">dari pengguna aktif</div>
                     </div>
@@ -211,29 +303,22 @@
             </div>
 
             <!-- RIGHT: Mockup Dashboard UI -->
-            <div class="flex-1 mt-14 lg:mt-0 reveal delay-200">
+            <div class="flex-1 reveal delay-200">
                 <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-indigo-500/20" style="background: rgba(15,15,25,0.85); backdrop-filter: blur(20px);">
-                    <!-- MacOS Window Header -->
                     <div class="h-9 border-b border-white/10 flex items-center px-4 gap-2 bg-white/5">
                         <div class="w-2.5 h-2.5 rounded-full bg-rose-500/80"></div>
                         <div class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></div>
                         <div class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></div>
                         <div class="ml-3 flex-1 h-4 bg-white/5 rounded max-w-[200px]"></div>
+                        <div class="text-[10px] px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold">AI Aktif</div>
                     </div>
-                    <!-- Mockup Body -->
-                    <div class="p-5 sm:p-7 flex flex-col gap-4">
-                        <!-- Header bar -->
-                        <div class="flex items-center justify-between">
-                            <div class="text-[11px] font-bold text-slate-300 uppercase tracking-widest">Data Warga Baru</div>
-                            <div class="text-[10px] px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold">AI Aktif</div>
-                        </div>
-                        <!-- Simulated KTP Upload -->
+                    <div class="p-7 flex flex-col gap-4">
+                        <div class="text-[11px] font-bold text-slate-300 uppercase tracking-widest">Data Warga Baru</div>
                         <div class="aspect-[2.5] rounded-xl border border-dashed border-indigo-500/30 bg-indigo-500/5 flex flex-col items-center justify-center gap-2 p-4 relative overflow-hidden">
                             <div class="absolute inset-0 bg-indigo-500/10 animate-pulse"></div>
-                            <svg class="w-7 h-7 text-indigo-400 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            <svg class="w-7 h-7 text-indigo-400 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
                             <span class="text-[11px] font-semibold text-indigo-300 relative z-10">Menganalisis Kartu Keluarga...</span>
                         </div>
-                        <!-- Form Fields -->
                         <div class="space-y-2.5">
                             <div class="h-9 w-full bg-slate-800/70 rounded-lg border border-white/5 flex items-center px-3">
                                 <span class="text-xs font-mono text-emerald-400 blink-cursor">Aditya Novaldy</span>
@@ -247,7 +332,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Progress bar -->
                         <div class="flex items-center gap-3">
                             <div class="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
                                 <div class="h-full w-3/4 bg-gradient-to-r from-indigo-500 to-emerald-400 rounded-full"></div>
@@ -258,8 +342,10 @@
                 </div>
             </div>
 
-        <a href="#fitur" class="absolute bottom-6 sm:bottom-8 inset-x-0 flex justify-center text-slate-500 bounce-y z-10">
-            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        </div>
+
+        <a href="#fitur" class="absolute bottom-6 inset-x-0 flex justify-center text-slate-500 bounce-y z-10">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
         </a>
     </section>
 
