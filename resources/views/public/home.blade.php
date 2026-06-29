@@ -248,6 +248,7 @@
                 ['modal'=>'titip-rumah','title'=>'Penjagaan Rumah Kosong','desc'=>'Lapor titip pengawasan rumah kosong saat sedang mudik/dinas.','color'=>'#4f46e5','bg'=>'bg-indigo-50','icon'=>'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
                 ['modal'=>'lapor-peristiwa','title'=>'Catatan Sipil Warga','desc'=>'Laporkan peristiwa kelahiran, kematian, atau warga pindah.','color'=>'#7c3aed','bg'=>'bg-purple-50','icon'=>'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'],
                 ['modal'=>'pinjam-inventaris-list','title'=>'Pinjam Inventaris RT','desc'=>'Lihat daftar inventaris barang RT yang dapat dipinjam gratis.','color'=>'#3b82f6','bg'=>'bg-blue-50','icon'=>'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'],
+                ['modal'=>'lapor-kos','title'=>'Lapor Kos / Kontrakan','desc'=>'Lapor data penghuni kos atau kontrakan baru di wilayah RT.','color'=>'#6366f1','bg'=>'bg-indigo-50','icon'=>'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5'],
             ]; @endphp
             
             @foreach($actions as $a)
@@ -916,6 +917,7 @@
                         'pinjam-inventaris': 'Pinjam Barang Inventaris',
                         'cek-surat': 'Lacak Status Surat',
                         'pinjam-inventaris-list': 'Daftar Inventaris RT',
+                        'lapor-kos': 'Lapor Warga Kos / Kontrakan',
                     }[modal]"></h3>
                     <p class="text-sm text-slate-500 mt-1 font-medium">Lengkapi form di bawah ini untuk melanjutkan.</p>
                 </div>
@@ -985,6 +987,44 @@
                         </div>
                     </form>
                     <div id="pinjam-inventaris-result" class="mt-4"></div>
+                </div>
+
+                <!-- FORM: Lapor Warga Kos/Kontrakan -->
+                <div x-show="modal === 'lapor-kos'">
+                    <div class="bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-xl text-sm mb-4">
+                        <b>Perhatian:</b> Khusus bagi pemilik kos/kontrakan. Wajib melaporkan penghuni baru selambat-lambatnya 2x24 jam sejak kedatangan.
+                    </div>
+                    <form onsubmit="return submitFormData(event, 'lapor-kos-form', '{{ route('lapor.kos', ['tenant' => $tenant->slug]) }}')" id="lapor-kos-form" class="space-y-4" enctype="multipart/form-data">
+                        @csrf
+                        <div>
+                            <label class="label">Nama Pemilik (Induk Kos)</label>
+                            <input type="text" name="nama_pemilik" required class="input-field placeholder-slate-400" placeholder="Nama Lengkap Pemilik">
+                        </div>
+                        <div>
+                            <label class="label">Alamat Kos / Blok Kontrakan</label>
+                            <input type="text" name="alamat_kos" required class="input-field placeholder-slate-400" placeholder="Cth: Blok G3 No. 15">
+                        </div>
+                        <div class="border-t border-slate-100 my-4 pt-4">
+                            <h4 class="text-sm font-bold text-slate-800 mb-3">Data Penghuni Baru</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="label">Nama Lengkap Penghuni</label>
+                                    <input type="text" name="nama_penghuni" required class="input-field placeholder-slate-400" placeholder="Sesuai KTP">
+                                </div>
+                                <div>
+                                    <label class="label">NIK Penghuni</label>
+                                    <input type="text" name="nik_penghuni" required pattern="[0-9]{16}" maxlength="16" class="input-field placeholder-slate-400" placeholder="16 digit NIK">
+                                </div>
+                                <div>
+                                    <label class="label">Upload Foto KTP Penghuni</label>
+                                    <input type="file" name="foto_ktp" required accept="image/jpeg,image/png,image/jpg" class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-colors">
+                                    <p class="text-[10px] text-slate-400 mt-1.5">*Maksimal 2MB (JPG/PNG)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-gradient w-full mt-2">Kirim Laporan</button>
+                    </form>
+                    <div id="lapor-kos-result" class="mt-4"></div>
                 </div>
 
                 <!-- FORM: Cek NIK -->
@@ -1314,67 +1354,6 @@
         </div>
     </section>
 
-    <!-- ===================== LAPOR WARGA KOS / KONTRAKAN ===================== -->
-    <section id="lapor-kos" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60 bg-slate-50">
-        <div class="flex flex-col md:flex-row gap-12 items-center">
-            <div class="flex-1">
-                <h2 class="text-sm font-black tracking-[0.2em] text-indigo-600 uppercase mb-3">Lapor Tamu Menginap</h2>
-                <h3 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-6">Warga Kos & Kontrakan</h3>
-                <p class="text-lg text-slate-600 mb-8 leading-relaxed">
-                    Khusus bagi Bapak/Ibu pemilik kos atau rumah kontrakan. Wajib melaporkan penghuni baru selambat-lambatnya 2x24 jam sejak kedatangan demi keamanan dan ketertiban lingkungan RT.
-                </p>
-                
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex gap-4">
-                    <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center flex-shrink-0">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-slate-900 mb-1">Perhatian!</h4>
-                        <p class="text-sm text-slate-500">Data e-KTP yang dilampirkan harus jelas dan terbaca. Data akan dijaga kerahasiaannya oleh pengurus RT.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex-1 w-full max-w-lg">
-                <div class="bg-white rounded-[2rem] shadow-xl p-8 border border-slate-100 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-[100px] -z-0"></div>
-                    
-                    <form action="{{ route('lapor.kos') }}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-5">
-                        @csrf
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Nama Pemilik (Induk Kos)</label>
-                            <input type="text" name="nama_pemilik" required class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50" placeholder="Cth: Bpk. H. Ahmad">
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Alamat Kos / Blok Kontrakan</label>
-                            <input type="text" name="alamat_kos" required class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50" placeholder="Cth: Blok G3 No. 15">
-                        </div>
-
-                        <div class="h-px bg-slate-100 my-2"></div>
-
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Nama Lengkap Penghuni Baru</label>
-                            <input type="text" name="nama_penghuni" required class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50" placeholder="Sesuai KTP">
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">NIK Penghuni</label>
-                            <input type="text" name="nik_penghuni" required pattern="[0-9]{16}" class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50" placeholder="16 Digit NIK">
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Upload Foto KTP Penghuni</label>
-                            <input type="file" name="foto_ktp" required accept="image/jpeg,image/png,image/jpg" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                            <p class="text-xs text-slate-400 mt-2">*Maksimal 2MB (JPG/PNG)</p>
-                        </div>
-
-                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-200 mt-4">
-                            Kirim Laporan
-                        </button>
-                    </form>
-                </div>
-            </div>
         </div>
     </section>
 
