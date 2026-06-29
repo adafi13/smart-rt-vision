@@ -1027,6 +1027,40 @@
                     <div id="lapor-kos-result" class="mt-4"></div>
                 </div>
 
+                <!-- FORM: Buku Tamu Digital (Security Gate) -->
+                <div x-show="modal === 'guestbook'">
+                    <div class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs mb-4">
+                        <b>Pos Jaga Keamanan:</b> Harap catat identitas tamu dan plat kendaraan yang memasuki wilayah RT dengan benar.
+                    </div>
+                    <form id="guestbook-form" onsubmit="return submitForm(event, 'guestbook-form', '{{ route('submit-guestbook', ['tenant' => $tenant->slug]) }}', 'POST')" class="space-y-4">
+                        @csrf
+                        <div>
+                            <label class="label">Nama Lengkap Tamu <span class="text-red-500">*</span></label>
+                            <input type="text" name="nama_tamu" required placeholder="Bpk. Budi / Kurir Paket" class="input-field">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="label">Plat Kendaraan</label>
+                                <input type="text" name="plat_nomor" placeholder="B 1234 XYZ" class="input-field uppercase">
+                            </div>
+                            <div>
+                                <label class="label">Tujuan Rumah <span class="text-red-500">*</span></label>
+                                <input type="text" name="tujuan_rumah" required placeholder="Blok A1 No. 5" class="input-field">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="label">Keperluan <span class="text-red-500">*</span></label>
+                            <input type="text" name="keperluan" required placeholder="Antar Paket / Bertamu / Teknisi AC" class="input-field">
+                        </div>
+                        <div class="border-t border-slate-100 mt-4 pt-4">
+                            <label class="label">PIN Keamanan (Otorisasi Satpam) <span class="text-red-500">*</span></label>
+                            <input type="password" name="pin" required placeholder="****" class="w-full rounded-xl border-amber-200 bg-amber-50 focus:border-amber-500 focus:ring-amber-500 px-4 py-2.5 text-center tracking-[0.5em] text-lg font-bold">
+                        </div>
+                        <button type="submit" class="btn-gradient w-full mt-2">Catat Tamu Masuk</button>
+                    </form>
+                    <div id="guestbook-result" class="mt-4"></div>
+                </div>
+
                 <!-- FORM: Cek NIK -->
                 <div x-show="modal === 'cek-nik'">
                     <form onsubmit="return submitForm(event, 'cek-nik-form', '{{ route('cek-nik', ['tenant' => $tenant->slug]) }}', 'GET')" id="cek-nik-form">
@@ -1300,62 +1334,7 @@
         </button>
     </div>
 
-    <!-- ===================== SECURITY GATE (BUKU TAMU) ===================== -->
-    <section id="security-gate" class="max-w-7xl mx-auto px-4 sm:px-6 py-24 border-t border-slate-200/60">
-        <div class="bg-slate-900 rounded-3xl overflow-hidden shadow-2xl relative">
-            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-500 via-slate-900 to-black"></div>
-            <div class="relative p-8 md:p-12 flex flex-col md:flex-row items-center gap-12">
-                <div class="flex-1 text-center md:text-left">
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 text-xs font-black uppercase tracking-widest mb-6">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                        Security Gate
-                    </div>
-                    <h3 class="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">Buku Tamu Digital</h3>
-                    <p class="text-slate-400 text-lg">Khusus Petugas Keamanan. Catat setiap tamu dan kendaraan yang masuk ke area lingkungan RT untuk keamanan bersama.</p>
-                </div>
-                <div class="w-full max-w-md bg-white rounded-2xl p-6 shadow-xl">
-                    <form id="guestbook-form" onsubmit="return submitForm(event, 'guestbook-form', '{{ route('submit-guestbook', ['tenant' => $tenant->slug]) }}', 'POST')" class="space-y-4">
-                        @csrf
-                        
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap Tamu <span class="text-red-500">*</span></label>
-                            <input type="text" name="nama_tamu" required placeholder="Bpk. Budi / Kurir Paket" class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2.5 text-sm">
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Plat Kendaraan</label>
-                                <input type="text" name="plat_nomor" placeholder="B 1234 XYZ" class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2.5 text-sm uppercase">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Tujuan Rumah <span class="text-red-500">*</span></label>
-                                <input type="text" name="tujuan_rumah" required placeholder="Blok A1 No. 5" class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2.5 text-sm">
-                            </div>
-                        </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Keperluan <span class="text-red-500">*</span></label>
-                            <input type="text" name="keperluan" required placeholder="Antar Paket / Bertamu / Teknisi AC" class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2.5 text-sm">
-                        </div>
-
-                        <div class="border-t border-slate-100 mt-4 pt-4">
-                            <label class="block text-xs font-bold text-slate-700 mb-1">PIN Keamanan (Otorisasi Satpam) <span class="text-red-500">*</span></label>
-                            <input type="password" name="pin" required placeholder="****" class="w-full rounded-xl border-amber-200 bg-amber-50 focus:border-amber-500 focus:ring-amber-500 px-4 py-2.5 text-center tracking-[0.5em] text-lg font-bold">
-                        </div>
-
-                        <div id="guestbook-result" class="mt-2"></div>
-
-                        <button type="submit" class="w-full mt-2 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-all shadow-md">
-                            Catat Tamu Masuk
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-        </div>
-    </section>
 
     <!-- FOOTER -->
     @include('partials.public-footer')
