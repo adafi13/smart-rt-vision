@@ -68,7 +68,12 @@ PERATURAN PENTING:
   ]
 }
 
-Jika ada bagian yang tidak terbaca, gunakan string kosong (""). Pastikan array anggota memuat seluruh anggota keluarga yang terdaftar.
+4. Jika gambar yang diunggah BUKAN dokumen Kartu Keluarga (KK) Indonesia, atau gambarnya terlalu buram/gelap/terpotong sehingga data tidak bisa dibaca sama sekali, Anda WAJIB mengembalikan JSON error berikut (JANGAN kembalikan struktur di atas):
+{
+  "error": "Gambar tidak terdeteksi sebagai Kartu Keluarga atau terlalu buram untuk dibaca oleh AI. Pastikan foto dokumen KK jelas, terang, dan tidak terpotong."
+}
+
+Jika ada bagian kecil yang tidak terbaca, gunakan string kosong ("") namun tetap kembalikan struktur data KK. Hanya gunakan objek "error" jika keseluruhan dokumen tidak terbaca atau bukan KK. Pastikan array anggota memuat seluruh anggota keluarga yang terdaftar.
 EOT;
 
         $payload = [

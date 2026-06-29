@@ -66,6 +66,12 @@ class FamilyController extends Controller
             return back()->with('error', 'Gagal mengekstrak data dari gambar. Silakan isi manual dengan melewati AI.')->withInput();
         }
 
+        if (isset($result['error'])) {
+            // Restore usage count if it failed due to invalid image
+            $tenant->decrement('ai_extractions_used');
+            return back()->with('error', $result['error'])->withInput();
+        }
+
         // Simpan data dan path gambar sementara di session
         session(['kk_extracted' => $result, 'kk_foto_path' => $path]);
 
