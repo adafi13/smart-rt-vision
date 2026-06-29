@@ -311,9 +311,23 @@ class HomeController extends Controller
                 \App\Models\PollOption::where('id', $request->poll_option_id)->increment('votes_count');
             });
 
+            $options = $poll->options()->get();
+            $totalVotes = $options->sum('votes_count');
+            
+            $formattedOptions = $options->map(function($opt) use ($totalVotes) {
+                return [
+                    'id' => $opt->id,
+                    'text' => $opt->option_text,
+                    'votes' => $opt->votes_count,
+                    'percentage' => $totalVotes > 0 ? round(($opt->votes_count / $totalVotes) * 100, 1) : 0,
+                ];
+            });
+
             return response()->json([
                 'success' => true,
-                'message' => 'Terima kasih! Suara Anda berhasil direkam.'
+                'message' => 'Terima kasih! Suara Anda berhasil direkam.',
+                'total_votes' => $totalVotes,
+                'options' => $formattedOptions,
             ]);
         } catch (\Exception $e) {
             return response()->json([

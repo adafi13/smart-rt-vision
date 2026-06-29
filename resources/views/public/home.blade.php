@@ -241,6 +241,7 @@
             @php $actions = [
                 ['modal'=>'cek-nik','title'=>'Cek Status Warga','desc'=>'Verifikasi status keanggotaan warga Anda di database RT.','color'=>'#6366f1','bg'=>'bg-indigo-50','icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
                 ['modal'=>'ajukan-surat','title'=>'Pengajuan Surat Resmi','desc'=>'Minta surat pengantar RT untuk KTP, KK, SKCK, atau Nikah.','color'=>'#0891b2','bg'=>'bg-cyan-50','icon'=>'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
+                ['modal'=>'cek-surat','title'=>'Lacak Status Surat','desc'=>'Pantau sejauh mana surat pengantar Anda diproses RT.','color'=>'#7c3aed','bg'=>'bg-purple-50','icon'=>'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01'],
                 ['modal'=>'cek-iuran','title'=>'Riwayat Pembayaran','desc'=>'Pantau riwayat pembayaran iuran kebersihan/keamanan Anda.','color'=>'#059669','bg'=>'bg-emerald-50','icon'=>'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 8v2'],
                 ['modal'=>'kirim-laporan','title'=>'Pusat Bantuan & Keluhan','desc'=>'Laporkan masalah infrastruktur, keamanan, atau kebersihan.','color'=>'#dc2626','bg'=>'bg-rose-50','icon'=>'M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z'],
                 ['modal'=>'cek-laporan','title'=>'Lacak Tiket Bantuan','desc'=>'Cek status penyelesaian laporan yang telah Anda kirimkan.','color'=>'#d97706','bg'=>'bg-amber-50','icon'=>'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'],
@@ -549,7 +550,7 @@
                     <div class="space-y-3 mb-6">
                         @foreach($poll->options as $option)
                         <label class="block relative border-2 border-slate-100 rounded-2xl p-4 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-colors">
-                            <input type="radio" name="option_id" value="{{ $option->id }}" required class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-600 focus:ring-indigo-500 border-slate-300">
+                            <input type="radio" name="poll_option_id" value="{{ $option->id }}" required class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-600 focus:ring-indigo-500 border-slate-300">
                             <span class="block font-bold text-slate-900">{{ $option->option_text }}</span>
                         </label>
                         @endforeach
@@ -950,12 +951,13 @@
                     <h3 class="text-2xl font-black text-slate-900" x-text="{
                         'cek-nik': 'Validasi NIK',
                         'ajukan-surat': 'Form Pengajuan Surat',
-                        'cek-iuran': 'Cek Riwayat Iuran',
+                        'cek-iuran': 'Cek Riwayat Iuran & Tunggakan',
                         'kirim-laporan': 'Lapor Keluhan',
                         'cek-laporan': 'Lacak Tiket',
                         'lapor-peristiwa': 'Catat Peristiwa',
                         'trigger-panic': 'Laporan Darurat (PANIC)',
                         'pinjam-inventaris': 'Pinjam Barang Inventaris',
+                        'cek-surat': 'Lacak Status Surat',
                     }[modal]"></h3>
                     <p class="text-sm text-slate-500 mt-1 font-medium">Lengkapi form di bawah ini untuk melanjutkan.</p>
                 </div>
@@ -1170,6 +1172,16 @@
                         <button type="submit" class="btn-gradient w-full mt-6" style="background: linear-gradient(135deg, #d97706, #f59e0b);">Cek Status Penanganan</button>
                     </form>
                     <div id="cek-laporan-result" class="mt-4"></div>
+                </div>
+
+                <!-- FORM: Cek Status Surat -->
+                <div x-show="modal === 'cek-surat'">
+                    <form onsubmit="return submitForm(event, 'cek-surat-form', '{{ route('cek-surat', ['tenant' => $tenant->slug]) }}', 'GET')" id="cek-surat-form">
+                        <label class="label">Masukkan NIK Pemohon</label>
+                        <input type="text" name="nik" required pattern="\d{16}" maxlength="16" class="input-field text-center tracking-wider font-semibold text-lg" placeholder="16 digit NIK terdaftar">
+                        <button type="submit" class="btn-gradient w-full mt-6" style="background: linear-gradient(135deg, #7c3aed, #8b5cf6);">Lacak Pengajuan Surat</button>
+                    </form>
+                    <div id="cek-surat-result" class="mt-4"></div>
                 </div>
 
                 <!-- FORM: Titip Rumah Kosong -->
@@ -1435,6 +1447,31 @@
         }
 
         function renderResult(resultBox, json) {
+            if (resultBox.startsWith('vote-result-') && json.success && json.options) {
+                let optionsHtml = json.options.map(opt => {
+                    return `
+                        <div class="space-y-1 mb-3">
+                            <div class="flex justify-between text-xs font-bold text-slate-700">
+                                <span>${opt.text}</span>
+                                <span>${opt.percentage}% (${opt.votes} suara)</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-indigo-600 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%;" x-init="setTimeout(() => $el.style.width = '${opt.percentage}%', 100)"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                document.getElementById(resultBox).innerHTML = `
+                    <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl mt-4 text-left">
+                        <div class="text-xs font-black text-indigo-800 uppercase tracking-widest mb-3">Hasil Voting Sementara:</div>
+                        <div class="space-y-3">${optionsHtml}</div>
+                        <p class="text-[10px] text-slate-400 font-bold mt-3 text-right">Total: ${json.total_votes} suara masuk</p>
+                    </div>
+                `;
+                return;
+            }
+
             if (json.found !== undefined) {
                 if (json.found) {
                     showResult(resultBox, true, `<div class="font-bold text-lg mb-1">${json.nama}</div> <div class="opacity-80">Terverifikasi sebagai warga (Status: ${json.status})</div>`);
@@ -1445,13 +1482,85 @@
             }
             
             if (json.data && Array.isArray(json.data)) {
-                if (json.data.length === 0) {
-                    showResult(resultBox, false, 'Belum ada catatan iuran untuk NIK tersebut.');
+                if (resultBox === 'cek-iuran-result') {
+                    let arrearsHtml = '';
+                    if (json.arrears && json.arrears.months_owed > 0) {
+                        arrearsHtml = `
+                            <div class="mb-4 p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-950 text-sm">
+                                <div class="flex items-center gap-2 mb-2 text-rose-800 font-bold">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                    TUNGGAKAN PIUTANG KAS RT
+                                </div>
+                                <p class="mb-2 leading-relaxed font-medium">Anda memiliki <b>${json.arrears.months_owed} bulan</b> tunggakan di tahun ini sebesar <span class="font-black text-rose-700">${json.arrears.total_arrears}</span> (Tarif RT: ${json.arrears.nominal_iuran}/bln).</p>
+                                <div class="text-xs opacity-90 leading-relaxed font-semibold">
+                                    Bulan tertunggak: <span class="underline decoration-wavy decoration-rose-300 font-bold text-rose-800">${json.arrears.unpaid_months.join(', ')}</span>
+                                </div>
+                            </div>
+                        `;
+                    } else if (json.arrears) {
+                        arrearsHtml = `
+                            <div class="mb-4 p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-800 text-xs font-bold flex items-center gap-1.5 shadow-sm">
+                                <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                Luar Biasa! Pembayaran Iuran Keluarga Anda Lunas Bulan Ini.
+                            </div>
+                        `;
+                    }
+
+                    let rows = json.data.map(d => `<div class="flex justify-between border-b border-emerald-100/60 py-2"><span class="opacity-80">${d.jenis} (${d.periode})</span><span class="font-bold text-slate-800">Rp ${d.jumlah}</span></div>`).join('');
+                    
+                    document.getElementById(resultBox).innerHTML = `
+                        <div class="p-5 bg-white rounded-3xl border border-slate-200 text-slate-700 text-sm text-left">
+                            <div class="font-black text-base text-slate-900 mb-3 pb-3 border-b border-slate-100">Rekap Kas & Iuran: ${json.nama}</div>
+                            ${arrearsHtml}
+                            <div class="font-bold text-xs text-slate-400 uppercase tracking-wider mb-2">5 Pembayaran Terakhir:</div>
+                            <div class="space-y-1">${rows || '<div class="text-slate-400 text-xs italic">Belum ada riwayat pembayaran.</div>'}</div>
+                        </div>
+                    `;
                     return;
                 }
-                let rows = json.data.map(d => `<div class="flex justify-between border-b border-emerald-100 py-2"><span class="opacity-80">${d.jenis} (${d.periode})</span><span class="font-bold">Rp ${d.jumlah}</span></div>`).join('');
-                document.getElementById(resultBox).innerHTML = `<div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 text-emerald-900 text-sm"><div class="font-bold text-base mb-3">Rekap Iuran ${json.nama}</div>${rows}</div>`;
-                return;
+
+                if (resultBox === 'cek-surat-result') {
+                    if (json.data.length === 0) {
+                        showResult(resultBox, false, 'Belum ada pengajuan surat resmi untuk NIK tersebut.');
+                        return;
+                    }
+                    
+                    let suratListHtml = json.data.map((s, idx) => {
+                        let statusColor = s.status === 'Pending' ? 'bg-amber-100 text-amber-700' : (s.status === 'Diproses' ? 'bg-indigo-100 text-indigo-700' : (s.status === 'Selesai' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'));
+                        
+                        let timelineHtml = s.timeline.map(t => `
+                            <div class="flex gap-2 items-start mt-2">
+                                <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5"></div>
+                                <div class="flex-1">
+                                    <p class="text-xs text-slate-700 font-semibold leading-normal">${t.pesan}</p>
+                                    <span class="text-[9px] text-slate-400 font-medium">${t.waktu}</span>
+                                </div>
+                            </div>
+                        `).join('');
+
+                        return `
+                            <div class="mb-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-bold text-slate-900">${s.jenis_surat}</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${statusColor}">${s.status}</span>
+                                </div>
+                                <p class="text-xs text-slate-500 mb-3 font-medium">Keperluan: ${s.keperluan}</p>
+                                <div class="border-t border-slate-200/60 pt-3">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Riwayat Proses:</span>
+                                    ${timelineHtml}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    document.getElementById(resultBox).innerHTML = `
+                        <div class="p-5 bg-white rounded-3xl border border-slate-200 text-left">
+                            <div class="font-black text-base text-slate-900 mb-3 pb-3 border-b border-slate-100">Status Surat: ${json.nama}</div>
+                            <div class="max-h-[50vh] overflow-y-auto pr-1">${suratListHtml}</div>
+                        </div>
+                    `;
+                    return;
+                }
             }
 
             if (json.data && json.data.timeline && Array.isArray(json.data.timeline)) {

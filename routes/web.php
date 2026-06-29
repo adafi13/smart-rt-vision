@@ -378,6 +378,7 @@ Route::middleware(['tenant.slug'])->prefix('/{tenant:slug}')->group(function () 
     Route::get('/syarat-ketentuan', [HomeController::class, 'syarat'])->name('syarat');
     Route::get('/cek-nik', [HomeController::class, 'cekNik'])->name('cek-nik');
     Route::post('/ajukan-surat', [LetterRequestController::class, 'store'])->name('ajukan-surat');
+    Route::get('/cek-surat', [LetterRequestController::class, 'cekSurat'])->name('cek-surat');
     Route::get('/cek-iuran', [ContributionController::class, 'cekIuran'])->name('cek-iuran');
     Route::post('/kirim-laporan', [ReportController::class, 'store'])->name('kirim-laporan');
     Route::get('/cek-laporan', [ReportController::class, 'cekLaporan'])->name('cek-laporan');
