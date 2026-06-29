@@ -10,10 +10,10 @@
         
         <!-- Action Toolbar -->
         <div class="flex justify-end">
-            <button x-data="" x-on:click="$dispatch('open-modal', 'create-poll')" class="w-full sm:w-auto inline-flex justify-center items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600">
+            <a href="{{ route('admin.polls.create') }}" class="w-full sm:w-auto inline-flex justify-center items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Buat Polling Baru
-            </button>
+            </a>
         </div>
         @if(session('success'))
             <div class="flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-medium">
@@ -91,9 +91,9 @@
                 </div>
                 
                 <div class="bg-gray-50/50 px-5 py-3 flex gap-2 justify-end border-t border-gray-100">
-                    <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'edit-poll-{{ $poll->id }}')" class="px-3 py-1.5 text-xs font-bold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <a href="{{ route('admin.polls.edit', $poll) }}" class="px-3 py-1.5 text-xs font-bold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                         Edit / Status
-                    </button>
+                    </a>
                     <form action="{{ route('admin.polls.destroy', $poll) }}" method="POST" onsubmit="return confirm('Hapus polling ini permanen beserta semua data suaranya?')">
                         @csrf @method('DELETE')
                         <button type="submit" class="px-3 py-1.5 text-xs font-bold text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors">
@@ -118,110 +118,5 @@
         </div>
         @endif
     </div>
-
-    <!-- MODAL CREATE -->
-    <x-modal name="create-poll" focusable>
-        <div class="p-6">
-            <h2 class="text-lg font-bold text-gray-900 mb-4">Buat Polling Baru</h2>
-            <form action="{{ route('admin.polls.store') }}" method="POST" class="space-y-4" x-data="{ options: ['', ''] }">
-                @csrf
-                
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Judul Musyawarah <span class="text-red-500">*</span></label>
-                    <x-text-input name="title" type="text" class="w-full text-sm" required placeholder="Contoh: Pemilihan Ketua RT 05 Periode 2026-2030"/>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Keterangan / Aturan (Opsional)</label>
-                    <textarea name="description" rows="2" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm" placeholder="Tuliskan deksripsi pemilihan di sini..."></textarea>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tgl Mulai (Opsional)</label>
-                        <x-text-input name="start_date" type="date" class="w-full text-sm"/>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tgl Selesai (Opsional)</label>
-                        <x-text-input name="end_date" type="date" class="w-full text-sm"/>
-                    </div>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
-                    <select name="status" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm">
-                        <option value="active">🟢 Aktif (Bisa divote jika masuk tanggal)</option>
-                        <option value="closed">🔴 Ditutup (Tidak bisa divote)</option>
-                    </select>
-                </div>
-                
-                <div class="pt-2 border-t border-gray-100">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Pilihan Suara (Minimal 2) <span class="text-red-500">*</span></label>
-                    <template x-for="(opt, index) in options" :key="index">
-                        <div class="flex gap-2 mb-2">
-                            <input type="text" :name="'options['+index+']'" x-model="options[index]" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm" placeholder="Opsi pilihan..." required>
-                            <button type="button" @click="options.splice(index, 1)" x-show="options.length > 2" class="p-2 text-rose-500 bg-rose-50 rounded-lg hover:bg-rose-100 shrink-0">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                            </button>
-                        </div>
-                    </template>
-                    <button type="button" @click="options.push('')" class="mt-2 text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100">
-                        + Tambah Opsi Lainnya
-                    </button>
-                </div>
-
-                <div class="pt-4 flex justify-end gap-3 border-t border-gray-100">
-                    <button type="button" x-on:click="$dispatch('close')" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50">Batal</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm">Buat Polling</button>
-                </div>
-            </form>
-        </div>
-    </x-modal>
-
-    <!-- MODAL EDIT -->
-    @foreach($polls as $poll)
-    <x-modal name="edit-poll-{{ $poll->id }}" focusable>
-        <div class="p-6">
-            <h2 class="text-lg font-bold text-gray-900 mb-4">Edit Polling</h2>
-            <form action="{{ route('admin.polls.update', $poll) }}" method="POST" class="space-y-4">
-                @csrf @method('PUT')
-                
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Judul Musyawarah <span class="text-red-500">*</span></label>
-                    <x-text-input name="title" type="text" class="w-full text-sm" required value="{{ $poll->title }}"/>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Keterangan / Aturan</label>
-                    <textarea name="description" rows="2" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm">{{ $poll->description }}</textarea>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tgl Mulai</label>
-                        <x-text-input name="start_date" type="date" class="w-full text-sm" value="{{ $poll->start_date?->format('Y-m-d') }}"/>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tgl Selesai</label>
-                        <x-text-input name="end_date" type="date" class="w-full text-sm" value="{{ $poll->end_date?->format('Y-m-d') }}"/>
-                    </div>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
-                    <select name="status" class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm shadow-sm">
-                        <option value="active" @selected($poll->status === 'active')>🟢 Aktif</option>
-                        <option value="closed" @selected($poll->status === 'closed')>🔴 Ditutup</option>
-                    </select>
-                </div>
-
-                <div class="pt-4 flex justify-end gap-3 border-t border-gray-100">
-                    <button type="button" x-on:click="$dispatch('close')" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50">Batal</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm">Simpan Perubahan</button>
-                </div>
-            </form>
-        </div>
-    </x-modal>
-    @endforeach
-
+    </div>
 </x-app-layout>

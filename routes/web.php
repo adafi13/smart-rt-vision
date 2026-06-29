@@ -228,7 +228,9 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
 
     Route::prefix('admin/polls')->name('admin.polls.')->middleware('rt_role:owner,sekretaris,humas')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\PollController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\PollController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Admin\PollController::class, 'store'])->name('store');
+        Route::get('/{poll}/edit', [\App\Http\Controllers\Admin\PollController::class, 'edit'])->name('edit');
         Route::put('/{poll}', [\App\Http\Controllers\Admin\PollController::class, 'update'])->name('update');
         Route::delete('/{poll}', [\App\Http\Controllers\Admin\PollController::class, 'destroy'])->name('destroy');
     });
