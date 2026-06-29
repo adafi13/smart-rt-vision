@@ -191,31 +191,33 @@
             query: '', 
             results: [], 
             loading: false,
-            init() {
-                this.$watch('query', value => {
-                    if (value.length < 2) {
-                        this.results = [];
-                        return;
-                    }
-                    this.loading = true;
-                    fetch('{{ route('super-admin.search') }}?q=' + encodeURIComponent(value), {
+            async performSearch() {
+                if (this.query.length < 2) {
+                    this.results = [];
+                    this.loading = false;
+                    return;
+                }
+                this.loading = true;
+                try {
+                    const res = await fetch('{{ route('super-admin.search') }}?q=' + encodeURIComponent(this.query), {
+                        credentials: 'same-origin',
                         headers: {
                             'Accept': 'application/json',
                             'X-Requested-With': 'XMLHttpRequest'
                         }
-                    })
-                    .then(res => {
-                        if (!res.ok) throw new Error('API Error');
-                        return res.json();
-                    })
-                    .then(data => {
-                        this.results = Array.isArray(data) ? data : [];
-                        this.loading = false;
-                    })
-                    .catch(err => {
-                        this.results = [];
-                        this.loading = false;
                     });
+                    if (!res.ok) throw new Error('API Error');
+                    const data = await res.json();
+                    this.results = Array.isArray(data) ? data : [];
+                } catch (err) {
+                    this.results = [];
+                } finally {
+                    this.loading = false;
+                }
+            },
+            init() {
+                this.$watch('query', () => {
+                    this.performSearch();
                 });
             }
          }"
@@ -270,7 +272,7 @@
             </template>
 
             <!-- Empty state -->
-            <template x-if="query.length >= 2 && results.length === 0 && !loading">
+            <template x-if="query.length >= 2 && (!results || results.length === 0) && !loading">
                 <div class="px-6 py-14 text-center text-sm sm:px-14">
                     <svg class="mx-auto h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
