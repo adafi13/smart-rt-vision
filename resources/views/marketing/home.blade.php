@@ -375,23 +375,71 @@
     </section>
 
     <!-- ===================== CARA KERJA ===================== -->
-    <section id="cara-kerja" class="max-w-5xl mx-auto px-4 sm:px-6 py-4 pb-20 sm:pb-24">
-        <div class="text-center max-w-xl mx-auto mb-14 reveal">
-            <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest">Cara Kerja</span>
-            <h2 class="text-2xl sm:text-3xl font-black text-gray-900 mt-2">Siap Pakai dalam 3 Langkah</h2>
+    <style>
+        .perspective-container { perspective: 1200px; }
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .card-3d:hover {
+            transform: translateY(-15px) rotateX(8deg) rotateY(-8deg);
+        }
+        .layer-1 { transform: translateZ(20px); transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .layer-2 { transform: translateZ(40px); transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .layer-3 { transform: translateZ(60px); transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        
+        .card-3d:hover .layer-1 { transform: translateZ(40px); }
+        .card-3d:hover .layer-2 { transform: translateZ(70px); }
+        .card-3d:hover .layer-3 { transform: translateZ(100px) scale(1.05) rotateY(-10deg); }
+    </style>
+    <section id="cara-kerja" class="max-w-6xl mx-auto px-4 sm:px-6 py-24 relative overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute top-1/4 left-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+        <div class="absolute bottom-1/4 right-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+
+        <div class="text-center max-w-2xl mx-auto mb-20 reveal">
+            <span class="inline-block py-1.5 px-4 rounded-full bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 uppercase tracking-widest mb-4 shadow-sm">Cara Kerja</span>
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight leading-tight">
+                Siap Pakai dalam <br class="hidden sm:block">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">3 Langkah Mudah</span>
+            </h2>
+            <p class="mt-5 text-base sm:text-lg text-gray-500">Otomatisasi seluruh administrasi RT Anda dengan mudah. Tidak perlu pusing belajar software rumit atau bayar server.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal perspective-container">
             @php $steps = [
-                ['n' => '01', 'title' => 'Daftar Workspace RT', 'desc' => 'Isi nama RT dan buat akun pengurus. Trial 14 hari langsung aktif, tanpa kartu kredit.', 'color' => '#6366f1'],
-                ['n' => '02', 'title' => 'Foto KK atau Import Excel', 'desc' => 'Upload foto Kartu Keluarga satu-per-satu (AI yang baca), atau import data lama lewat Excel sekaligus.', 'color' => '#0891b2'],
-                ['n' => '03', 'title' => 'Warga Langsung Bisa Akses', 'desc' => 'Portal mandiri warga otomatis aktif di alamat RT Anda sendiri — siap dipakai untuk cek NIK, ajukan surat, dan lainnya.', 'color' => '#059669'],
+                ['n' => '01', 'title' => 'Daftar Workspace', 'desc' => 'Isi nama RT dan buat akun pengurus. Trial 14 hari langsung aktif, tanpa kartu kredit.', 'c_text' => 'text-indigo-500', 'h_text' => 'group-hover:text-indigo-50', 'grad' => 'from-indigo-400 to-indigo-600', 'shad' => 'shadow-indigo-500/30', 'h_shad' => 'hover:shadow-indigo-500/20', 'icon' => 'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1'],
+                ['n' => '02', 'title' => 'Foto KK / Import', 'desc' => 'Upload foto Kartu Keluarga satu-per-satu (AI yang baca), atau import data lama lewat Excel sekaligus.', 'c_text' => 'text-purple-500', 'h_text' => 'group-hover:text-purple-50', 'grad' => 'from-purple-400 to-purple-600', 'shad' => 'shadow-purple-500/30', 'h_shad' => 'hover:shadow-purple-500/20', 'icon' => 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12'],
+                ['n' => '03', 'title' => 'Portal Aktif', 'desc' => 'Portal mandiri warga otomatis aktif di alamat RT Anda sendiri — siap dipakai untuk cek NIK & ajukan surat.', 'c_text' => 'text-emerald-500', 'h_text' => 'group-hover:text-emerald-50', 'grad' => 'from-emerald-400 to-emerald-600', 'shad' => 'shadow-emerald-500/30', 'h_shad' => 'hover:shadow-emerald-500/20', 'icon' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
             ]; @endphp
+            
             @foreach($steps as $s)
-            <div class="relative">
-                <span class="text-5xl font-black" style="color: {{ $s['color'] }}; opacity: 0.15;">{{ $s['n'] }}</span>
-                <h3 class="text-base font-bold text-gray-900 mt-1">{{ $s['title'] }}</h3>
-                <p class="text-sm text-gray-500 mt-2 leading-relaxed">{{ $s['desc'] }}</p>
+            <div class="h-full cursor-pointer">
+                <!-- 3D Card -->
+                <div class="card-3d relative h-full bg-white rounded-[2rem] p-8 sm:p-10 border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl {{ $s['h_shad'] }} group overflow-hidden">
+                    
+                    <!-- Decorative Background Number (Layer 0) -->
+                    <div class="absolute -top-4 -right-2 text-8xl font-black text-slate-50 transition-colors duration-500 {{ $s['h_text'] }} select-none pointer-events-none -z-10">
+                        {{ $s['n'] }}
+                    </div>
+
+                    <!-- 3D Floating Icon (Layer 3) -->
+                    <div class="layer-3 relative z-10 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br {{ $s['grad'] }} flex items-center justify-center mb-8 shadow-lg {{ $s['shad'] }}">
+                        <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $s['icon'] }}"/></svg>
+                    </div>
+
+                    <!-- Content (Layer 1 & 2) -->
+                    <div class="relative z-10">
+                        <div class="layer-2 mb-4">
+                            <span class="text-sm font-bold {{ $s['c_text'] }} tracking-wider">LANGKAH {{ $s['n'] }}</span>
+                            <h3 class="text-xl sm:text-2xl font-black text-gray-900 mt-1">{{ $s['title'] }}</h3>
+                        </div>
+                        <p class="layer-1 text-sm sm:text-base text-gray-500 leading-relaxed">{{ $s['desc'] }}</p>
+                    </div>
+                    
+                    <!-- Bottom Glow Line -->
+                    <div class="absolute inset-x-0 bottom-0 h-1.5 bg-gradient-to-r {{ $s['grad'] }} opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                </div>
             </div>
             @endforeach
         </div>
