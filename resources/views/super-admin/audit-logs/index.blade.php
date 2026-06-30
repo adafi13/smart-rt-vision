@@ -209,7 +209,7 @@
                                         @if($log->old_values)
                                             @php
                                                 $filteredOld = $log->old_values;
-                                                if (str_starts_with($log->action, 'update_') && is_array($log->new_values)) {
+                                                if (str_starts_with($log->action, 'updated_') && is_array($log->new_values)) {
                                                     $filteredOld = array_intersect_key($filteredOld, $log->new_values);
                                                 }
                                             @endphp
