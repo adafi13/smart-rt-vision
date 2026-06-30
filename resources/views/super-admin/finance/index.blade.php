@@ -94,8 +94,8 @@
                     @forelse($stats['topAiTenants'] as $tenant)
                     <div class="px-5 py-3.5 flex items-center justify-between text-sm">
                         <div>
-                            <p class="font-semibold text-gray-900">{{ $tenant->rt_name }} (RW {{ $tenant->rw }})</p>
-                            <p class="text-xs text-gray-400">{{ $tenant->admin_name }}</p>
+                            <p class="font-semibold text-gray-900">{{ $tenant->name }} (RW {{ $tenant->rw ? str_pad($tenant->rw->rw, 3, '0', STR_PAD_LEFT) : '?' }})</p>
+                            <p class="text-xs text-gray-400">{{ $tenant->owner->name ?? 'Tanpa Admin' }}</p>
                         </div>
                         <div class="text-right">
                             <p class="font-black text-rose-600">{{ number_format($tenant->ai_extractions_used) }}x</p>
