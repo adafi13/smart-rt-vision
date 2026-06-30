@@ -88,13 +88,10 @@
                                     <span class="text-xs text-gray-400 ml-0.5">KK</span>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <form method="POST" action="{{ route('rw.tenants.toggle-status', $rt) }}">
-                                        @csrf
-                                        <button type="submit" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition-all hover:opacity-80 {{ $rt->status === 'active' ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200' }}">
-                                            <span class="w-1.5 h-1.5 rounded-full {{ $rt->status === 'active' ? 'bg-emerald-500' : 'bg-gray-400' }}"></span>
-                                            {{ $rt->status === 'active' ? 'Aktif' : 'Nonaktif' }}
-                                        </button>
-                                    </form>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold {{ $rt->status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500' }}">
+                                        <span class="w-1.5 h-1.5 rounded-full {{ $rt->status === 'active' ? 'bg-emerald-500' : 'bg-gray-400' }}"></span>
+                                        {{ $rt->status === 'active' ? 'Aktif' : 'Nonaktif' }}
+                                    </span>
                                 </td>
                                     @php
                                         $activeSub = $rt->activeSubscription();
