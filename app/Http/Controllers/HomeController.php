@@ -586,7 +586,7 @@ class HomeController extends Controller
         $path = $request->file('foto_kk')->store('kk_images', 'public');
 
         // Increment count since we start extraction
-        $tenant->increment('ai_extractions_used');
+        $tenant->incrementAiUsage();
 
         try {
             $extractor = new \App\Services\KkExtractor();

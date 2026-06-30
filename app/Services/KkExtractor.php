@@ -97,13 +97,19 @@ EOT;
             ]
         ];
 
-        $models = ['gemini-flash-latest', 'gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-2.0-flash'];
+        // Pastikan PHP tidak crash jika API lambat
+        @ini_set('max_execution_time', 120);
+        @set_time_limit(120);
+
+        // Gunakan model yang valid di tahun 2026 (gemini-1.5 sudah usang)
+        $models = ['gemini-2.5-flash', 'gemini-3.5-flash', 'gemini-pro-latest'];
         
         foreach ($models as $model) {
             $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
 
             try {
-                $response = Http::timeout(30)->post($url, $payload);
+                // Timeout API diatur ke 25 detik agar jika server Google antre panjang tidak langsung gagal
+                $response = Http::timeout(25)->post($url, $payload);
 
                 if ($response->failed()) {
                     Log::warning("Gemini API request failed for model {$model}: " . $response->body());
