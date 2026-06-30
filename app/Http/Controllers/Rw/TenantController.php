@@ -22,7 +22,7 @@ class TenantController extends Controller
         $rw = auth()->user()->rw;
         $rts = Tenant::where('rw_id', $rw->id)
             ->withCount('families')
-            ->with(['users' => fn($q) => $q->where('tenant_role', 'owner')->select('id', 'name', 'email', 'tenant_id'), 'subscriptions.plan', 'rtStaffs' => fn($q) => $q->orderBy('order_level')])
+            ->with(['users' => fn($q) => $q->where(fn($q2) => $q2->where('tenant_role', 'owner')->orWhereNull('tenant_role'))->select('id', 'name', 'email', 'tenant_id'), 'subscriptions.plan', 'rtStaffs' => fn($q) => $q->orderBy('order_level')])
             ->latest()
             ->paginate(15);
 
@@ -82,7 +82,7 @@ class TenantController extends Controller
             abort(403);
         }
 
-        $owner = $tenant->users()->where('tenant_role', 'owner')->first();
+        $owner = $tenant->users()->where(fn($q) => $q->where('tenant_role', 'owner')->orWhereNull('tenant_role'))->first();
         $totalKK     = Family::where('tenant_id', $tenant->id)->count();
         $totalWarga  = Member::where('tenant_id', $tenant->id)->count();
         $pemasukan   = Contribution::where('tenant_id', $tenant->id)->sum('jumlah');
@@ -111,7 +111,7 @@ class TenantController extends Controller
                     $q->where('name', 'like', "%{$query}%")
                       ->orWhere('slug', 'like', "%{$query}%")
                       ->orWhereHas('users', function ($uq) use ($query) {
-                          $uq->where('tenant_role', 'owner')
+                          $uq->where(fn($q2) => $q2->where('tenant_role', 'owner')->orWhereNull('tenant_role'))
                              ->where('email', 'like', "%{$query}%");
                       });
                 })
