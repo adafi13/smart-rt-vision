@@ -121,6 +121,45 @@
 
     <style>@keyframes loginSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</style>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animasi countdown untuk pesan error "Terlalu banyak percobaan"
+            const errorElements = document.querySelectorAll('.auth-error');
+            errorElements.forEach(function(el) {
+                const text = el.innerText;
+                const match = text.match(/dalam\s+(\d+)\s+detik/i);
+                if (match) {
+                    let seconds = parseInt(match[1]);
+                    const prefix = text.substring(0, match.index + 6); // "dalam "
+                    const loginBtn = document.getElementById('loginBtn');
+                    
+                    // Nonaktifkan tombol selama masa tunggu
+                    if (loginBtn) {
+                        loginBtn.disabled = true;
+                        loginBtn.style.opacity = '0.5';
+                        loginBtn.style.cursor = 'not-allowed';
+                    }
+
+                    const timer = setInterval(() => {
+                        seconds--;
+                        if (seconds > 0) {
+                            el.innerText = prefix + seconds + " detik.";
+                        } else {
+                            clearInterval(timer);
+                            el.innerText = "Waktu tunggu selesai. Silakan coba masuk kembali.";
+                            el.style.color = "#059669"; // Ganti warna jadi hijau
+                            
+                            // Aktifkan tombol kembali
+                            if (loginBtn) {
+                                loginBtn.disabled = false;
+                                loginBtn.style.opacity = '1';
+                                loginBtn.style.cursor = 'pointer';
+                            }
+                        }
+                    }, 1000);
+                }
+            });
+        });
+
         function togglePassword(id, btn) {
             const input = document.getElementById(id);
             const eyeOpen = btn.querySelector('.eye-open');
