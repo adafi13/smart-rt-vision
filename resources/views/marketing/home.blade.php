@@ -127,7 +127,7 @@
                 
                 <a href="{{ route('register') }}" :class="scrolled ? 'btn-primary' : 'btn-ghost'" class="!py-2 !px-3 sm:!px-4 text-xs sm:text-sm whitespace-nowrap transition-all duration-300">Daftar RT</a>
 
-                <a href="{{ route('register.rw') }}" :class="scrolled ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30'" class="!py-2 !px-3 sm:!px-4 text-xs sm:text-sm whitespace-nowrap transition-all duration-300 rounded-xl font-bold flex items-center gap-1">Daftar RW <span class="text-[10px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full ml-1">GRATIS</span></a>
+                <a href="{{ route('register.rw') }}" :class="scrolled ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30'" class="!py-2 !px-3 sm:!px-4 text-xs sm:text-sm whitespace-nowrap transition-all duration-300 rounded-xl font-bold hidden sm:flex items-center gap-1">Daftar RW <span class="text-[10px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full ml-1">GRATIS</span></a>
                 
                 <button type="button" @click="navOpen = !navOpen" class="md:hidden p-2 rounded-lg transition-colors duration-300" :class="scrolled ? 'text-slate-600 hover:bg-slate-100' : 'text-slate-300 hover:text-white hover:bg-white/10'">
                     <svg x-show="!navOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -143,7 +143,7 @@
             <a href="#harga" class="px-2 py-2.5 rounded-lg transition-colors" :class="scrolled ? 'hover:bg-slate-50 hover:text-indigo-600' : 'hover:bg-white/5 hover:text-white'">Harga</a>
             <a href="#faq" class="px-2 py-2.5 rounded-lg transition-colors" :class="scrolled ? 'hover:bg-slate-50 hover:text-indigo-600' : 'hover:bg-white/5 hover:text-white'">FAQ</a>
             <a href="{{ route('login') }}" class="px-2 py-2.5 rounded-lg transition-colors" :class="scrolled ? 'hover:bg-slate-50 hover:text-indigo-600' : 'hover:bg-white/5 hover:text-white'">Masuk</a>
-            <a href="{{ route('register.rw') }}" class="px-2 py-2.5 rounded-lg transition-colors text-emerald-500 font-bold" :class="scrolled ? 'hover:bg-emerald-50' : 'hover:bg-white/5'">Daftar RW (Gratis)</a>
+            <a href="{{ route('register.rw') }}" class="px-3 py-2.5 mt-2 text-center rounded-lg transition-colors bg-emerald-500/10 text-emerald-500 font-bold border border-emerald-500/20" :class="scrolled ? 'hover:bg-emerald-500/20' : 'hover:bg-emerald-500/30'">Daftar RW (Gratis)</a>
         </div>
     </header>
 
