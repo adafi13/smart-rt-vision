@@ -144,9 +144,9 @@
                                 <a href="{{ route('kk.edit', $family) }}" class="p-2 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 transition-colors" title="Edit">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                 </a>
-                                <form action="{{ route('kk.destroy', $family) }}" method="POST" class="inline" onsubmit="return confirm('Seluruh data anggota keluarga akan ikut terhapus. Lanjutkan?')">
+                                <form action="{{ route('kk.destroy', $family) }}" method="POST" class="inline" id="delete-form-{{ $family->id }}">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="p-2 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus">
+                                    <button type="button" onclick="confirmDelete('{{ $family->id }}')" class="p-2 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     </button>
                                 </form>
@@ -193,6 +193,9 @@
                     <div class="flex gap-2">
                         <a href="{{ route('kk.show', $family) }}" class="flex-1 flex items-center justify-center py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-semibold rounded-xl transition-colors">Detail</a>
                         <a href="{{ route('kk.edit', $family) }}" class="flex-1 flex items-center justify-center py-2 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-xl transition-colors">Edit</a>
+                        <button type="button" onclick="confirmDelete('{{ $family->id }}')" class="flex-none px-4 flex items-center justify-center py-2 bg-rose-50 border border-rose-100 hover:bg-rose-100 text-rose-700 text-xs font-semibold rounded-xl transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -219,4 +222,31 @@
         @endif
 
     </div>
+
+    @push('scripts')
+    <script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Hapus Kartu Keluarga?',
+            html: "Data KK dan <b>seluruh anggotanya</b> akan ikut terhapus permanen.<br>Aksi ini tidak bisa dibatalkan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Hapus Permanen!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+            customClass: {
+                confirmButton: 'rounded-xl',
+                cancelButton: 'rounded-xl',
+                popup: 'rounded-2xl'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-form-' + id).submit();
+            }
+        });
+    }
+    </script>
+    @endpush
 </x-app-layout>
