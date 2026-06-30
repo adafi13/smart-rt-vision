@@ -11,7 +11,19 @@ class TenantScope implements Scope
     public function apply(Builder $builder, Model $model): void
     {
         if (app()->bound('currentTenantId') && app('currentTenantId')) {
-            $builder->where($model->getQualifiedTenantKeyName(), app('currentTenantId'));
+            $builder->where(function ($q) use ($model) {
+                $q->where($model->getQualifiedTenantKeyName(), app('currentTenantId'));
+                
+                // Allow fetching global RW data if applicable
+                if (app()->bound('currentRwId') && app('currentRwId')) {
+                    if (\Illuminate\Support\Facades\Schema::hasColumn($model->getTable(), 'rw_id')) {
+                        $q->orWhere(function ($q2) use ($model) {
+                            $q2->where('rw_id', app('currentRwId'))
+                               ->whereNull($model->getQualifiedTenantKeyName());
+                        });
+                    }
+                }
+            });
         }
     }
 }

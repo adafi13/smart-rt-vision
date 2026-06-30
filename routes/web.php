@@ -424,6 +424,48 @@ Route::middleware(['auth', 'rw_admin'])->prefix('rw')->name('rw.')->group(functi
     // Direktori Warga Global (RW)
     Route::get('/warga', [\App\Http\Controllers\Rw\MemberController::class, 'index'])->name('members.index');
     Route::get('/warga/export-excel', [\App\Http\Controllers\Rw\MemberController::class, 'exportExcel'])->name('members.export-excel');
+
+    // Pengajuan Surat (RW)
+    Route::prefix('pengajuan-surat')->name('letter-requests.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Rw\LetterRequestController::class, 'index'])->name('index');
+        Route::put('/{letterRequest}', [\App\Http\Controllers\Rw\LetterRequestController::class, 'update'])->name('update');
+        Route::get('/{letterRequest}/pdf', [\App\Http\Controllers\Rw\LetterRequestController::class, 'downloadPdf'])->name('pdf');
+    });
+
+    // Keuangan (Kas Gabungan RW)
+    Route::prefix('keuangan')->name('finance.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Rw\FinanceController::class, 'index'])->name('index');
+        // Iuran RT
+        Route::post('/contributions', [\App\Http\Controllers\Rw\FinanceController::class, 'storeContribution'])->name('contributions.store');
+        Route::delete('/contributions/{contribution}', [\App\Http\Controllers\Rw\FinanceController::class, 'destroyContribution'])->name('contributions.destroy');
+        // Pengeluaran RW
+        Route::post('/expenses', [\App\Http\Controllers\Rw\FinanceController::class, 'storeExpense'])->name('expenses.store');
+        Route::delete('/expenses/{expense}', [\App\Http\Controllers\Rw\FinanceController::class, 'destroyExpense'])->name('expenses.destroy');
+    });
+
+    // Agenda & Berita RW
+    Route::resource('agendas', \App\Http\Controllers\Rw\AgendaController::class)->except('show');
+    
+    Route::prefix('berita')->name('berita.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Rw\NewsController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Rw\NewsController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Rw\NewsController::class, 'store'])->name('store');
+        Route::get('/{news}/edit', [\App\Http\Controllers\Rw\NewsController::class, 'edit'])->name('edit');
+        Route::put('/{news}', [\App\Http\Controllers\Rw\NewsController::class, 'update'])->name('update');
+        Route::delete('/{news}', [\App\Http\Controllers\Rw\NewsController::class, 'destroy'])->name('destroy');
+    });
+
+    // Inventaris RW
+    Route::prefix('inventaris')->name('inventaris.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Rw\InventoryController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Rw\InventoryController::class, 'store'])->name('store');
+        Route::put('/{inventory}', [\App\Http\Controllers\Rw\InventoryController::class, 'update'])->name('update');
+        Route::delete('/{inventory}', [\App\Http\Controllers\Rw\InventoryController::class, 'destroy'])->name('destroy');
+        
+        Route::post('/borrowings/{borrowing}/approve', [\App\Http\Controllers\Rw\InventoryController::class, 'approve'])->name('borrowings.approve');
+        Route::post('/borrowings/{borrowing}/reject', [\App\Http\Controllers\Rw\InventoryController::class, 'reject'])->name('borrowings.reject');
+        Route::post('/borrowings/{borrowing}/return', [\App\Http\Controllers\Rw\InventoryController::class, 'returnItem'])->name('borrowings.return');
+    });
 });
 require __DIR__.'/auth.php';
 

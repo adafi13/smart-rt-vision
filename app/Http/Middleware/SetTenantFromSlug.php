@@ -22,6 +22,11 @@ class SetTenantFromSlug
 
         app()->instance('currentTenantId', $tenant->id);
         app()->instance('currentTenant', $tenant);
+        
+        if ($tenant->rw_id) {
+            app()->instance('currentRwId', $tenant->rw_id);
+            app()->instance('currentRw', $tenant->rw);
+        }
 
         $request->route()->setParameter('tenant', $tenant);
         URL::defaults(['tenant' => $tenant->slug]);

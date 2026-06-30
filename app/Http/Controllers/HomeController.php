@@ -30,7 +30,15 @@ class HomeController extends Controller
             'laki_laki' => Member::where('status_warga', 'Aktif')->where('jenis_kelamin', 'Laki-laki')->count(),
             'perempuan' => Member::where('status_warga', 'Aktif')->where('jenis_kelamin', 'Perempuan')->count(),
 
-            'warta' => News::orderBy('created_at', 'desc')->take(3)->get(),
+            'warta' => News::where('tenant_id', app('currentTenant')->id)
+                ->when(app('currentTenant')->rw_id, function ($query) {
+                    $query->orWhere(function ($q) {
+                        $q->whereNull('tenant_id')->where('rw_id', app('currentTenant')->rw_id);
+                    });
+                })
+                ->orderBy('created_at', 'desc')
+                ->take(3)
+                ->get(),
             'produk' => Product::where('is_ready', true)->orderBy('created_at', 'desc')->take(4)->get(),
 
             'total_masuk' => $totalIuran,
@@ -46,7 +54,13 @@ class HomeController extends Controller
                 ->take(3)
                 ->get() : collect(),
             
-            'inventories' => \App\Models\Inventory::where('tenant_id', app('currentTenant')->id)->get(),
+            'inventories' => \App\Models\Inventory::where('tenant_id', app('currentTenant')->id)
+                ->when(app('currentTenant')->rw_id, function ($query) {
+                    $query->orWhere(function ($q) {
+                        $q->whereNull('tenant_id')->where('rw_id', app('currentTenant')->rw_id);
+                    });
+                })
+                ->get(),
             
             'ronda_schedules' => \App\Models\RondaSchedule::with(['member', 'attendance'])
                 ->where('tenant_id', app('currentTenant')->id)
@@ -63,7 +77,14 @@ class HomeController extends Controller
                 ->get()
                 ->filter(function($poll) { return $poll->is_active; }),
                 
-            'agendas' => \App\Models\Agenda::where('tenant_id', app('currentTenant')->id)
+            'agendas' => \App\Models\Agenda::where(function($query) {
+                    $query->where('tenant_id', app('currentTenant')->id)
+                          ->when(app('currentTenant')->rw_id, function ($q) {
+                              $q->orWhere(function ($subQ) {
+                                  $subQ->whereNull('tenant_id')->where('rw_id', app('currentTenant')->rw_id);
+                              });
+                          });
+                })
                 ->where('start_time', '>=', now())
                 ->orderBy('start_time', 'asc')
                 ->take(5)

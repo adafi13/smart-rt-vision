@@ -784,6 +784,11 @@
                         <span class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider rounded-md border {{ $agenda->type === 'rapat' ? 'bg-amber-50 text-amber-600 border-amber-200' : ($agenda->type === 'kerjabakti' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-blue-50 text-blue-600 border-blue-200') }}">
                             {{ $agenda->type }}
                         </span>
+                        @if($agenda->rw_id && !$agenda->tenant_id)
+                        <span class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider rounded-md border bg-indigo-100 text-indigo-700 border-indigo-200 ml-1">
+                            RW
+                        </span>
+                        @endif
                         <p class="text-xs font-semibold text-slate-400 mt-1.5">{{ $agenda->start_time->format('H:i') }} WIB - Selesai</p>
                     </div>
                 </div>
@@ -830,6 +835,11 @@
                     <span class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider rounded-md border {{ $news->kategori === 'Penting' || $news->is_penting ? 'bg-rose-50 text-rose-600 border-rose-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200' }}">
                         {{ $news->kategori }}
                     </span>
+                    @if($news->rw_id && !$news->tenant_id)
+                    <span class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider rounded-md border bg-indigo-100 text-indigo-700 border-indigo-200 ml-1">
+                        RW
+                    </span>
+                    @endif
                     <span class="text-xs font-semibold text-slate-400">{{ $news->created_at->translatedFormat('d M Y') }}</span>
                 </div>
                 
@@ -1027,7 +1037,12 @@
                             @foreach($inventories as $item)
                             <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex justify-between items-center gap-4">
                                 <div class="flex-1 min-w-0">
-                                    <h4 class="font-bold text-slate-900 text-sm truncate">{{ $item->item_name }}</h4>
+                                    <h4 class="font-bold text-slate-900 text-sm truncate">
+                                        {{ $item->item_name }}
+                                        @if($item->rw_id && !$item->tenant_id)
+                                        <span class="px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider rounded border bg-indigo-100 text-indigo-700 border-indigo-200 ml-1 align-middle">RW</span>
+                                        @endif
+                                    </h4>
                                     @if($item->description)
                                         <p class="text-xs text-slate-500 line-clamp-1 mt-0.5">{{ $item->description }}</p>
                                     @endif

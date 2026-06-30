@@ -170,6 +170,20 @@
             <p><strong>( {{ $rtName ?? '...........................' }} )</strong></p>
         </div>
         <div class="clear"></div>
+        
+        @if(isset($rwName) && $rwName)
+        <div class="signature-box" style="float: none; margin: 40px auto 0;">
+            <p>Mengetahui,<br><strong>Ketua {{ $rwName }}</strong></p>
+            
+            @if(isset($rwSignature) && $rwSignature)
+                <img src="{{ $rwSignature }}" alt="Tanda Tangan RW" class="signature-img">
+            @else
+                <br><br><br>
+            @endif
+            
+            <p><strong>( {{ $rwHeadName ?? '...........................' }} )</strong></p>
+        </div>
+        @endif
     </div>
 
 </body>

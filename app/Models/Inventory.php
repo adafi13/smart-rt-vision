@@ -16,6 +16,8 @@ class Inventory extends Model
         'total_quantity',
         'condition',
         'image_path',
+    
+        'rw_id',
     ];
 
     public function tenant()
@@ -40,5 +42,10 @@ class Inventory extends Model
     public function getAvailableQuantityAttribute()
     {
         return max(0, $this->total_quantity - $this->borrowed_quantity);
+    }
+
+    public function rw()
+    {
+        return $this->belongsTo(\App\Models\Rw::class, 'rw_id');
     }
 }

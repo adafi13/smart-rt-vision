@@ -17,6 +17,8 @@ class Contribution extends Model
         'periode',
         'tanggal_bayar',
         'keterangan',
+    
+        'rw_id',
     ];
 
     protected $casts = [
@@ -27,5 +29,10 @@ class Contribution extends Model
     public function family(): BelongsTo
     {
         return $this->belongsTo(Family::class);
+    }
+
+    public function rw()
+    {
+        return $this->belongsTo(\App\Models\Rw::class, 'rw_id');
     }
 }

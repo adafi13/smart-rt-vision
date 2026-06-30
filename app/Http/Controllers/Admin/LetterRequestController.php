@@ -89,6 +89,24 @@ class LetterRequestController extends Controller
         }
 
         $rtName = Setting::get("tenant_{$tenantId}_rt_name");
+        
+        $rw = app('currentTenant')->rw;
+        $rwSignature = null;
+        $rwName = null;
+        $rwHeadName = null;
+
+        if ($letterRequest->rw_status === 'Disetujui' && $rw) {
+            $rwSignaturePath = Setting::get("rw_{$rw->id}_signature_path");
+            $rwSignatureFile = $rwSignaturePath ? public_path('storage/' . $rwSignaturePath) : null;
+            if ($rwSignatureFile && file_exists($rwSignatureFile)) {
+                $type = pathinfo($rwSignatureFile, PATHINFO_EXTENSION);
+                $data = file_get_contents($rwSignatureFile);
+                $rwSignature = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
+            $rwName = $rw->name;
+            $rwHeadName = Setting::get("rw_{$rw->id}_head_name") ?: '...........................';
+        }
+        
         $member = $letterRequest->member;
 
         $pdf = Pdf::loadView('pdf.surat_pengantar', [
@@ -98,6 +116,9 @@ class LetterRequestController extends Controller
             'member' => $member,
             'rtSignature' => $rtSignature,
             'rtName' => $rtName,
+            'rwSignature' => $rwSignature,
+            'rwName' => $rwName,
+            'rwHeadName' => $rwHeadName,
         ]);
 
         if (request()->has('preview')) {

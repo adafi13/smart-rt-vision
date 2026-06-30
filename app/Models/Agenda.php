@@ -18,6 +18,8 @@ class Agenda extends Model
         'end_time',
         'location',
         'type',
+    
+        'rw_id',
     ];
 
     protected $casts = [
@@ -33,5 +35,10 @@ class Agenda extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function rw()
+    {
+        return $this->belongsTo(\App\Models\Rw::class, 'rw_id');
     }
 }

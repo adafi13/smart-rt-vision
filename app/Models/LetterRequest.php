@@ -16,10 +16,19 @@ class LetterRequest extends Model
         'keperluan',
         'status',
         'catatan_admin',
+    
+        'rw_status',
+    
+        'catatan_rw',
     ];
 
     public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class);
+    }
+
+    public function rw()
+    {
+        return $this->belongsTo(\App\Models\Rw::class, 'rw_id');
     }
 }

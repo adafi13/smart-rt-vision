@@ -16,9 +16,16 @@ class News extends Model
         'isi',
         'gambar',
         'is_penting',
+    
+        'rw_id',
     ];
 
     protected $casts = [
         'is_penting' => 'boolean',
     ];
+
+    public function rw()
+    {
+        return $this->belongsTo(\App\Models\Rw::class, 'rw_id');
+    }
 }

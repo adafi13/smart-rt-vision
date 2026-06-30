@@ -15,7 +15,7 @@
         @endif
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <form method="POST" action="{{ route('rw.settings.update') }}" class="p-6 sm:p-8 space-y-5">
+            <form method="POST" action="{{ route('rw.settings.update') }}" class="p-6 sm:p-8 space-y-5" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -50,6 +50,30 @@
                                placeholder="Nama provinsi">
                         @error('province') <p class="text-xs text-rose-500 mt-1 font-medium">{{ $message }}</p> @enderror
                     </div>
+                </div>
+
+                <div>
+                    <label for="head_name" class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">Nama Ketua RW (Untuk Tanda Tangan)</label>
+                    <input id="head_name" name="head_name" type="text" value="{{ old('head_name', $rwHeadName ?? '') }}"
+                           class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent @error('head_name') border-rose-300 @enderror"
+                           placeholder="Contoh: Budi Santoso">
+                    @error('head_name') <p class="text-xs text-rose-500 mt-1 font-medium">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="pt-4 border-t border-gray-100">
+                    <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Tanda Tangan RW & Stempel</label>
+                    <p class="text-xs text-gray-500 mb-3">Tanda tangan ini akan digunakan pada surat-surat yang disetujui RW.</p>
+                    
+                    @if($rwSignature)
+                        <div class="mb-4">
+                            <p class="text-xs font-medium text-gray-700 mb-2">Tanda Tangan Saat Ini:</p>
+                            <img src="{{ Storage::url($rwSignature) }}" alt="Tanda Tangan RW" class="h-24 object-contain bg-gray-50 border rounded-lg p-2">
+                        </div>
+                    @endif
+                    
+                    <input type="file" name="rw_signature" accept="image/png, image/jpeg" 
+                           class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    @error('rw_signature') <p class="text-xs text-rose-500 mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="pt-4 border-t border-gray-100 flex justify-end">

@@ -21,6 +21,8 @@ class InventoryBorrowing extends Model
         'return_date',
         'status',
         'notes',
+    
+        'rw_id',
     ];
 
     protected $casts = [
@@ -53,5 +55,10 @@ class InventoryBorrowing extends Model
             'rejected' => '<span class="px-2 py-1 bg-rose-50 text-rose-600 rounded-md text-xs font-medium border border-rose-200">Ditolak</span>',
             default => '<span class="px-2 py-1 bg-gray-50 text-gray-600 rounded-md text-xs font-medium border border-gray-200">Unknown</span>',
         };
+    }
+
+    public function rw()
+    {
+        return $this->belongsTo(\App\Models\Rw::class, 'rw_id');
     }
 }
