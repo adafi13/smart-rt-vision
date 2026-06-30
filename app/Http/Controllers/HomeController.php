@@ -755,6 +755,41 @@ class HomeController extends Controller
                 return back()->with('error', 'Gagal: Anda sudah memiliki permohonan pembaruan KK yang sedang menunggu persetujuan Ketua RT.')->withInput();
             }
 
+            // Validasi: Cegah pembaruan jika data sama persis (mencegah spam ke RT)
+            $isIdentical = true;
+            $incomingAnggota = $request->anggota ?? [];
+            
+            if (count($incomingAnggota) !== $existingFamily->members()->count()) {
+                $isIdentical = false;
+            } else {
+                foreach ($incomingAnggota as $anggotaData) {
+                    if (empty($anggotaData['nik'])) continue;
+                    
+                    $member = $existingFamily->members()->where('nik', $anggotaData['nik'])->first();
+                    if (!$member) {
+                        $isIdentical = false;
+                        break;
+                    }
+
+                    // Bandingkan field yang rentan berubah. Gunakan strtolower & trim untuk menoleransi sedikit typo AI
+                    $newStatus = strtolower(trim($anggotaData['status_perkawinan'] ?? ''));
+                    $oldStatus = strtolower(trim($member->status_perkawinan ?? ''));
+                    $newPekerjaan = strtolower(trim($anggotaData['pekerjaan'] ?? ''));
+                    $oldPekerjaan = strtolower(trim($member->pekerjaan ?? ''));
+                    $newPendidikan = strtolower(trim($anggotaData['pendidikan'] ?? ''));
+                    $oldPendidikan = strtolower(trim($member->pendidikan ?? ''));
+
+                    if ($newStatus !== $oldStatus || $newPekerjaan !== $oldPekerjaan || $newPendidikan !== $oldPendidikan) {
+                        $isIdentical = false;
+                        break;
+                    }
+                }
+            }
+
+            if ($isIdentical) {
+                return back()->with('error', 'Gagal: Tidak terdeteksi adanya perubahan data (jumlah anggota, NIK, status perkawinan, maupun pekerjaan) pada KK yang Anda unggah dengan data kami saat ini. Pembaruan tidak diperlukan.')->withInput();
+            }
+
             try {
                 \App\Models\KkUpdateRequest::create([
                     'tenant_id' => $tenantId,
