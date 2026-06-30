@@ -15,6 +15,11 @@ class EnsureSuperAdmin
         $user = auth()->user();
         $route = $request->route()->getName();
 
+        // Hanya Owner Super Admin yang boleh kelola Staff
+        if (!$user->isSuperAdminOwner() && str_starts_with($route, 'super-admin.staff')) {
+            abort(403, 'Hanya Owner yang diizinkan mengakses manajemen staff.');
+        }
+
         // Support tidak boleh buka Billing & Pengaturan
         if ($user->isSuperAdminSupport() && (str_starts_with($route, 'super-admin.transactions') || str_starts_with($route, 'super-admin.settings') || str_starts_with($route, 'super-admin.plans'))) {
             abort(403, 'Role Support tidak diizinkan mengakses modul ini.');
