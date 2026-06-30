@@ -298,7 +298,20 @@ class FamilyController extends Controller
 
     public function update(Request $request, Family $family)
     {
-        $family->update($request->except(['_token', '_method']));
+        $validated = $request->validate([
+            'nomor_kk' => 'required|string|size:16',
+            'nama_kepala_keluarga' => 'required|string',
+            'alamat' => 'nullable|string',
+            'rt' => 'nullable|string',
+            'rw' => 'nullable|string',
+            'desa_kelurahan' => 'nullable|string',
+            'kecamatan' => 'nullable|string',
+            'kabupaten_kota' => 'nullable|string',
+            'provinsi' => 'nullable|string',
+            'kode_pos' => 'nullable|string',
+        ]);
+
+        $family->update($validated);
         return redirect()->route('kk.index')->with('success', 'Data KK diupdate.');
     }
 
