@@ -416,6 +416,7 @@ Route::middleware(['auth', 'rw_admin'])->prefix('rw')->name('rw.')->group(functi
     // Tiket Bantuan (Support Tickets)
     Route::resource('tickets', \App\Http\Controllers\Rw\TicketController::class)->only(['index', 'create', 'store', 'show']);
     Route::post('tickets/{ticket}/reply', [\App\Http\Controllers\Rw\TicketController::class, 'reply'])->name('tickets.reply');
+    Route::post('tickets/{ticket}/close', [\App\Http\Controllers\Rw\TicketController::class, 'close'])->name('tickets.close');
 
     // Pengumuman/Broadcast
     Route::resource('broadcasts', \App\Http\Controllers\Rw\BroadcastController::class)->except('show');

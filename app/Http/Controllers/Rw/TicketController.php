@@ -112,4 +112,19 @@ class TicketController extends Controller
 
         return back()->with('success', 'Balasan berhasil dikirim.');
     }
+
+    public function close(Ticket $ticket)
+    {
+        if ($ticket->rw_id !== auth()->user()->rw->id) {
+            abort(404);
+        }
+
+        $ticket->update([
+            'status'      => 'resolved',
+            'resolved_at' => now(),
+        ]);
+
+        return redirect()->route('rw.tickets.index')
+            ->with('success', 'Tiket #' . $ticket->ticket_number . ' telah ditandai sebagai selesai.');
+    }
 }
