@@ -55,7 +55,8 @@ class TenantController extends Controller
             $tenant = Tenant::create([
                 'name'   => $request->rt_name,
                 'slug'   => $slug,
-                'status' => 'active',
+                'status' => 'trial',
+                'trial_ends_at' => now()->addDays(14),
                 'rw_id'  => $rw->id,
             ]);
 
