@@ -88,7 +88,15 @@
                             </div>
                             <p class="text-base font-extrabold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-snug">{{ $ticket->subject }}</p>
                             <div class="flex flex-wrap items-center gap-3 mt-2.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-                                <span class="text-slate-600 dark:text-slate-400">{{ $ticket->tenant->name ?? '-' }}</span>
+                                <span class="text-slate-600 dark:text-slate-400">
+                                    @if($ticket->tenant)
+                                        {{ $ticket->tenant->name }}
+                                    @elseif($ticket->rw)
+                                        RW {{ str_pad($ticket->rw->rw, 3, '0', STR_PAD_LEFT) }} (RW Admin)
+                                    @else
+                                        -
+                                    @endif
+                                </span>
                                 <span class="text-slate-300 dark:text-slate-600">•</span>
                                 <span>{{ $ticket->user->name }}</span>
                                 <span class="text-slate-300 dark:text-slate-600">•</span>

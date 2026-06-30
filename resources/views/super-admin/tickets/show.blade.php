@@ -47,7 +47,15 @@
                     <div class="flex-1 min-w-0">
                         <h2 class="text-sm font-black text-slate-900 dark:text-white truncate">{{ $ticket->subject }}</h2>
                         <p class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mt-0.5">
-                            {{ $ticket->user?->name ?? '—' }} &middot; <span class="text-violet-500">{{ $ticket->tenant?->name ?? 'N/A' }}</span> &middot; {{ $ticket->category_label }} &middot; {{ $ticket->created_at->diffForHumans() }}
+                            {{ $ticket->user?->name ?? '—' }} &middot; <span class="text-violet-500">
+                                @if($ticket->tenant)
+                                    {{ $ticket->tenant->name }}
+                                @elseif($ticket->rw)
+                                    RW {{ str_pad($ticket->rw->rw, 3, '0', STR_PAD_LEFT) }}
+                                @else
+                                    N/A
+                                @endif
+                            </span> &middot; {{ $ticket->category_label }} &middot; {{ $ticket->created_at->diffForHumans() }}
                         </p>
                     </div>
                 </div>
@@ -139,8 +147,16 @@
                             {{ strtoupper(substr($ticket->tenant?->name ?? 'T', 0, 1)) }}
                         </div>
                         <div class="min-w-0">
-                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Tenant</p>
-                            <p class="text-sm font-black text-slate-800 dark:text-white truncate">{{ $ticket->tenant?->name ?? '—' }}</p>
+                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Pihak Asal</p>
+                            <p class="text-sm font-black text-slate-800 dark:text-white truncate">
+                                @if($ticket->tenant)
+                                    {{ $ticket->tenant->name }}
+                                @elseif($ticket->rw)
+                                    RW {{ str_pad($ticket->rw->rw, 3, '0', STR_PAD_LEFT) }}
+                                @else
+                                    —
+                                @endif
+                            </p>
                         </div>
                     </div>
                     <div class="px-5 py-3 flex items-start justify-between gap-2">

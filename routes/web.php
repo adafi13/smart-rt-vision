@@ -413,6 +413,10 @@ Route::middleware(['auth', 'rw_admin'])->prefix('rw')->name('rw.')->group(functi
     Route::get('/settings', [\App\Http\Controllers\Rw\SettingsController::class, 'index'])->name('settings');
     Route::put('/settings', [\App\Http\Controllers\Rw\SettingsController::class, 'update'])->name('settings.update');
 
+    // Tiket Bantuan (Support Tickets)
+    Route::resource('tickets', \App\Http\Controllers\Rw\TicketController::class)->only(['index', 'create', 'store', 'show']);
+    Route::post('tickets/{ticket}/reply', [\App\Http\Controllers\Rw\TicketController::class, 'reply'])->name('tickets.reply');
+
     // Pengumuman/Broadcast
     Route::resource('broadcasts', \App\Http\Controllers\Rw\BroadcastController::class)->except('show');
 

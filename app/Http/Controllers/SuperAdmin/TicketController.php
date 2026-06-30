@@ -13,7 +13,7 @@ class TicketController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Ticket::with(['tenant', 'user', 'assignedTo'])->withCount('replies')->latest();
+        $query = Ticket::with(['tenant', 'rw', 'user', 'assignedTo'])->withCount('replies')->latest();
 
         $search = $request->input('search');
         $status = $request->input('status', 'all');
@@ -48,7 +48,7 @@ class TicketController extends Controller
 
     public function show(Ticket $ticket)
     {
-        $ticket->load(['tenant', 'user', 'replies.user', 'assignedTo']);
+        $ticket->load(['tenant', 'rw', 'user', 'replies.user', 'assignedTo']);
         // Super admins can assign to any staff
         $admins = User::where('is_super_admin', true)->orWhere('role', 'su')->get();
         return view('super-admin.tickets.show', compact('ticket', 'admins'));

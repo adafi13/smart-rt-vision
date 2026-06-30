@@ -13,7 +13,7 @@ class Ticket extends Model
     use BelongsToTenant;
 
     protected $fillable = [
-        'tenant_id', 'user_id', 'ticket_number', 'category', 'subject', 'status', 'priority', 'assigned_to', 'resolved_at'
+        'tenant_id', 'rw_id', 'user_id', 'ticket_number', 'category', 'subject', 'status', 'priority', 'assigned_to', 'resolved_at'
     ];
 
     protected $casts = [
@@ -61,6 +61,11 @@ class Ticket extends Model
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
+    }
+
+    public function rw(): BelongsTo
+    {
+        return $this->belongsTo(Rw::class);
     }
 
     public function user(): BelongsTo
