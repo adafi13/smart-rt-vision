@@ -32,8 +32,11 @@ class SetTenantFromAuth
                 return redirect()->route('suspended');
             }
 
-            // Izinkan akses ke route expired dan proses logout/impersonation.
-            $allowedRoutes = ['expired', 'super-admin.leave-impersonation', 'logout'];
+            // Izinkan akses ke route expired, billing, dan proses logout/impersonation.
+            $allowedRoutes = [
+                'expired', 'super-admin.leave-impersonation', 'logout',
+                'billing.index', 'billing.checkout', 'billing.success', 'billing.cancel'
+            ];
             $currentRoute = request()->route() ? request()->route()->getName() : null;
 
             if (!$tenant->isActive() && !in_array($currentRoute, $allowedRoutes)) {
