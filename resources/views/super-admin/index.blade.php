@@ -8,10 +8,22 @@
             <p class="text-sm text-gray-500 mt-0.5">Pantau performa, pendapatan, dan kesehatan platform SmartRT Vision secara real-time.</p>
         </div>
         <div class="flex items-center gap-2">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-full">
-                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                Sistem Online
-            </span>
+            @if($dbLatency < 200)
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-full" title="DB Latency: {{ $dbLatency }}ms">
+                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                    Sistem Online ({{ $dbLatency }}ms)
+                </span>
+            @elseif($dbLatency < 500)
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold rounded-full" title="DB Latency: {{ $dbLatency }}ms">
+                    <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span>
+                    Koneksi Lambat ({{ $dbLatency }}ms)
+                </span>
+            @else
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold rounded-full" title="DB Latency: {{ $dbLatency }}ms">
+                    <span class="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse"></span>
+                    Sistem Sibuk ({{ $dbLatency }}ms)
+                </span>
+            @endif
             <span class="text-xs text-gray-400">{{ now()->translatedFormat('d M Y, H:i') }} WIB</span>
         </div>
     </div>

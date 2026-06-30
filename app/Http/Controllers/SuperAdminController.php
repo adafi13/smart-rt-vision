@@ -96,9 +96,14 @@ class SuperAdminController extends Controller
             ];
         }
 
+        // Database Latency Check
+        $start = microtime(true);
+        \Illuminate\Support\Facades\DB::select('SELECT 1');
+        $dbLatency = round((microtime(true) - $start) * 1000);
+
         return view('super-admin.index', compact(
             'stats', 'tenants', 'revenueChartData', 'expiringTenants',
-            'topTenants', 'registrationTrend', 'newTenantsThisMonth'
+            'topTenants', 'registrationTrend', 'newTenantsThisMonth', 'dbLatency'
         ));
     }
 
