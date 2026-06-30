@@ -29,13 +29,29 @@ class BroadcastController extends Controller
         ]);
 
         $rw = auth()->user()->rw;
-        $rw->broadcasts()->create([
+        $broadcast = $rw->broadcasts()->create([
             'title' => $request->title,
             'content' => $request->content,
             'status' => $request->status,
         ]);
 
-        return redirect()->route('rw.broadcasts.index')->with('success', 'Pengumuman berhasil dibuat.');
+        if ($broadcast->status === 'active') {
+            // Find all RT admins under this RW
+            $tenantIds = $rw->tenants()->pluck('id');
+            $rtAdminEmails = \App\Models\User::whereIn('tenant_id', $tenantIds)
+                ->where('role', 'admin_rt')
+                ->where(function($q) {
+                    $q->where('tenant_role', 'owner')->orWhereNull('tenant_role');
+                })
+                ->pluck('email')
+                ->toArray();
+
+            if (!empty($rtAdminEmails)) {
+                \Illuminate\Support\Facades\Mail::bcc($rtAdminEmails)->queue(new \App\Mail\RwBroadcastNotification($broadcast));
+            }
+        }
+
+        return redirect()->route('rw.broadcasts.index')->with('success', 'Pengumuman berhasil dibuat dan dinotifikasikan ke RT.');
     }
 
     public function edit(RwBroadcast $broadcast)
