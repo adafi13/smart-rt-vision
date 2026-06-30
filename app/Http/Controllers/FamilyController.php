@@ -16,13 +16,38 @@ class FamilyController extends Controller
 {
     public function index(Request $request)
     {
+        $status = $request->input('status');
+        
+        $totalAll = Family::count();
+        $totalPending = Family::where('status_verifikasi', 'pending')->count();
+        $totalVerified = Family::where('status_verifikasi', 'terverifikasi')->count();
+        $totalDitolak = Family::where('status_verifikasi', 'ditolak')->count();
+        $totalDraft = Family::where('status_verifikasi', 'draft')->count();
+
         $query = Family::query();
-        if ($search = $request->input('search')) {
-            $query->where('nomor_kk', 'like', "%{$search}%")
-                  ->orWhere('nama_kepala_keluarga', 'like', "%{$search}%");
+        
+        if ($status) {
+            $query->where('status_verifikasi', $status);
         }
-        $families = $query->latest()->paginate(10);
-        return view('kk.index', compact('families'));
+
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('nomor_kk', 'like', "%{$search}%")
+                  ->orWhere('nama_kepala_keluarga', 'like', "%{$search}%");
+            });
+        }
+        
+        $families = $query->latest()->paginate(10)->withQueryString();
+        
+        return view('kk.index', compact(
+            'families',
+            'status',
+            'totalAll',
+            'totalPending',
+            'totalVerified',
+            'totalDitolak',
+            'totalDraft'
+        ));
     }
 
     public function create()
@@ -51,31 +76,76 @@ class FamilyController extends Controller
             'foto_kk' => 'required|mimes:jpeg,png,jpg,pdf|max:8192',
         ]);
 
-        $path = $request->file('foto_kk')->store('kk_images');
-        $fullPath = storage_path('app/private/' . $path);
+        $path = $request->file('foto_kk')->store('kk_images', 'public');
+        $fullPath = storage_path('app/public/' . $path);
 
-        // Laravel 11 stores private files in storage/app/private by default
-        if(!file_exists($fullPath)) {
-            $fullPath = storage_path('app/' . $path);
-        }
+        try {
+            $result = $extractor->extract($fullPath);
+            $tenant->incrementAiUsage();
 
-        $result = $extractor->extract($fullPath);
-        $tenant->incrementAiUsage();
+            if (!$result) {
+                \App\Models\KkScanLog::create([
+                    'tenant_id' => $tenant->id,
+                    'user_id' => auth()->id(),
+                    'uploader_type' => 'admin',
+                    'file_path' => $path,
+                    'status' => 'failed',
+                    'error_message' => 'Gagal mengekstrak data dari gambar (Layanan AI sibuk/timeout).',
+                ]);
+                return back()->with('error', 'Gagal mengekstrak data dari gambar. Silakan isi manual dengan melewati AI.')->withInput();
+            }
 
-        if (!$result) {
-            return back()->with('error', 'Gagal mengekstrak data dari gambar. Silakan isi manual dengan melewati AI.')->withInput();
-        }
+            if (isset($result['error'])) {
+                // Restore usage count if it failed due to invalid image
+                $tenant->decrement('ai_extractions_used');
+                \App\Models\KkScanLog::create([
+                    'tenant_id' => $tenant->id,
+                    'user_id' => auth()->id(),
+                    'uploader_type' => 'admin',
+                    'file_path' => $path,
+                    'status' => 'failed',
+                    'error_message' => $result['error'],
+                ]);
+                return back()->with('error', $result['error'])->withInput();
+            }
 
-        if (isset($result['error'])) {
-            // Restore usage count if it failed due to invalid image
+            // Fallback: Cari nama kepala keluarga dari anggota jika kosong di root
+            if (empty($result['nama_kepala_keluarga']) && isset($result['anggota']) && is_array($result['anggota'])) {
+                foreach ($result['anggota'] as $anggota) {
+                    $hub = strtolower($anggota['hubungan_keluarga'] ?? '');
+                    if ($hub === 'kepala keluarga' || $hub === 'suami') {
+                        $result['nama_kepala_keluarga'] = $anggota['nama'] ?? '';
+                        break;
+                    }
+                }
+            }
+
+            \App\Models\KkScanLog::create([
+                'tenant_id' => $tenant->id,
+                'user_id' => auth()->id(),
+                'uploader_type' => 'admin',
+                'file_path' => $path,
+                'status' => 'success',
+                'nomor_kk' => $result['nomor_kk'] ?? null,
+                'nama_kepala_keluarga' => $result['nama_kepala_keluarga'] ?? null,
+            ]);
+
+            // Simpan data dan path gambar sementara di session
+            session(['kk_extracted' => $result, 'kk_foto_path' => $path]);
+
+            return redirect()->route('kk.verify');
+        } catch (\Exception $e) {
             $tenant->decrement('ai_extractions_used');
-            return back()->with('error', $result['error'])->withInput();
+            \App\Models\KkScanLog::create([
+                'tenant_id' => $tenant->id,
+                'user_id' => auth()->id(),
+                'uploader_type' => 'admin',
+                'file_path' => $path,
+                'status' => 'failed',
+                'error_message' => $e->getMessage(),
+            ]);
+            return back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage())->withInput();
         }
-
-        // Simpan data dan path gambar sementara di session
-        session(['kk_extracted' => $result, 'kk_foto_path' => $path]);
-
-        return redirect()->route('kk.verify');
     }
 
     public function verify()
@@ -266,5 +336,51 @@ class FamilyController extends Controller
     public function downloadTemplate()
     {
         return Excel::download(new WargaTemplateExport, 'Format_Import_Warga.xlsx');
+    }
+
+    public function approve(Family $family)
+    {
+        $family->update([
+            'status_verifikasi' => 'terverifikasi',
+            'alasan_penolakan' => null,
+        ]);
+
+        \App\Models\AuditLog::create([
+            'tenant_id' => $family->tenant_id,
+            'user_id' => auth()->id(),
+            'action' => 'approve_citizen_family',
+            'model_type' => Family::class,
+            'model_id' => $family->id,
+            'new_values' => ['nomor_kk' => $family->nomor_kk, 'status_verifikasi' => 'terverifikasi'],
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
+
+        return redirect()->route('kk.show', $family)->with('success', 'Pendaftaran Kartu Keluarga berhasil disetujui.');
+    }
+
+    public function reject(Request $request, Family $family)
+    {
+        $request->validate([
+            'alasan_penolakan' => 'required|string|max:500',
+        ]);
+
+        $family->update([
+            'status_verifikasi' => 'ditolak',
+            'alasan_penolakan' => $request->alasan_penolakan,
+        ]);
+
+        \App\Models\AuditLog::create([
+            'tenant_id' => $family->tenant_id,
+            'user_id' => auth()->id(),
+            'action' => 'reject_citizen_family',
+            'model_type' => Family::class,
+            'model_id' => $family->id,
+            'new_values' => ['nomor_kk' => $family->nomor_kk, 'status_verifikasi' => 'ditolak', 'alasan' => $request->alasan_penolakan],
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
+
+        return redirect()->route('kk.show', $family)->with('success', 'Pendaftaran Kartu Keluarga telah ditolak.');
     }
 }

@@ -65,6 +65,7 @@
                         ($isOwner || $isSekretaris) ? ['route' => 'kk.index', 'match' => 'kk.*', 'label' => 'Data KK'] : null,
                         ($isOwner || $isSekretaris) ? ['route' => 'warga.index', 'match' => 'warga.*', 'label' => 'Data Warga'] : null,
                         ($isOwner || $isSekretaris) ? ['route' => 'warga-kos.index', 'match' => 'warga-kos.*', 'label' => 'Warga Kos/Kontrakan'] : null,
+                        ($isOwner || $isSekretaris) ? ['route' => 'admin.riwayat-scan.index', 'match' => 'admin.riwayat-scan.*', 'label' => 'Riwayat Scan AI'] : null,
                     ]),
                 ],
                 [

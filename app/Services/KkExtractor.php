@@ -15,6 +15,7 @@ class KkExtractor
      */
     public function extract(string $imagePath): ?array
     {
+        @set_time_limit(120);
         $apiKey = config('services.gemini.api_key');
         
         if (empty($apiKey)) {
@@ -41,6 +42,7 @@ PERATURAN PENTING:
 
 {
   "nomor_kk": "string 16 digit",
+  "nama_kepala_keluarga": "string",
   "alamat": "string",
   "rt": "string",
   "rw": "string",
@@ -101,7 +103,7 @@ EOT;
             $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
 
             try {
-                $response = Http::timeout(60)->post($url, $payload);
+                $response = Http::timeout(30)->post($url, $payload);
 
                 if ($response->failed()) {
                     Log::warning("Gemini API request failed for model {$model}: " . $response->body());

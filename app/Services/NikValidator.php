@@ -52,8 +52,12 @@ class NikValidator
         }
 
         // 3. Duplikat
-        if (!empty($nik) && Member::where('nik', $nik)->exists()) {
-            $warnings['nik'][] = 'Peringatan: NIK ini sudah terdaftar di sistem.';
+        if (!empty($nik)) {
+            $existing = Member::where('nik', $nik)->first();
+            if ($existing) {
+                $kkNum = $existing->family->nomor_kk ?? '-';
+                $warnings['nik'][] = "Peringatan: NIK ini sudah terdaftar atas nama {$existing->nama} di KK No. {$kkNum}.";
+            }
         }
 
         // 4. Validasi Masa Depan Tanggal Lahir
@@ -111,8 +115,11 @@ class NikValidator
             $warnings['nomor_kk'][] = 'Nomor KK harus 16 digit angka.';
         }
 
-        if (!empty($nomorKk) && Family::where('nomor_kk', $nomorKk)->exists()) {
-            $warnings['nomor_kk'][] = 'Peringatan: Nomor KK ini sudah terdaftar di sistem.';
+        if (!empty($nomorKk)) {
+            $existing = Family::where('nomor_kk', $nomorKk)->first();
+            if ($existing) {
+                $warnings['nomor_kk'][] = "Peringatan: Nomor KK ini sudah terdaftar di sistem atas nama Kepala Keluarga: {$existing->nama_kepala_keluarga}.";
+            }
         }
 
         return $warnings;

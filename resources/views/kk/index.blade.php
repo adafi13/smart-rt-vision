@@ -15,6 +15,47 @@
             </div>
         @endif
 
+        <!-- Status Filter Tabs -->
+        <div class="border-b border-gray-200 bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <nav class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
+                <a href="{{ route('kk.index') }}" 
+                   class="border-b-2 pb-2 px-1 text-sm font-semibold whitespace-nowrap {{ empty($status) ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                    Semua KK
+                    <span class="ml-2 rounded-full px-2 py-0.5 text-xs font-medium {{ empty($status) ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-900' }}">
+                        {{ $totalAll }}
+                    </span>
+                </a>
+                <a href="{{ route('kk.index', ['status' => 'pending']) }}" 
+                   class="border-b-2 pb-2 px-1 text-sm font-semibold whitespace-nowrap {{ $status === 'pending' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                    Pendaftaran Mandiri (Pending)
+                    <span class="ml-2 rounded-full px-2 py-0.5 text-xs font-medium {{ $status === 'pending' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-900' }}">
+                        {{ $totalPending }}
+                    </span>
+                </a>
+                <a href="{{ route('kk.index', ['status' => 'terverifikasi']) }}" 
+                   class="border-b-2 pb-2 px-1 text-sm font-semibold whitespace-nowrap {{ $status === 'terverifikasi' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                    Terverifikasi
+                    <span class="ml-2 rounded-full px-2 py-0.5 text-xs font-medium {{ $status === 'terverifikasi' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-900' }}">
+                        {{ $totalVerified }}
+                    </span>
+                </a>
+                <a href="{{ route('kk.index', ['status' => 'ditolak']) }}" 
+                   class="border-b-2 pb-2 px-1 text-sm font-semibold whitespace-nowrap {{ $status === 'ditolak' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                    Ditolak
+                    <span class="ml-2 rounded-full px-2 py-0.5 text-xs font-medium {{ $status === 'ditolak' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-900' }}">
+                        {{ $totalDitolak }}
+                    </span>
+                </a>
+                <a href="{{ route('kk.index', ['status' => 'draft']) }}" 
+                   class="border-b-2 pb-2 px-1 text-sm font-semibold whitespace-nowrap {{ $status === 'draft' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                    Draft
+                    <span class="ml-2 rounded-full px-2 py-0.5 text-xs font-medium {{ $status === 'draft' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-900' }}">
+                        {{ $totalDraft }}
+                    </span>
+                </a>
+            </nav>
+        </div>
+
         <!-- Actions & Search -->
         <div class="flex flex-col-reverse sm:flex-row justify-between gap-3">
             <form method="GET" action="{{ route('kk.index') }}" class="flex-1 flex gap-2 w-full sm:max-w-md">
@@ -81,6 +122,14 @@
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 uppercase tracking-wide">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Verified
                                 </span>
+                            @elseif($family->status_verifikasi === 'pending')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800 uppercase tracking-wide animate-pulse">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Pending
+                                </span>
+                            @elseif($family->status_verifikasi === 'ditolak')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 uppercase tracking-wide">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Ditolak
+                                </span>
                             @else
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 uppercase tracking-wide">
                                     <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Draft
@@ -124,6 +173,10 @@
                     <div>
                         @if($family->status_verifikasi === 'terverifikasi')
                             <span class="inline-flex px-2 py-1 rounded bg-emerald-100 text-emerald-700 text-[10px] font-bold">Verified</span>
+                        @elseif($family->status_verifikasi === 'pending')
+                            <span class="inline-flex px-2 py-1 rounded bg-indigo-100 text-indigo-700 text-[10px] font-bold animate-pulse">Pending</span>
+                        @elseif($family->status_verifikasi === 'ditolak')
+                            <span class="inline-flex px-2 py-1 rounded bg-rose-100 text-rose-700 text-[10px] font-bold">Ditolak</span>
                         @else
                             <span class="inline-flex px-2 py-1 rounded bg-amber-100 text-amber-700 text-[10px] font-bold">Draft</span>
                         @endif

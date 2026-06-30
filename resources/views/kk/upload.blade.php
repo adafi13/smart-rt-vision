@@ -45,7 +45,7 @@
                 </p>
             </div>
 
-            <form action="{{ route('kk.extract') }}" method="POST" enctype="multipart/form-data" id="upload-form" class="p-6 sm:p-8">
+            <form action="{{ route('kk.extract') }}" method="POST" enctype="multipart/form-data" id="upload-form" class="p-6 sm:p-8" data-no-global-loader>
                 @csrf
 
                 <!-- Drop zone -->

@@ -87,6 +87,9 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::post('/extract', [FamilyController::class, 'extract'])->name('extract');
         Route::get('/verify', [FamilyController::class, 'verify'])->name('verify');
         Route::post('/store', [FamilyController::class, 'store'])->name('store');
+        
+        Route::post('/{family}/approve', [FamilyController::class, 'approve'])->name('approve');
+        Route::post('/{family}/reject', [FamilyController::class, 'reject'])->name('reject');
 
         // Catatan: harus didaftarkan SEBELUM /{family} agar tidak "ditelan" sebagai parameter family.
         Route::get('/import', [FamilyController::class, 'importForm'])->name('import.form');
@@ -164,6 +167,10 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::get('/', [AdminReportController::class, 'index'])->name('index');
         Route::put('/{report}', [AdminReportController::class, 'update'])->name('update');
         Route::delete('/{report}', [AdminReportController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('admin/riwayat-scan')->name('admin.riwayat-scan.')->middleware('rt_role:owner,sekretaris')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\KkScanLogController::class, 'index'])->name('index');
     });
 
     Route::prefix('admin/peristiwa')->name('admin.peristiwa.')->middleware('rt_role:owner,sekretaris,humas')->group(function () {
@@ -377,6 +384,13 @@ Route::middleware(['tenant.slug'])->prefix('/{tenant:slug}')->group(function () 
     Route::get('/kebijakan-privasi', [HomeController::class, 'privasi'])->name('privasi');
     Route::get('/syarat-ketentuan', [HomeController::class, 'syarat'])->name('syarat');
     Route::get('/cek-nik', [HomeController::class, 'cekNik'])->name('cek-nik');
+    
+    // Pendaftaran KK Mandiri (Warga)
+    Route::get('/kk-baru', [HomeController::class, 'wargaUploadKk'])->name('warga.kk.upload');
+    Route::post('/kk-baru/extract', [HomeController::class, 'wargaExtractKk'])->name('warga.kk.extract');
+    Route::get('/kk-baru/verify', [HomeController::class, 'wargaVerifyKk'])->name('warga.kk.verify');
+    Route::post('/kk-baru/store', [HomeController::class, 'wargaStoreKk'])->name('warga.kk.store');
+
     Route::post('/ajukan-surat', [LetterRequestController::class, 'store'])->name('ajukan-surat');
     Route::get('/cek-surat', [LetterRequestController::class, 'cekSurat'])->name('cek-surat');
     Route::get('/cek-iuran', [ContributionController::class, 'cekIuran'])->name('cek-iuran');

@@ -112,12 +112,47 @@ class HomeController extends Controller
     public function cekNik(\Illuminate\Http\Request $request)
     {
         $nik = $request->query('nik');
-        $warga = $nik ? Member::where('nik', $nik)->first() : null;
+        $tenantId = app('currentTenant')->id;
+        
+        $warga = $nik ? Member::where('nik', $nik)
+            ->whereHas('family', function ($q) use ($tenantId) {
+                $q->where('tenant_id', $tenantId);
+            })
+            ->first() : null;
+
+        if (!$warga) {
+            return response()->json([
+                'found' => false,
+            ]);
+        }
+
+        $family = $warga->family;
+        $statusVerifikasi = $family->status_verifikasi ?? 'pending';
+        $namaMasked = substr($warga->nama, 0, 2).str_repeat('*', max(0, strlen($warga->nama) - 4)).substr($warga->nama, -2);
+
+        if ($statusVerifikasi === 'pending') {
+            return response()->json([
+                'found' => true,
+                'nama' => $namaMasked,
+                'status' => 'Pending',
+                'message' => 'Pendaftaran KK dengan NIK ini sedang MENUNGGU PERSETUJUAN Ketua RT.'
+            ]);
+        }
+
+        if ($statusVerifikasi === 'ditolak') {
+            return response()->json([
+                'found' => true,
+                'nama' => $namaMasked,
+                'status' => 'Ditolak',
+                'message' => 'Pendaftaran KK Anda DITOLAK oleh Ketua RT. Alasan: ' . ($family->alasan_penolakan ?? '-')
+            ]);
+        }
 
         return response()->json([
-            'found' => (bool) $warga,
-            'nama' => $warga ? substr($warga->nama, 0, 2).str_repeat('*', max(0, strlen($warga->nama) - 4)).substr($warga->nama, -2) : null,
-            'status' => $warga ? $warga->status_warga : null,
+            'found' => true,
+            'nama' => $namaMasked,
+            'status' => $warga->status_warga ?? 'Aktif',
+            'message' => 'Warga terdaftar aktif di RT ini.'
         ]);
     }
 
@@ -276,6 +311,22 @@ class HomeController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal: NIK tidak ditemukan atau status warga tidak aktif.'
+            ]);
+        }
+
+        // Cek umur wajib 17 tahun ke atas
+        if (!$member->tanggal_lahir) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal: Data tanggal lahir NIK Anda belum terdaftar. Hubungi pengurus RT untuk melengkapi data.'
+            ]);
+        }
+
+        $birthDate = \Carbon\Carbon::parse($member->tanggal_lahir);
+        if ($birthDate->age < 17) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal: Anda belum memenuhi syarat usia untuk mengikuti voting (minimal 17 tahun).'
             ]);
         }
 
@@ -505,5 +556,250 @@ class HomeController extends Controller
                 'timeline' => $timeline
             ]
         ]);
+    }
+
+    public function wargaUploadKk()
+    {
+        $tenant = app('currentTenant');
+        return view('public.kk.upload', compact('tenant'));
+    }
+
+    public function wargaExtractKk(Request $request)
+    {
+        $tenant = app('currentTenant');
+        
+        // 1. Cek Kuota KK
+        if (!$tenant->canAddMoreKk()) {
+            return back()->with('error', 'Jumlah Kartu Keluarga di RT ini sudah mencapai batas paket. Silakan hubungi Ketua RT untuk peningkatan paket.');
+        }
+
+        // 1b. Cek Kuota AI
+        if (! $tenant->canRunAiExtraction()) {
+            return back()->with('error', 'Kuota ekstraksi AI bulan ini sudah habis untuk RT ini. Silakan hubungi Ketua RT.');
+        }
+
+        // 2. Validasi File
+        $request->validate([
+            'foto_kk' => 'required|mimes:jpeg,png,jpg,pdf|max:8192',
+        ]);
+
+        $path = $request->file('foto_kk')->store('kk_images', 'public');
+
+        // Increment count since we start extraction
+        $tenant->increment('ai_extractions_used');
+
+        try {
+            $extractor = new \App\Services\KkExtractor();
+            $result = $extractor->extract(storage_path('app/public/' . $path));
+
+            if (!$result) {
+                $tenant->decrement('ai_extractions_used');
+                \App\Models\KkScanLog::create([
+                    'tenant_id' => $tenant->id,
+                    'uploader_type' => 'warga',
+                    'file_path' => $path,
+                    'status' => 'failed',
+                    'error_message' => 'Layanan AI sedang sibuk atau batas kuota API habis.',
+                ]);
+                return back()->with('error', 'Gagal memproses dokumen KK: Layanan AI sedang sibuk atau batas kuota API habis. Silakan coba lagi beberapa saat lagi.')->withInput();
+            }
+
+            if (isset($result['error'])) {
+                // Decrement if failed due to invalid image
+                $tenant->decrement('ai_extractions_used');
+                \App\Models\KkScanLog::create([
+                    'tenant_id' => $tenant->id,
+                    'uploader_type' => 'warga',
+                    'file_path' => $path,
+                    'status' => 'failed',
+                    'error_message' => $result['error'],
+                ]);
+                return back()->with('error', $result['error'])->withInput();
+            }
+
+            // Fallback: Cari nama kepala keluarga dari anggota jika kosong di root
+            if (empty($result['nama_kepala_keluarga']) && isset($result['anggota']) && is_array($result['anggota'])) {
+                foreach ($result['anggota'] as $anggota) {
+                    $hub = strtolower($anggota['hubungan_keluarga'] ?? '');
+                    if ($hub === 'kepala keluarga' || $hub === 'suami') {
+                        $result['nama_kepala_keluarga'] = $anggota['nama'] ?? '';
+                        break;
+                    }
+                }
+            }
+
+            \App\Models\KkScanLog::create([
+                'tenant_id' => $tenant->id,
+                'uploader_type' => 'warga',
+                'file_path' => $path,
+                'status' => 'success',
+                'nomor_kk' => $result['nomor_kk'] ?? null,
+                'nama_kepala_keluarga' => $result['nama_kepala_keluarga'] ?? null,
+            ]);
+
+            session([
+                'warga_kk_extracted' => $result,
+                'warga_kk_foto_path' => $path
+            ]);
+
+            return redirect()->route('warga.kk.verify', ['tenant' => $tenant->slug]);
+        } catch (\Exception $e) {
+            $tenant->decrement('ai_extractions_used');
+            \App\Models\KkScanLog::create([
+                'tenant_id' => $tenant->id,
+                'uploader_type' => 'warga',
+                'file_path' => $path,
+                'status' => 'failed',
+                'error_message' => $e->getMessage(),
+            ]);
+            return back()->with('error', 'Gagal memproses dokumen KK: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    public function wargaVerifyKk()
+    {
+        if (!session()->has('warga_kk_extracted')) {
+            $tenant = app('currentTenant');
+            return redirect()->route('warga.kk.upload', ['tenant' => $tenant->slug]);
+        }
+
+        $tenant = app('currentTenant');
+        $data = session('warga_kk_extracted');
+        $fotoPath = session('warga_kk_foto_path');
+
+        $warningsKk = \App\Services\NikValidator::validateKk($data['nomor_kk'] ?? '');
+        $warningsAnggota = [];
+
+        // 1. Dapatkan Tahun Lahir Kepala Keluarga (KK)
+        $parentBirthYear = null;
+        if (isset($data['anggota']) && is_array($data['anggota'])) {
+            foreach ($data['anggota'] as $anggota) {
+                $hubungan = strtolower($anggota['hubungan_keluarga'] ?? '');
+                if (($hubungan === 'kepala keluarga' || $hubungan === 'suami') && !empty($anggota['tanggal_lahir'])) {
+                    $parentBirthYear = (int)date('Y', strtotime($anggota['tanggal_lahir']));
+                    break;
+                }
+            }
+        }
+
+        // 2. Jalankan validasi dasar & validasi relasi umur orang tua-anak
+        if (isset($data['anggota']) && is_array($data['anggota'])) {
+            foreach ($data['anggota'] as $i => $anggota) {
+                $warningsAnggota[$i] = \App\Services\NikValidator::validate($anggota);
+
+                $hubungan = strtolower($anggota['hubungan_keluarga'] ?? '');
+                if ($hubungan === 'anak' && !empty($anggota['tanggal_lahir']) && $parentBirthYear !== null) {
+                    $childBirthYear = (int)date('Y', strtotime($anggota['tanggal_lahir']));
+                    // Jika anak lahir sebelum orang tua atau selisih umur kurang dari 14 tahun
+                    if ($childBirthYear <= $parentBirthYear || ($childBirthYear - $parentBirthYear) < 14) {
+                        $warningsAnggota[$i]['tanggal_lahir'][] = 'Peringatan: Tahun lahir anak (' . $childBirthYear . ') tidak selaras dengan Kepala Keluarga (' . $parentBirthYear . ').';
+                    }
+                }
+            }
+        }
+
+        return view('public.kk.verify', compact('tenant', 'data', 'fotoPath', 'warningsKk', 'warningsAnggota'));
+    }
+
+    public function wargaStoreKk(Request $request)
+    {
+        $tenant = app('currentTenant');
+
+        // 1. Cek Kuota
+        if (!$tenant->canAddMoreKk()) {
+            return redirect()->route('warga.kk.upload', ['tenant' => $tenant->slug])
+                ->with('error', 'Jumlah Kartu Keluarga di RT ini sudah mencapai batas paket. Silakan hubungi Ketua RT.');
+        }
+
+        // 2. Validasi Input
+        $request->validate([
+            'nomor_kk' => 'required|string|size:16',
+            'nama_kepala_keluarga' => 'required|string',
+        ]);
+
+        $tenantId = $tenant->id;
+
+        // 3. Validasi Keunikan Nomor KK pada RT ini
+        $existsKk = \App\Models\Family::where('tenant_id', $tenantId)
+            ->where('nomor_kk', $request->nomor_kk)
+            ->exists();
+        if ($existsKk) {
+            return back()->with('error', 'Gagal: Nomor KK ' . $request->nomor_kk . ' sudah terdaftar di database RT. Jika Anda ingin melakukan pembaruan, silakan hubungi Ketua RT Anda.')->withInput();
+        }
+
+        // 4. Validasi Keunikan NIK Anggota pada RT ini
+        if ($request->has('anggota') && is_array($request->anggota)) {
+            foreach ($request->anggota as $anggotaData) {
+                if (empty($anggotaData['nik'])) continue;
+                
+                $existsNik = \App\Models\Member::whereHas('family', function ($q) use ($tenantId) {
+                    $q->where('tenant_id', $tenantId);
+                })->where('nik', $anggotaData['nik'])->exists();
+                
+                if ($existsNik) {
+                    return back()->with('error', 'Gagal: Warga dengan NIK ' . $anggotaData['nik'] . ' (' . ($anggotaData['nama'] ?? 'Tanpa Nama') . ') sudah terdaftar di database RT.')->withInput();
+                }
+            }
+        }
+
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($request, $tenantId) {
+                $family = \App\Models\Family::create([
+                    'tenant_id' => $tenantId,
+                    'nomor_kk' => $request->nomor_kk,
+                    'nama_kepala_keluarga' => $request->nama_kepala_keluarga,
+                    'alamat' => $request->alamat ?? '',
+                    'rt' => $request->rt ?? '',
+                    'rw' => $request->rw ?? '',
+                    'desa_kelurahan' => $request->desa_kelurahan ?? '',
+                    'kecamatan' => $request->kecamatan ?? '',
+                    'kabupaten_kota' => $request->kabupaten_kota ?? '',
+                    'provinsi' => $request->provinsi ?? '',
+                    'kode_pos' => $request->kode_pos ?? '',
+                    'foto_path' => $request->foto_path ?? null,
+                    'status_verifikasi' => 'pending', // Menunggu persetujuan
+                ]);
+
+                if ($request->has('anggota') && is_array($request->anggota)) {
+                    foreach ($request->anggota as $anggotaData) {
+                        if (empty($anggotaData['nik']) || empty($anggotaData['nama'])) continue;
+
+                        $family->members()->create([
+                            'nik' => $anggotaData['nik'],
+                            'nama' => $anggotaData['nama'],
+                            'jenis_kelamin' => $anggotaData['jenis_kelamin'] ?? 'Laki-laki',
+                            'tempat_lahir' => $anggotaData['tempat_lahir'] ?? null,
+                            'tanggal_lahir' => $anggotaData['tanggal_lahir'] ?? null,
+                            'agama' => $anggotaData['agama'] ?? null,
+                            'pendidikan' => $anggotaData['pendidikan'] ?? null,
+                            'pekerjaan' => $anggotaData['pekerjaan'] ?? null,
+                            'status_perkawinan' => $anggotaData['status_perkawinan'] ?? null,
+                            'hubungan_keluarga' => $anggotaData['hubungan_keluarga'] ?? 'Anggota Keluarga',
+                            'kewarganegaraan' => $anggotaData['kewarganegaraan'] ?? 'WNI',
+                            'nama_ayah' => $anggotaData['nama_ayah'] ?? null,
+                            'nama_ibu' => $anggotaData['nama_ibu'] ?? null,
+                        ]);
+                    }
+                }
+
+                \App\Models\AuditLog::create([
+                    'tenant_id' => $tenantId,
+                    'user_id' => null, // Warga mandiri tanpa user login
+                    'action' => 'citizen_submit_family',
+                    'model_type' => \App\Models\Family::class,
+                    'model_id' => $family->id,
+                    'new_values' => ['nomor_kk' => $family->nomor_kk, 'nama' => $family->nama_kepala_keluarga],
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                ]);
+            });
+
+            session()->forget(['warga_kk_extracted', 'warga_kk_foto_path']);
+            
+            return redirect()->route('home', ['tenant' => $tenant->slug])
+                ->with('success', 'Data pendaftaran KK Anda berhasil dikirim ke Ketua RT. Mohon tunggu proses persetujuan.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal mengirim pendaftaran KK: ' . $e->getMessage())->withInput();
+        }
     }
 }

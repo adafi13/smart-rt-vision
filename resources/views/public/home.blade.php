@@ -290,6 +290,7 @@
         <div class="flex flex-wrap justify-center gap-5 reveal">
             @php $actions = [
                 ['modal'=>'cek-nik','title'=>'Cek Status Warga','desc'=>'Verifikasi status keanggotaan warga Anda di database RT.','color'=>'#6366f1','bg'=>'bg-indigo-50','icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
+                ['url'=>route('warga.kk.upload', ['tenant'=>$tenant->slug]),'title'=>'Pendaftaran KK Mandiri','desc'=>'Daftarkan keluarga baru secara mandiri menggunakan teknologi scan AI.','color'=>'#ec4899','bg'=>'bg-pink-50','icon'=>'M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z'],
                 ['modal'=>'ajukan-surat','title'=>'Pengajuan Surat Resmi','desc'=>'Minta surat pengantar RT untuk KTP, KK, SKCK, atau Nikah.','color'=>'#0891b2','bg'=>'bg-cyan-50','icon'=>'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
                 ['modal'=>'cek-surat','title'=>'Lacak Status Surat','desc'=>'Pantau sejauh mana surat pengantar Anda diproses RT.','color'=>'#7c3aed','bg'=>'bg-purple-50','icon'=>'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01'],
                 ['modal'=>'cek-iuran','title'=>'Riwayat Pembayaran','desc'=>'Pantau riwayat pembayaran iuran kebersihan/keamanan Anda.','color'=>'#059669','bg'=>'bg-emerald-50','icon'=>'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 8v2'],
@@ -303,6 +304,20 @@
             ]; @endphp
             
             @foreach($actions as $a)
+            @if(isset($a['url']))
+            <a href="{{ $a['url'] }}" class="service-card group w-full md:w-[calc(50%-1.25rem)] lg:w-[calc(33.333%-1.25rem)] max-w-sm tilt-card cursor-pointer shadow-sm hover:shadow-indigo-500/10 no-underline">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-2 {{ $a['bg'] }} transition-transform duration-300 group-hover:scale-110">
+                    <svg class="w-7 h-7" style="color: {{ $a['color'] }};" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $a['icon'] }}"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">{{ $a['title'] }}</h3>
+                    <p class="text-sm text-slate-500 font-medium leading-relaxed">{{ $a['desc'] }}</p>
+                </div>
+                <div class="mt-auto pt-4 flex items-center text-sm font-bold" style="color: {{ $a['color'] }};">
+                    Akses Layanan <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                </div>
+            </a>
+            @else
             <button type="button" @click="modal = '{{ $a['modal'] }}'" class="service-card group w-full md:w-[calc(50%-1.25rem)] lg:w-[calc(33.333%-1.25rem)] max-w-sm tilt-card cursor-pointer shadow-sm hover:shadow-indigo-500/10">
                 <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-2 {{ $a['bg'] }} transition-transform duration-300 group-hover:scale-110">
                     <svg class="w-7 h-7" style="color: {{ $a['color'] }};" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $a['icon'] }}"/></svg>
@@ -315,6 +330,7 @@
                     Akses Layanan <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                 </div>
             </button>
+            @endif
             @endforeach
         </div>
     </section>
@@ -370,7 +386,8 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal relative z-10">
             <!-- Saldo Card (Credit Card Style) -->
-            <div class="rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl flex flex-col h-full" style="background: linear-gradient(135deg, #0f172a, #334155);">
+            <div class="rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl flex flex-col h-full transition-all duration-300 hover:scale-[1.02]" 
+                 style="background: {{ $saldo_kas < 0 ? 'linear-gradient(135deg, #7f1d1d, #991b1b)' : 'linear-gradient(135deg, #0f172a, #334155)' }};">
                 <div class="absolute top-0 right-0 p-6 opacity-20">
                     <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
                 </div>
@@ -378,13 +395,22 @@
                 <p class="text-3xl sm:text-4xl font-black text-white tracking-tight mb-8">Rp {{ number_format($saldo_kas, 0, ',', '.') }}</p>
                 
                 <div class="flex items-center gap-2 mt-auto">
-                    <span class="w-8 h-5 rounded bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center"><svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></span>
-                    <span class="text-xs font-bold text-slate-300">Aman & Terkendali</span>
+                    @if($saldo_kas < 0)
+                        <span class="w-8 h-5 rounded bg-rose-500/25 border border-rose-500/40 flex items-center justify-center">
+                            <svg class="w-3 h-3 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                        </span>
+                        <span class="text-xs font-bold text-rose-200">Kas Defisit (Perlu Perhatian)</span>
+                    @else
+                        <span class="w-8 h-5 rounded bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
+                            <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                        </span>
+                        <span class="text-xs font-bold text-slate-300">Aman & Terkendali</span>
+                    @endif
                 </div>
             </div>
 
             <!-- Pemasukan Card -->
-            <div class="premium-card p-8 flex flex-col justify-center border-t-4 border-t-emerald-500 h-full text-center">
+            <div class="premium-card p-8 flex flex-col justify-center border-t-4 border-t-emerald-500 h-full text-center hover:shadow-lg transition-shadow">
                 <div class="w-14 h-14 mx-auto rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 mb-5">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 </div>
@@ -393,7 +419,7 @@
             </div>
 
             <!-- Pengeluaran Card -->
-            <div class="premium-card p-8 flex flex-col justify-center border-t-4 border-t-rose-500 h-full text-center">
+            <div class="premium-card p-8 flex flex-col justify-center border-t-4 border-t-rose-500 h-full text-center hover:shadow-lg transition-shadow">
                 <div class="w-14 h-14 mx-auto rounded-full bg-rose-50 flex items-center justify-center text-rose-600 mb-5">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
                 </div>
@@ -405,9 +431,23 @@
             <div class="premium-card p-6 md:col-span-3 flex flex-col sm:flex-row items-center gap-8 mt-2">
                 <div class="flex-1 w-full text-center sm:text-left">
                     <h4 class="text-lg font-bold text-slate-900 mb-2">Analisis Pengeluaran</h4>
-                    <p class="text-sm text-slate-500 font-medium">Berdasarkan grafik di samping, warga dapat melihat sektor mana saja yang menggunakan dana kas RT terbanyak bulan ini.</p>
+                    <p class="text-sm text-slate-500 font-medium mb-4">Berdasarkan grafik di samping, warga dapat melihat sektor mana saja yang menggunakan dana kas RT terbanyak bulan ini.</p>
+                    
+                    <!-- Premium Chart Legend -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs mt-4">
+                        @foreach($chart_labels as $index => $label)
+                            <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl border border-slate-100 hover:bg-slate-100 transition-colors">
+                                <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: {{ ['#4f46e5', '#0ea5e9', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6'][$index % 6] }};"></span>
+                                <span class="font-bold text-slate-700 truncate flex-1">{{ $label }}</span>
+                                <span class="text-slate-500 font-black">
+                                    Rp {{ number_format($chart_values[$index], 0, ',', '.') }} 
+                                    <span class="text-slate-400 font-medium">({{ number_format(($chart_values[$index] / max(1, $total_keluar)) * 100, 1) }}%)</span>
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
-                <div class="relative h-[200px] w-[200px] flex-shrink-0 mx-auto">
+                <div class="relative h-[180px] w-[180px] flex-shrink-0 mx-auto">
                     <canvas id="expenseChart"></canvas>
                 </div>
             </div>
@@ -545,10 +585,19 @@
             @foreach($active_polls as $poll)
             <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-xl relative overflow-hidden group hover:-translate-y-2 transition-all duration-300">
                 <div class="absolute top-0 right-0 p-4">
-                    <span class="px-3 py-1 bg-rose-100 text-rose-700 font-black text-xs rounded-full animate-pulse uppercase tracking-widest">Live Polling</span>
+                    <span class="px-3 py-1 bg-indigo-100 text-indigo-700 font-black text-xs rounded-full uppercase tracking-widest">E-Voting</span>
                 </div>
                 <h4 class="text-2xl font-black text-slate-900 mb-2 pr-20">{{ $poll->title }}</h4>
-                <p class="text-slate-500 text-sm font-medium mb-6">{{ $poll->description }}</p>
+                <p class="text-slate-500 text-sm font-medium mb-4">{{ $poll->description }}</p>
+
+                @if($poll->end_date)
+                <div class="flex items-center gap-1.5 text-xs text-rose-600 font-bold mb-6 bg-rose-50/80 border border-rose-100/50 rounded-xl px-3 py-2 w-fit">
+                    <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Batas Akhir: {{ $poll->end_date->translatedFormat('d F Y') }}
+                </div>
+                @else
+                <div class="mb-6"></div>
+                @endif
 
                 <form onsubmit="return submitForm(event, 'vote-form-{{ $poll->id }}', '{{ route('submit-vote', ['tenant' => $tenant->slug]) }}', 'POST')" id="vote-form-{{ $poll->id }}">
                     @csrf
@@ -1448,7 +1497,17 @@
 
             if (json.found !== undefined) {
                 if (json.found) {
-                    showResult(resultBox, true, `<div class="font-bold text-lg mb-1">${json.nama}</div> <div class="opacity-80">Terverifikasi sebagai warga (Status: ${json.status})</div>`);
+                    let msg = `<div class="font-bold text-lg mb-1">${json.nama}</div>`;
+                    if (json.status === 'Pending') {
+                        msg += `<div class="opacity-95 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold mt-2">${json.message}</div>`;
+                        showResult(resultBox, true, msg);
+                    } else if (json.status === 'Ditolak') {
+                        msg += `<div class="opacity-95 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs font-semibold mt-2">${json.message}</div>`;
+                        showResult(resultBox, false, msg);
+                    } else {
+                        msg += `<div class="opacity-80">Terverifikasi sebagai warga (Status: ${json.status})</div>`;
+                        showResult(resultBox, true, msg);
+                    }
                 } else {
                     showResult(resultBox, false, '<b>Gagal:</b> NIK tidak ditemukan dalam database RT ini.');
                 }
@@ -1824,5 +1883,33 @@
     
     <!-- Load EZUIKIT for EZVIZ CCTV -->
     <script src="https://ezvizlife.com/ezui/ezuikit.js"></script>
+
+    @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    icon: 'success',
+                    confirmButtonColor: '#4f46e5',
+                    confirmButtonText: 'OK'
+                });
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    title: 'Gagal!',
+                    text: "{{ session('error') }}",
+                    icon: 'error',
+                    confirmButtonColor: '#ef4444',
+                    confirmButtonText: 'OK'
+                });
+            });
+        </script>
+    @endif
 </body>
 </html>
