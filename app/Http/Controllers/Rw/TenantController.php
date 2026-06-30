@@ -98,20 +98,6 @@ class TenantController extends Controller
         ));
     }
 
-    public function toggleStatus(Tenant $tenant)
-    {
-        $rw = auth()->user()->rw;
-        if ($tenant->rw_id !== $rw->id) {
-            abort(403);
-        }
-
-        $tenant->update([
-            'status' => $tenant->status === 'active' ? 'inactive' : 'active'
-        ]);
-
-        $msg = $tenant->status === 'active' ? 'diaktifkan' : 'dinonaktifkan';
-        return back()->with('success', "RT \"{$tenant->name}\" berhasil {$msg}.");
-    }
 
     public function adoptSearch(Request $request)
     {

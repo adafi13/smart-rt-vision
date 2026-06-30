@@ -10,18 +10,6 @@
                     <p class="text-sm text-gray-500 mt-0.5 font-mono">/{{ $tenant->slug }}</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <a href="{{ route('home', ['tenant' => $tenant->slug]) }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-bold rounded-xl text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                    Buka Portal RT
-                </a>
-                <form method="POST" action="{{ route('rw.tenants.toggle-status', $tenant) }}">
-                    @csrf
-                    <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-bold rounded-xl transition-colors {{ $tenant->status === 'active' ? 'text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-100' : 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100' }}">
-                        {{ $tenant->status === 'active' ? 'Nonaktifkan RT' : 'Aktifkan RT' }}
-                    </button>
-                </form>
-            </div>
         </div>
     </x-slot>
 

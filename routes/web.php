@@ -396,7 +396,6 @@ Route::middleware(['auth', 'rw_admin'])->prefix('rw')->name('rw.')->group(functi
 
     // Manajemen RT
     Route::resource('tenants', \App\Http\Controllers\Rw\TenantController::class)->only(['index', 'create', 'store', 'show']);
-    Route::post('tenants/{tenant}/toggle-status', [\App\Http\Controllers\Rw\TenantController::class, 'toggleStatus'])->name('tenants.toggle-status');
 
     // Klaim RT Lama
     Route::get('adopt', [\App\Http\Controllers\Rw\TenantController::class, 'adoptSearch'])->name('tenants.adopt');
