@@ -1,5 +1,5 @@
 <x-super-admin-layout title="Detail RT - {{ $tenant->name }}">
-<div class="space-y-6" x-data="{ openResetModal: false, openGrantModal: false }">
+<div class="space-y-6" x-data="{ openResetModal: false }">
 
     {{-- ===== BREADCRUMB & HEADER ===== --}}
     <div>
@@ -291,11 +291,11 @@
                     </div>
                     @endif
 
-                    <button type="button" @click="openGrantModal = true"
+                    <a href="{{ route('super-admin.edit', $tenant) }}"
                        class="w-full flex items-center justify-center gap-2 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition-colors shadow-sm">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                        Perpanjang / Beri Paket Manual
-                    </button>
+                        Perpanjang / Ubah Paket
+                    </a>
                 </div>
             </div>
 
@@ -460,57 +460,6 @@
                     <button type="submit"
                         class="px-5 py-2.5 text-sm font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl transition-colors shadow-sm">
                         Reset Password
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    {{-- ===== MODAL BERI PAKET MANUAL ===== --}}
-    <div x-show="openGrantModal" style="display:none;" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="openGrantModal = false"
-             x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
-
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md"
-             x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-             x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95">
-
-            <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
-                <div>
-                    <h3 class="text-sm font-black text-gray-900">Beri Paket Manual</h3>
-                    <p class="text-xs text-gray-500">Bypass / perpanjang paket tanpa pembayaran.</p>
-                </div>
-                <button type="button" @click="openGrantModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-
-            <form action="{{ route('super-admin.grant', $tenant) }}" method="POST">
-                @csrf
-                <div class="px-6 py-5 space-y-4">
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Pilih Paket</label>
-                        <select name="plan_id" required class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition font-semibold">
-                            @foreach($plans as $plan)
-                                <option value="{{ $plan->id }}">{{ $plan->name }} (Rp{{ number_format($plan->price, 0, ',', '.') }}/bln)</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Durasi (Bulan)</label>
-                        <input type="number" name="months" required min="1" max="24" value="1"
-                            class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition font-semibold">
-                    </div>
-                </div>
-                <div class="px-6 py-4 bg-gray-50 rounded-b-2xl flex justify-end gap-2">
-                    <button type="button" @click="openGrantModal = false"
-                        class="px-5 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                        Batal
-                    </button>
-                    <button type="submit"
-                        class="px-5 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors shadow-sm">
-                        Berikan Paket
                     </button>
                 </div>
             </form>
