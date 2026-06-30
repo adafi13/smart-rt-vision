@@ -55,6 +55,11 @@ class LoginRequest extends FormRequest
                 );
             }
 
+            // Jika percobaan gagal sudah mencapai batas 3, langsung lemparkan pesan tunggu 20 detik.
+            if (RateLimiter::tooManyAttempts($this->throttleKey(), 3)) {
+                $this->ensureIsNotRateLimited();
+            }
+
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
