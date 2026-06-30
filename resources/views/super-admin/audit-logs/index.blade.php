@@ -169,7 +169,13 @@
                                     </div>
                                     <div>
                                         <p class="text-sm font-bold text-gray-900">{{ $log->user->name ?? 'System' }}</p>
-                                        <p class="text-xs text-gray-500">{{ $log->tenant->name ?? 'Super Admin' }}</p>
+                                        @if($log->tenant)
+                                            <p class="text-xs text-gray-500">{{ $log->tenant->name }}</p>
+                                        @elseif($log->rw)
+                                            <p class="text-xs text-emerald-500 font-semibold">RW {{ str_pad($log->rw->rw, 3, '0', STR_PAD_LEFT) }} - {{ $log->rw->name }}</p>
+                                        @else
+                                            <p class="text-xs text-indigo-500 font-bold">Super Admin</p>
+                                        @endif
                                     </div>
                                 </div>
                             </td>

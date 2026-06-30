@@ -43,14 +43,18 @@ class AppServiceProvider extends ServiceProvider
             if (!$tenantId && app()->bound('currentTenant')) {
                  $tenantId = app('currentTenant')->id ?? null;
             }
-            
-            if (!$tenantId) return;
-        
+
+            // Determine RW
+            $rwId = $model->rw_id ?? (auth()->check() ? auth()->user()->rw_id : null);
+
+            // Jika tidak ada tenant_id dan rw_id, abaikan log
+            if (!$tenantId && !$rwId) return;
+
             $user = auth()->user();
-        
+
             $oldValues = [];
             $newValues = [];
-        
+
             if ($actionType === 'updated') {
                 $oldValues = $model->getOriginal();
                 $newValues = $model->getChanges();
@@ -61,10 +65,11 @@ class AppServiceProvider extends ServiceProvider
             } elseif ($actionType === 'deleted') {
                 $oldValues = $model->getAttributes();
             }
-        
+
             try {
                 \App\Models\AuditLog::create([
                     'tenant_id' => $tenantId,
+                    'rw_id'     => $rwId,
                     'user_id' => $user ? $user->id : null,
                     'action' => $actionType . '_' . strtolower(class_basename($model)),
                     'model_type' => $modelClass,

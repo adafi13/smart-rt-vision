@@ -13,7 +13,7 @@ class AuditLogController extends Controller
     {
         // withoutGlobalScope ensures SuperAdmin sees ALL tenants' logs
         $query = AuditLog::withoutGlobalScope(TenantScope::class)
-            ->with(['user', 'tenant'])
+            ->with(['user', 'tenant', 'rw'])
             ->latest();
 
         if ($search = $request->input('search')) {
