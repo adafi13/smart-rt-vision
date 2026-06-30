@@ -33,17 +33,27 @@ class LoginRequest extends FormRequest
         ];
     }
 
-    /**
-     * Attempt to authenticate the request's credentials.
-     *
-     * @throws ValidationException
-     */
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+            // Hit the 20 seconds throttle (max 3)
+            RateLimiter::hit($this->throttleKey(), 20);
+            
+            // Hit the 1 hour throttle for the 5 limit
+            $totalFailuresKey = $this->throttleKey() . '|total_failures';
+            RateLimiter::hit($totalFailuresKey, 3600);
+            
+            if (RateLimiter::attempts($totalFailuresKey) >= 5) {
+                RateLimiter::clear($this->throttleKey());
+                RateLimiter::clear($totalFailuresKey);
+                
+                throw new \Illuminate\Http\Exceptions\HttpResponseException(
+                    redirect()->route('password.request')
+                        ->with('status', 'Anda telah salah memasukkan password sebanyak 5 kali. Demi keamanan, silakan reset password Anda terlebih dahulu.')
+                );
+            }
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
@@ -51,6 +61,7 @@ class LoginRequest extends FormRequest
         }
 
         RateLimiter::clear($this->throttleKey());
+        RateLimiter::clear($this->throttleKey() . '|total_failures');
     }
 
     /**
@@ -60,7 +71,7 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 3)) {
             return;
         }
 
