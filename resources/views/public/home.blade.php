@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="Portal resmi warga — statistik, transparansi kas, dan layanan mandiri RT.">
-    <title>{{ ($tenant->name ?? config('app.name', 'SmartRT Vision')) }} · Portal Warga</title>
+    <title>{{ $tenant->name ?? config('app.name', 'SmartRT Vision') }}{{ isset($tenant->rw) ? ' ' . $tenant->rw->name : '' }} · Portal Warga</title>
     <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="theme-color" content="#4f46e5">
@@ -148,7 +148,7 @@
                     <div class="inline-flex items-center gap-3 px-3 py-1.5 rounded-lg border-l-2 border-indigo-500 bg-indigo-950/20 backdrop-blur-sm mb-6 select-none">
                         <span class="text-[10px] font-black tracking-[0.2em] text-indigo-400 uppercase">Portal Cerdas Warga</span>
                         <span class="text-slate-700 text-sm font-light">|</span>
-                        <span class="text-[10px] font-black tracking-[0.1em] text-white uppercase">{{ strtoupper($tenant->name ?? config('app.name', 'SmartRT Vision')) }}</span>
+                        <span class="text-[10px] font-black tracking-[0.1em] text-white uppercase">{{ strtoupper($tenant->name ?? config('app.name', 'SmartRT Vision')) }}{{ isset($tenant->rw) ? ' ' . strtoupper($tenant->rw->name) : '' }}</span>
                     </div>
                     
                     <h1 class="text-[2.5rem] sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight text-white mb-6">
@@ -157,7 +157,12 @@
                             <span class="relative z-10 text-white">Warga</span>
                             <span class="absolute bottom-1.5 sm:bottom-2 left-0 w-full h-3 sm:h-4 bg-indigo-500/60 -z-10 -rotate-2 rounded-sm"></span>
                         </span> 
-                        <span class="whitespace-nowrap text-slate-300">{{ $tenant->name ?? 'Lingkungan' }}</span>
+                        <span class="whitespace-nowrap text-slate-300">
+                            {{ $tenant->name ?? 'Lingkungan' }}
+                            @if(isset($tenant->rw))
+                                <span class="text-3xl sm:text-4xl lg:text-5xl opacity-75">{{ $tenant->rw->name }}</span>
+                            @endif
+                        </span>
                     </h1>
                     
                     <p class="text-base sm:text-lg md:text-xl text-slate-400 font-medium leading-relaxed mb-10 max-w-xl">
