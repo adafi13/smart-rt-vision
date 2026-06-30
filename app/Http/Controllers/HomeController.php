@@ -40,6 +40,12 @@ class HomeController extends Controller
             'chart_labels' => $chartData->pluck('kategori'),
             'chart_values' => $chartData->pluck('total'),
             
+            'rw_broadcasts' => app('currentTenant')->rw_id ? \App\Models\RwBroadcast::where('rw_id', app('currentTenant')->rw_id)
+                ->where('status', 'active')
+                ->latest()
+                ->take(3)
+                ->get() : collect(),
+            
             'inventories' => \App\Models\Inventory::where('tenant_id', app('currentTenant')->id)->get(),
             
             'ronda_schedules' => \App\Models\RondaSchedule::with(['member', 'attendance'])

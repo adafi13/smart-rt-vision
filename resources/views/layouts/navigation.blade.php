@@ -115,6 +115,7 @@
                     'label' => 'Pengaturan',
                     'icon' => 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z',
                     'items' => array_filter([
+                        $isOwner ? ['route' => 'admin.settings.index', 'match' => 'admin.settings.*', 'label' => 'Pengaturan Profil RT'] : null,
                         ($isOwner || $isSekretaris) ? ['route' => 'admin.organisasi.index', 'match' => 'admin.organisasi.*', 'label' => 'Struktur Organisasi'] : null,
                         $isOwner ? ['route' => 'admin.staff.index', 'match' => 'admin.staff.*', 'label' => 'Manajemen Staff (Akun)'] : null,
                         $isOwner ? ['route' => 'admin.logs.index', 'match' => 'admin.logs.*', 'label' => 'Log Aktivitas'] : null,
@@ -209,40 +210,42 @@
         <div class="my-4 border-t border-gray-100"></div>
 
         <!-- Call to Actions -->
-        @if(!auth()->user()->isRtBendahara())
-        <div class="px-2 mb-2">
-            <a href="{{ route('kk.upload') }}" @click="mobileOpen = false"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm"
-               style="background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white;"
-               title="Upload KK Baru">
-                <svg class="w-5 h-5 flex-shrink-0 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
-                </svg>
-                <span class="md:hidden whitespace-nowrap">Upload KK Baru</span>
-                <span x-show="sidebarExpanded"
-                      x-transition:enter="transition-opacity duration-200 delay-100"
-                      x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                      x-transition:leave="transition-opacity duration-75" x-transition:leave-end="opacity-0"
-                      class="hidden md:block whitespace-nowrap">Upload KK Baru</span>
-            </a>
-        </div>
-        @endif
+        @if(auth()->user()->tenant_id)
+            @if(!auth()->user()->isRtBendahara())
+            <div class="px-2 mb-2">
+                <a href="{{ route('home', ['tenant' => auth()->user()->tenant->slug ?? '']) . '/kk-baru' }}" @click="mobileOpen = false"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm"
+                   style="background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white;"
+                   title="Upload KK Baru">
+                    <svg class="w-5 h-5 flex-shrink-0 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span class="md:hidden whitespace-nowrap">Upload KK Baru</span>
+                    <span x-show="sidebarExpanded"
+                          x-transition:enter="transition-opacity duration-200 delay-100"
+                          x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                          x-transition:leave="transition-opacity duration-75" x-transition:leave-end="opacity-0"
+                          class="hidden md:block whitespace-nowrap">Upload KK Baru</span>
+                </a>
+            </div>
+            @endif
 
-        <div class="px-2 pb-4">
-            <a href="{{ route('home', ['tenant' => auth()->user()->tenant->slug ?? '']) }}" target="_blank" @click="mobileOpen = false"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-100"
-               title="Portal Warga (Web)">
-                <svg class="w-5 h-5 flex-shrink-0 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                </svg>
-                <span class="md:hidden whitespace-nowrap">Portal Warga (Web)</span>
-                <span x-show="sidebarExpanded"
-                      x-transition:enter="transition-opacity duration-200 delay-100"
-                      x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                      x-transition:leave="transition-opacity duration-75" x-transition:leave-end="opacity-0"
-                      class="hidden md:block whitespace-nowrap">Portal Warga (Web)</span>
-            </a>
-        </div>
+            <div class="px-2 pb-4">
+                <a href="{{ route('home', ['tenant' => auth()->user()->tenant->slug ?? '']) }}" target="_blank" @click="mobileOpen = false"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-100"
+                   title="Portal Warga (Web)">
+                    <svg class="w-5 h-5 flex-shrink-0 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                    </svg>
+                    <span class="md:hidden whitespace-nowrap">Portal Warga (Web)</span>
+                    <span x-show="sidebarExpanded"
+                          x-transition:enter="transition-opacity duration-200 delay-100"
+                          x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                          x-transition:leave="transition-opacity duration-75" x-transition:leave-end="opacity-0"
+                          class="hidden md:block whitespace-nowrap">Portal Warga (Web)</span>
+                </a>
+            </div>
+        @endif
     </nav>
 
     <!-- User footer -->

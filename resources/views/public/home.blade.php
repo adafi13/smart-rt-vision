@@ -256,6 +256,29 @@
         </div>
     </section>
 
+    <!-- ===================== RW BROADCAST ===================== -->
+    @if(isset($rw_broadcasts) && count($rw_broadcasts) > 0)
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-4">
+        <div class="space-y-4 reveal">
+            @foreach($rw_broadcasts as $broadcast)
+            <div class="premium-card p-5 sm:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-l-blue-500 shadow-sm flex flex-col sm:flex-row items-start gap-4 hover:shadow-md transition-shadow">
+                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+                </div>
+                <div class="flex-1 w-full">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-2">
+                        <span class="inline-flex px-3 py-1 rounded-full bg-blue-200 text-blue-800 text-[10px] font-black uppercase tracking-widest self-start sm:self-auto">Pengumuman RW</span>
+                        <span class="text-[11px] font-bold text-slate-500">{{ $broadcast->created_at->diffForHumans() }}</span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold text-slate-900 mb-2">{{ $broadcast->title }}</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">{{ $broadcast->content }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+
     <!-- ===================== DEMOGRAFI (STATS) ===================== -->
     <section id="stats" class="max-w-7xl mx-auto px-4 sm:px-6 pt-24">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 reveal">

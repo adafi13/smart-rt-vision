@@ -44,6 +44,15 @@
                 <a href="{{ url('/') }}" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-indigo-600 border-2 border-indigo-600 text-white font-bold hover:bg-indigo-700 hover:border-indigo-700 shadow-lg shadow-indigo-200 transition-all focus:ring-4 focus:ring-indigo-100">
                     Ke Beranda Utama
                 </a>
+                
+                @auth
+                <form method="POST" action="{{ route('logout') }}" class="w-full sm:w-auto">
+                    @csrf
+                    <button type="submit" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-rose-50 border-2 border-rose-100 text-rose-600 font-bold hover:bg-rose-100 hover:border-rose-200 transition-colors focus:ring-4 focus:ring-rose-50">
+                        Logout
+                    </button>
+                </form>
+                @endauth
             </div>
         </div>
 

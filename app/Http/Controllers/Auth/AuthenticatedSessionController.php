@@ -38,6 +38,10 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('super-admin.index', absolute: false));
         }
 
+        if ($request->user()->isAdminRw()) {
+            return redirect()->intended(route('rw.dashboard', absolute: false));
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

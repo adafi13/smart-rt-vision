@@ -1,4 +1,7 @@
-<x-app-layout title="Pengaturan Profil">
+@php
+    $layout = auth()->user()->role === 'admin_rw' ? 'rw-app-layout' : 'app-layout';
+@endphp
+<x-dynamic-component :component="$layout" title="Pengaturan Profil">
     <div class="max-w-7xl mx-auto space-y-8">
         
         <!-- Header / Hero Section -->
@@ -19,7 +22,7 @@
                         </span>
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-500/20 backdrop-blur-md border border-emerald-400/30 text-emerald-50">
                             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            {{ auth()->user()->role == 'admin_rt' ? 'Pengurus RT' : (auth()->user()->role == 'warga' ? 'Warga' : 'Super Admin') }}
+                            {{ auth()->user()->role == 'admin_rt' ? 'Pengurus RT' : (auth()->user()->role == 'warga' ? 'Warga' : (auth()->user()->role == 'admin_rw' ? 'Super RW' : 'Super Admin')) }}
                         </span>
                     </div>
                 </div>
@@ -83,4 +86,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-dynamic-component>

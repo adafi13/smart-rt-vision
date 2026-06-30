@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant.slug' => \App\Http\Middleware\SetTenantFromSlug::class,
             'super_admin' => \App\Http\Middleware\EnsureSuperAdmin::class,
             'rt_role' => \App\Http\Middleware\EnsureRtRole::class,
+            'rw_admin' => \App\Http\Middleware\RwMiddleware::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [

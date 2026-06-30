@@ -21,9 +21,16 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('auth.register');
+        $rwName = null;
+        if ($request->has('ref')) {
+            $rw = \App\Models\Rw::where('invite_code', $request->ref)->first();
+            if ($rw) {
+                $rwName = $rw->name;
+            }
+        }
+        return view('auth.register', compact('rwName'));
     }
 
     /**
@@ -45,12 +52,21 @@ class RegisteredUserController extends Controller
         ]);
 
         $user = DB::transaction(function () use ($request) {
+            $rw_id = null;
+            if ($request->has('ref')) {
+                $rw = \App\Models\Rw::where('invite_code', $request->ref)->first();
+                if ($rw) {
+                    $rw_id = $rw->id;
+                }
+            }
+
             $tenant = Tenant::create([
                 'name' => $request->tenant_name,
                 'slug' => $this->generateUniqueSlug($request->tenant_name),
                 'email' => $request->email,
                 'status' => 'trial',
                 'trial_ends_at' => now()->addDays(14),
+                'rw_id' => $rw_id,
             ]);
 
             return User::forceCreate([
@@ -58,6 +74,8 @@ class RegisteredUserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'role' => 'admin_rt',
+                'tenant_role' => 'owner',
             ]);
         });
 

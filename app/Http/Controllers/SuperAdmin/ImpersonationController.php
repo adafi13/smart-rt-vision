@@ -29,6 +29,22 @@ class ImpersonationController extends Controller
         return redirect()->route('dashboard')->with('success', "Berhasil menyamar sebagai Admin RT: {$tenant->name}");
     }
 
+    public function impersonateRw(\App\Models\Rw $rw)
+    {
+        $admin = $rw->users()->where('role', 'admin_rw')->first();
+
+        if (!$admin) {
+            return back()->with('error', 'RW ini belum memiliki Admin yang bisa digunakan untuk menyamar.');
+        }
+
+        session()->put('impersonated_by', Auth::id());
+        session()->put('impersonating_rw', $rw->name);
+
+        Auth::login($admin);
+
+        return redirect()->route('rw.dashboard')->with('success', "Berhasil menyamar sebagai Admin RW: {$rw->name}");
+    }
+
     public function leave()
     {
         if (!session()->has('impersonated_by')) {
@@ -37,6 +53,7 @@ class ImpersonationController extends Controller
 
         $superAdminId = session()->pull('impersonated_by');
         session()->forget('impersonating_tenant');
+        session()->forget('impersonating_rw');
 
         $superAdmin = User::find($superAdminId);
         

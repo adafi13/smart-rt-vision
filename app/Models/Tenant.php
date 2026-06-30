@@ -23,6 +23,11 @@ class Tenant extends Model
         return $this->status === 'active' || $this->onTrial();
     }
 
+    public function rw()
+    {
+        return $this->belongsTo(Rw::class, 'rw_id');
+    }
+
     public function users()
     {
         return $this->hasMany(User::class);
@@ -36,6 +41,11 @@ class Tenant extends Model
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class);
+    }
+
+    public function rtStaffs()
+    {
+        return $this->hasMany(RtStaff::class);
     }
 
     public function latestSubscription()

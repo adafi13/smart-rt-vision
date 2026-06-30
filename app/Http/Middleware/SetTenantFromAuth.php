@@ -19,7 +19,10 @@ class SetTenantFromAuth
             if ($user->is_super_admin) {
                 return redirect()->route('super-admin.index');
             }
-            abort(403, 'Akun ini tidak terhubung ke RT manapun. Gunakan Panel Super Admin.');
+            if ($user->isAdminRw()) {
+                return redirect()->route('rw.dashboard');
+            }
+            abort(403, 'Akun ini tidak terhubung ke RT manapun.');
         }
 
         if ($user && $user->tenant_id) {

@@ -78,13 +78,23 @@ class DashboardController extends Controller
             }
         }
 
+        // Fetch RW Broadcasts
+        $rwBroadcasts = collect();
+        if ($tenant && $tenant->rw_id) {
+            $rwBroadcasts = \App\Models\RwBroadcast::where('rw_id', $tenant->rw_id)
+                ->where('status', 'active')
+                ->latest()
+                ->take(5)
+                ->get();
+        }
+
         return view('dashboard', compact(
             'totalKk', 'totalWarga', 'totalLakiLaki', 'totalPerempuan',
             'ageGroups', 'pendidikanStats', 'activePanicAlerts',
             'pendingReports', 'pendingReportsList', 'pendingLetterRequests', 'pendingLetterRequestsList',
             'saldoKas', 'pemasukanBulanIni', 'pengeluaranBulanIni',
             'latestActivities',
-            'aiRemaining', 'aiPercentage', 'aiLimit'
+            'aiRemaining', 'aiPercentage', 'aiLimit', 'rwBroadcasts'
         ));
     }
 }

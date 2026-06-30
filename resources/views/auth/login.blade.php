@@ -109,9 +109,13 @@
 
     <!-- Register link -->
     <div style="text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid #f1f5f9;">
-        <p style="font-size:13px;color:#64748b;font-weight:500;margin:0;">
+        <p style="font-size:13px;color:#64748b;font-weight:500;margin:0;margin-bottom:8px;">
             Belum memiliki akun?
             <a href="{{ route('register') }}" style="color:#2563eb;font-weight:700;text-decoration:none;">Buat Akun RT &rarr;</a>
+        </p>
+        <p style="font-size:13px;color:#64748b;font-weight:500;margin:0;">
+            Ingin mengelola banyak RT?
+            <a href="{{ route('register.rw') }}" style="color:#4f46e5;font-weight:700;text-decoration:none;">Daftar Organisasi RW <span style="font-size:10px;background:#ecfdf5;color:#059669;padding:2px 6px;border-radius:100px;margin-left:4px;vertical-align:middle;border:1px solid #a7f3d0;">GRATIS</span> &rarr;</a>
         </p>
     </div>
 

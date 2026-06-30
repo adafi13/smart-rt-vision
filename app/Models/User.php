@@ -14,7 +14,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['name', 'email', 'password', 'role', 'su_role', 'tenant_role', 'google_id', 'avatar'])]
+#[Fillable(['name', 'email', 'password', 'role', 'su_role', 'tenant_role', 'google_id', 'avatar', 'rw_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -75,9 +75,19 @@ class User extends Authenticatable
         return $this->role === 'admin_rt';
     }
 
+    public function isAdminRw(): bool
+    {
+        return $this->role === 'admin_rw';
+    }
+
     public function isWarga(): bool
     {
         return $this->role === 'warga';
+    }
+
+    public function rw()
+    {
+        return $this->belongsTo(Rw::class, 'rw_id');
     }
 
     public function auditLogs(): HasMany

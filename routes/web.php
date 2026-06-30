@@ -276,10 +276,17 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'index'])->name('index');
         Route::get('/create', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'store'])->name('store');
-        Route::get('/{document}/edit', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'edit'])->name('edit');
-        Route::put('/{document}', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'update'])->name('update');
+        Route::get('documents/{document}/download', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'download'])->name('admin.documents.download');
+        Route::get('documents/{document}/view', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'view'])->name('admin.documents.view');
+        
         Route::delete('/{document}', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'destroy'])->name('destroy');
         Route::get('/{document}/download', [\App\Http\Controllers\Admin\AdminDocumentController::class, 'download'])->name('download');
+    });
+
+    // Settings RT (Pengaturan Profil RT)
+    Route::prefix('admin/settings')->name('admin.settings.')->middleware('rt_role:owner')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\TenantSettingsController::class, 'index'])->name('index');
+        Route::post('/generate-token', [\App\Http\Controllers\Admin\TenantSettingsController::class, 'generateToken'])->name('generate-token');
     });
 
     Route::prefix('admin/cctv')->name('admin.cctvs.')->middleware('rt_role:owner,keamanan')->group(function () {
@@ -370,7 +377,11 @@ Route::middleware(['auth', 'super_admin'])->prefix('super-admin')->name('super-a
     Route::get('security', [\App\Http\Controllers\SuperAdmin\SecurityController::class, 'index'])->name('security.index');
     Route::post('security', [\App\Http\Controllers\SuperAdmin\SecurityController::class, 'update'])->name('security.update');
 
-    // ⚠️ Wildcard routes HARUS di bawah semua route spesifik agar tidak menangkap 'finance', 'staff', 'security' dll
+    // Manajemen RW
+    Route::resource('rws', \App\Http\Controllers\SuperAdmin\RwController::class)->only(['index', 'show']);
+    Route::post('impersonate-rw/{rw}', [\App\Http\Controllers\SuperAdmin\ImpersonationController::class, 'impersonateRw'])->name('impersonate.rw');
+
+    // ⚠️ Wildcard routes HARUS di bawah semua route spesifik agar tidak menangkap 'finance', 'staff', 'security', 'rws' dll
     Route::get('/{tenant}', [SuperAdminController::class, 'show'])->name('show');
     Route::get('/{tenant}/edit', [SuperAdminController::class, 'edit'])->name('edit');
     Route::put('/{tenant}', [SuperAdminController::class, 'update'])->name('update');
@@ -379,7 +390,36 @@ Route::middleware(['auth', 'super_admin'])->prefix('super-admin')->name('super-a
     Route::post('/{tenant}/reset-password', [SuperAdminController::class, 'resetOwnerPassword'])->name('reset-password');
 });
 
+// ===== SUPER RW =====
+Route::middleware(['auth', 'rw_admin'])->prefix('rw')->name('rw.')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Rw\DashboardController::class, 'index'])->name('dashboard');
+
+    // Manajemen RT
+    Route::resource('tenants', \App\Http\Controllers\Rw\TenantController::class)->only(['index', 'create', 'store', 'show']);
+    Route::post('tenants/{tenant}/toggle-status', [\App\Http\Controllers\Rw\TenantController::class, 'toggleStatus'])->name('tenants.toggle-status');
+
+    // Klaim RT Lama
+    Route::get('adopt', [\App\Http\Controllers\Rw\TenantController::class, 'adoptSearch'])->name('tenants.adopt');
+    Route::post('adopt/{tenant}', [\App\Http\Controllers\Rw\TenantController::class, 'adopt'])->name('tenants.adopt.store');
+
+    // Pengaturan RW
+    Route::get('/settings', [\App\Http\Controllers\Rw\SettingsController::class, 'index'])->name('settings');
+    Route::put('/settings', [\App\Http\Controllers\Rw\SettingsController::class, 'update'])->name('settings.update');
+
+    // Pengumuman/Broadcast
+    Route::resource('broadcasts', \App\Http\Controllers\Rw\BroadcastController::class)->except('show');
+
+    // Direktori Warga Global (RW)
+    Route::get('/warga', [\App\Http\Controllers\Rw\MemberController::class, 'index'])->name('members.index');
+    Route::get('/warga/export-excel', [\App\Http\Controllers\Rw\MemberController::class, 'exportExcel'])->name('members.export-excel');
+});
 require __DIR__.'/auth.php';
+
+Route::middleware('guest')->group(function () {
+    Route::get('register-rw', [\App\Http\Controllers\Auth\RwRegisteredUserController::class, 'create'])
+                ->name('register.rw');
+    Route::post('register-rw', [\App\Http\Controllers\Auth\RwRegisteredUserController::class, 'store']);
+});
 
 // ===== PORTAL PUBLIK PER-RT (tanpa login, path: /{tenant}/...) =====
 // HARUS PALING BAWAH — lihat catatan di atas file ini.

@@ -1,13 +1,14 @@
 <x-guest-layout>
-
     {{-- ═══════ DEFAULT SLOT (Form Panel) ═══════ --}}
     @php
         $fieldErrors = array_merge(
             $errors->get('name'), 
             $errors->get('email'), 
             $errors->get('password'), 
-            $errors->get('tenant_name'), 
-            $errors->get('tenant_slug')
+            $errors->get('rw_name'), 
+            $errors->get('address'),
+            $errors->get('city'),
+            $errors->get('province')
         );
         $globalErrorList = array_filter($errors->all(), fn($e) => !in_array($e, $fieldErrors));
     @endphp
@@ -21,57 +22,72 @@
 
     <!-- Badge + Heading -->
     <div style="margin-bottom:28px;">
-        <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;background:#f0fdf4;border:1px solid #bbf7d0;margin-bottom:14px;">
-            <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;"></span>
-            <span style="font-size:11px;font-weight:700;color:#166534;letter-spacing:0.05em;text-transform:uppercase;">Trial 14 hari gratis</span>
+        <div style="display:inline-flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;background:#eef2ff;border:1px solid #c7d2fe;">
+                <span style="width:6px;height:6px;border-radius:50%;background:#4f46e5;display:inline-block;"></span>
+                <span style="font-size:11px;font-weight:700;color:#3730a3;letter-spacing:0.05em;text-transform:uppercase;">Super RW</span>
+            </div>
+            <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;background:#ecfdf5;border:1px solid #a7f3d0;">
+                <svg style="width:12px;height:12px;color:#059669;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span style="font-size:11px;font-weight:700;color:#065f46;letter-spacing:0.05em;text-transform:uppercase;">100% Gratis Selamanya</span>
+            </div>
         </div>
-        <h1 style="font-size:28px;font-weight:900;color:#0f172a;letter-spacing:-0.03em;margin:0 0 6px;line-height:1.2;">Daftarkan RT Anda 🏘️</h1>
-        <p style="font-size:14px;color:#64748b;margin:0;font-weight:500;">Buat workspace RT dan mulai kelola data warga dalam hitungan menit.</p>
-    </div>
-
-    <!-- Tab switch -->
-    <div class="tab-wrap">
-        <a href="{{ route('login') }}" class="tab-item">Masuk</a>
-        <a href="{{ route('register') }}" class="tab-item active">Daftar</a>
+        <h1 style="font-size:28px;font-weight:900;color:#0f172a;letter-spacing:-0.03em;margin:0 0 6px;line-height:1.2;">Daftarkan RW Anda 🏢</h1>
+        <p style="font-size:14px;color:#64748b;margin:0;font-weight:500;">Pusat pengelolaan data RT secara terpusat dalam satu dasbor.</p>
     </div>
 
     <!-- Form -->
-    <form method="POST" action="{{ route('register') }}" style="display:flex;flex-direction:column;gap:16px;">
+    <form method="POST" action="{{ route('register.rw') }}" style="display:flex;flex-direction:column;gap:16px;">
         @csrf
-        
-        @if(request()->has('ref'))
-            <input type="hidden" name="ref" value="{{ request()->ref }}">
-            @if(isset($rwName))
-                <div style="padding:12px 16px;border-radius:12px;background:#f0fdf4;border:1px solid #bbf7d0;display:flex;align-items:center;gap:12px;margin-bottom:8px;">
-                    <div style="width:36px;height:36px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;color:#16a34a;">
-                        <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                    </div>
-                    <div>
-                        <p style="font-size:13px;font-weight:700;color:#166534;margin:0;">Anda diundang oleh {{ $rwName }}</p>
-                        <p style="font-size:11px;color:#15803d;margin:0;">RT Anda akan otomatis tergabung di bawah naungan RW ini.</p>
-                    </div>
-                </div>
-            @endif
-        @endif
 
-        <!-- Nama RT -->
+        <!-- Nama RW -->
         <div>
-            <label class="auth-label" for="tenant_name">Nama RT / Lingkungan</label>
+            <label class="auth-label" for="rw_name">Nama Organisasi (Contoh: RW 05 Desa Mekar)</label>
             <div class="icon-field">
                 <svg style="width:18px;height:18px;color:#94a3b8;" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-                <input id="tenant_name" name="tenant_name" type="text" value="{{ old('tenant_name') }}" required
-                       class="auth-input" placeholder="Contoh: RT 022 Sukaragam">
+                <input id="rw_name" name="rw_name" type="text" value="{{ old('rw_name') }}" required autofocus
+                       class="auth-input" placeholder="Contoh: RW 05">
             </div>
-            @error('tenant_name') <p class="auth-error">{{ $message }}</p> @enderror
+            @error('rw_name') <p class="auth-error">{{ $message }}</p> @enderror
         </div>
+        
+        <!-- Alamat -->
+        <div>
+            <label class="auth-label" for="address">Alamat Lengkap</label>
+            <div class="icon-field">
+                <svg style="width:18px;height:18px;color:#94a3b8;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <input id="address" name="address" type="text" value="{{ old('address') }}" required
+                       class="auth-input" placeholder="Alamat jalan atau gedung">
+            </div>
+            @error('address') <p class="auth-error">{{ $message }}</p> @enderror
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <!-- Kota -->
+            <div>
+                <label class="auth-label" for="city">Kota / Kab</label>
+                <input id="city" name="city" type="text" value="{{ old('city') }}" required
+                       class="auth-input no-icon" placeholder="Nama kota">
+                @error('city') <p class="auth-error">{{ $message }}</p> @enderror
+            </div>
+            <!-- Provinsi -->
+            <div>
+                <label class="auth-label" for="province">Provinsi</label>
+                <input id="province" name="province" type="text" value="{{ old('province') }}" required
+                       class="auth-input no-icon" placeholder="Nama provinsi">
+                @error('province') <p class="auth-error">{{ $message }}</p> @enderror
+            </div>
+        </div>
+
+        <div class="auth-divider"><span>Data Login Ketua RW</span></div>
 
         <!-- Nama Lengkap -->
         <div>
-            <label class="auth-label" for="name">Nama Lengkap Anda</label>
+            <label class="auth-label" for="name">Nama Lengkap Ketua RW</label>
             <div class="icon-field">
                 <svg style="width:18px;height:18px;color:#94a3b8;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                <input id="name" name="name" type="text" value="{{ old('name') }}" required autofocus
-                       class="auth-input" placeholder="Nama pengurus RT">
+                <input id="name" name="name" type="text" value="{{ old('name') }}" required
+                       class="auth-input" placeholder="Nama pengurus RW">
             </div>
             @error('name') <p class="auth-error">{{ $message }}</p> @enderror
         </div>
@@ -105,9 +121,8 @@
             if (hasLength) strength += 1;
             if (hasNumber) strength += 1;
             if (hasSpecial) strength += 1;
-            if (val.length >= 12 && hasNumber && hasSpecial && /[A-Z]/.test(val)) strength += 1; // Extra point for very strong
+            if (val.length >= 12 && hasNumber && hasSpecial && /[A-Z]/.test(val)) strength += 1; 
             
-            // Update checklist UI
             const updateCheck = (id, isValid) => {
                 const el = document.getElementById(id);
                 const circle = el.querySelector('circle');
@@ -133,7 +148,6 @@
             updateCheck('req-number', hasNumber);
             updateCheck('req-special', hasSpecial);
             
-            // Update Bars UI
             const bars = [
                 document.getElementById('bar-1'),
                 document.getElementById('bar-2'),
@@ -141,10 +155,8 @@
                 document.getElementById('bar-4')
             ];
             
-            // Reset colors
             bars.forEach(b => b.style.background = '#e2e8f0');
             
-            // Set colors based on strength
             const colors = ['#ef4444', '#f59e0b', '#10b981', '#059669'];
             for (let i = 0; i < strength; i++) {
                 bars[i].style.background = colors[strength - 1] || '#10b981';
@@ -203,20 +215,19 @@
         <div style="margin-top:4px;">
             <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
                 <input type="checkbox" name="terms" required
-                       style="margin-top:2px;width:16px;height:16px;border-radius:4px;border:1px solid #cbd5e1;accent-color:#2563eb;">
+                       style="margin-top:2px;width:16px;height:16px;border-radius:4px;border:1px solid #cbd5e1;accent-color:#4f46e5;">
                 <span style="font-size:12px;color:#64748b;line-height:1.5;">
                     Saya setuju dengan 
-                    <a href="{{ route('terms') }}" target="_blank" style="color:#2563eb;font-weight:600;text-decoration:none;">Syarat & Ketentuan</a> serta 
-                    <a href="{{ route('privacy') }}" target="_blank" style="color:#2563eb;font-weight:600;text-decoration:none;">Kebijakan Privasi</a> SmartRT Vision.
+                    <a href="{{ route('terms') }}" target="_blank" style="color:#4f46e5;font-weight:600;text-decoration:none;">Syarat & Ketentuan</a> serta 
+                    <a href="{{ route('privacy') }}" target="_blank" style="color:#4f46e5;font-weight:600;text-decoration:none;">Kebijakan Privasi</a>.
                 </span>
             </label>
-            @error('terms') <p class="auth-error" style="margin-top:4px;">{{ $message }}</p> @enderror
         </div>
 
         <!-- Submit -->
-        <button type="submit" class="auth-btn" style="margin-top:4px;">
+        <button type="submit" class="auth-btn" style="margin-top:4px; background: linear-gradient(135deg, #4f46e5, #4338ca);">
             <span style="display:flex;align-items:center;justify-content:center;gap:8px;">
-                Buat Akun Gratis
+                Daftarkan Organisasi RW
                 <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </span>
         </button>
@@ -225,7 +236,7 @@
     <div style="text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid #f1f5f9;">
         <p style="font-size:13px;color:#64748b;font-weight:500;margin:0;">
             Sudah punya akun?
-            <a href="{{ route('login') }}" style="color:#2563eb;font-weight:700;text-decoration:none;">Masuk di sini</a>
+            <a href="{{ route('login') }}" style="color:#4f46e5;font-weight:700;text-decoration:none;">Masuk di sini</a>
         </p>
     </div>
 
@@ -236,44 +247,43 @@
             <!-- Heading -->
             <div class="fade-in-up">
                 <h2 style="font-size:32px;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1.15;margin:0 0 12px;">
-                    Mulai perjalanan<br><span style="color:#60a5fa;">digital RT Anda.</span>
+                    Sentralisasi data<br><span style="color:#a5b4fc;">organisasi RW Anda.</span>
                 </h2>
                 <p style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:500;line-height:1.7;margin:0;">
-                    Ratusan RT sudah membuktikan manfaatnya. Bergabunglah sekarang secara gratis.
+                    Kelola banyak RT sekaligus. Dapatkan ringkasan laporan kependudukan dan keuangan dalam satu tempat terpadu.
                 </p>
             </div>
 
             <!-- Steps -->
             <div style="display:flex;flex-direction:column;gap:10px;">
                 <div class="glass-card fade-in-up" style="padding:14px 18px;border-radius:14px;display:flex;align-items:center;gap:14px;">
-                    <div style="width:32px;height:32px;border-radius:10px;background:rgba(96,165,250,0.2);border:1px solid rgba(96,165,250,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        <span style="font-size:13px;font-weight:900;color:#60a5fa;">1</span>
+                    <div style="width:32px;height:32px;border-radius:10px;background:rgba(165,180,252,0.2);border:1px solid rgba(165,180,252,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span style="font-size:13px;font-weight:900;color:#a5b4fc;">1</span>
                     </div>
                     <div>
-                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 2px;">Daftar Akun</h4>
-                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;">Isi nama RT dan email Anda dalam 30 detik</p>
+                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 2px;">Daftar Akun RW</h4>
+                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;">Buat ruang kerja untuk organisasi Anda</p>
                     </div>
                 </div>
                 <div class="glass-card fade-in-up" style="padding:14px 18px;border-radius:14px;display:flex;align-items:center;gap:14px;">
-                    <div style="width:32px;height:32px;border-radius:10px;background:rgba(96,165,250,0.2);border:1px solid rgba(96,165,250,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        <span style="font-size:13px;font-weight:900;color:#60a5fa;">2</span>
+                    <div style="width:32px;height:32px;border-radius:10px;background:rgba(165,180,252,0.2);border:1px solid rgba(165,180,252,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span style="font-size:13px;font-weight:900;color:#a5b4fc;">2</span>
                     </div>
                     <div>
-                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 2px;">Upload Data KK</h4>
-                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;">AI kami otomatis membaca dan mengekstrak data</p>
+                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 2px;">Tambahkan RT</h4>
+                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;">Buat akun untuk masing-masing RT anak Anda</p>
                     </div>
                 </div>
                 <div class="glass-card fade-in-up" style="padding:14px 18px;border-radius:14px;display:flex;align-items:center;gap:14px;">
-                    <div style="width:32px;height:32px;border-radius:10px;background:rgba(96,165,250,0.2);border:1px solid rgba(96,165,250,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        <span style="font-size:13px;font-weight:900;color:#60a5fa;">3</span>
+                    <div style="width:32px;height:32px;border-radius:10px;background:rgba(165,180,252,0.2);border:1px solid rgba(165,180,252,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span style="font-size:13px;font-weight:900;color:#a5b4fc;">3</span>
                     </div>
                     <div>
-                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 2px;">Aktifkan Portal</h4>
-                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;">Warga langsung bisa mengakses layanan online</p>
+                        <h4 style="font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 2px;">Pantau Dasbor</h4>
+                        <p style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;margin:0;">Laporan dari seluruh RT terangkum otomatis</p>
                     </div>
                 </div>
             </div>
         </div>
     </x-slot>
-
 </x-guest-layout>
