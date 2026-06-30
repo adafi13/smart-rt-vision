@@ -99,7 +99,7 @@ class SuperAdminController extends Controller
         // Database Latency Check
         $start = microtime(true);
         \Illuminate\Support\Facades\DB::select('SELECT 1');
-        $dbLatency = round((microtime(true) - $start) * 1000);
+        $dbLatency = round((microtime(true) - $start) * 1000, 2);
 
         return view('super-admin.index', compact(
             'stats', 'tenants', 'revenueChartData', 'expiringTenants',
