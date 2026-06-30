@@ -190,15 +190,30 @@
                             </td>
                             <td class="px-5 py-4 max-w-xs">
                                 @if($log->old_values || $log->new_values)
+                                    @php
+                                        $formatValues = function($values) {
+                                            if (!is_array($values)) return '';
+                                            $items = [];
+                                            foreach($values as $k => $v) {
+                                                if (is_array($v) || is_object($v)) {
+                                                    $val = '{...}';
+                                                } else {
+                                                    $val = Str::limit((string)$v, 30);
+                                                }
+                                                $items[] = "<span class='text-gray-400'>$k:</span> $val";
+                                            }
+                                            return implode(', ', $items);
+                                        };
+                                    @endphp
                                     <div class="text-[10px] font-mono rounded-lg overflow-hidden border border-gray-100">
                                         @if($log->old_values)
-                                            <div class="bg-rose-50 text-rose-700 px-2 py-1 truncate" title="{{ json_encode($log->old_values, JSON_PRETTY_PRINT) }}">
-                                                <span class="font-black">−</span> {{ Str::limit(json_encode($log->old_values), 80) }}
+                                            <div class="bg-rose-50 text-rose-700 px-2 py-1.5 truncate" title="{{ json_encode($log->old_values, JSON_PRETTY_PRINT) }}">
+                                                <span class="font-black mr-1">−</span> {!! $formatValues($log->old_values) !!}
                                             </div>
                                         @endif
                                         @if($log->new_values)
-                                            <div class="bg-emerald-50 text-emerald-700 px-2 py-1 truncate" title="{{ json_encode($log->new_values, JSON_PRETTY_PRINT) }}">
-                                                <span class="font-black">+</span> {{ Str::limit(json_encode($log->new_values), 80) }}
+                                            <div class="bg-emerald-50 text-emerald-700 px-2 py-1.5 truncate" title="{{ json_encode($log->new_values, JSON_PRETTY_PRINT) }}">
+                                                <span class="font-black mr-1">+</span> {!! $formatValues($log->new_values) !!}
                                             </div>
                                         @endif
                                     </div>
