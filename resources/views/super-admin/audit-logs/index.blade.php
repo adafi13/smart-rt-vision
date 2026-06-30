@@ -207,8 +207,14 @@
                                     @endphp
                                     <div class="text-[10px] font-mono rounded-lg overflow-hidden border border-gray-100">
                                         @if($log->old_values)
-                                            <div class="bg-rose-50 text-rose-700 px-2 py-1.5 truncate" title="{{ json_encode($log->old_values, JSON_PRETTY_PRINT) }}">
-                                                <span class="font-black mr-1">−</span> {!! $formatValues($log->old_values) !!}
+                                            @php
+                                                $filteredOld = $log->old_values;
+                                                if (str_starts_with($log->action, 'update_') && is_array($log->new_values)) {
+                                                    $filteredOld = array_intersect_key($filteredOld, $log->new_values);
+                                                }
+                                            @endphp
+                                            <div class="bg-rose-50 text-rose-700 px-2 py-1.5 truncate" title="{{ json_encode($filteredOld, JSON_PRETTY_PRINT) }}">
+                                                <span class="font-black mr-1">−</span> {!! $formatValues($filteredOld) !!}
                                             </div>
                                         @endif
                                         @if($log->new_values)

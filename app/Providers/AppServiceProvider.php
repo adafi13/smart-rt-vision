@@ -56,10 +56,12 @@ class AppServiceProvider extends ServiceProvider
             $newValues = [];
 
             if ($actionType === 'updated') {
-                $oldValues = $model->getOriginal();
                 $newValues = $model->getChanges();
-                unset($oldValues['updated_at'], $newValues['updated_at']);
+                unset($newValues['updated_at']);
                 if (empty($newValues)) return; // No actual data changed
+                
+                // Only record old values for fields that actually changed
+                $oldValues = array_intersect_key($model->getOriginal(), $newValues);
             } elseif ($actionType === 'created') {
                 $newValues = $model->getAttributes();
             } elseif ($actionType === 'deleted') {
