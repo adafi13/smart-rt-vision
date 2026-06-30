@@ -213,7 +213,7 @@
         @if(auth()->user()->tenant_id)
             @if(!auth()->user()->isRtBendahara())
             <div class="px-2 mb-2">
-                <a href="{{ route('home', ['tenant' => auth()->user()->tenant->slug ?? '']) . '/kk-baru' }}" @click="mobileOpen = false"
+                <a href="{{ route('kk.upload') }}" @click="mobileOpen = false"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm"
                    style="background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white;"
                    title="Upload KK Baru">
