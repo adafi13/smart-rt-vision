@@ -244,6 +244,20 @@ class HomeController extends Controller
             'status' => 'active',
         ]);
         
+        try {
+            $admins = \App\Models\User::where('tenant_id', $tenantId)
+                ->whereIn('role', ['admin', 'super_admin'])
+                ->get();
+                
+            \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\EmergencyAlert(
+                "🚨 DARURAT: " . strtoupper($request->type),
+                "Dari {$request->reporter_name} di {$request->location}. Segera cek sekarang!",
+                "/admin/panic-alerts"
+            ));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('WebPush Error: ' . $e->getMessage());
+        }
+        
         $rtPhone = $tenant->phone;
         
         // Fallback: Jika nomor RT utama kosong, cari nomor pengurus (Ketua RT atau Keamanan)

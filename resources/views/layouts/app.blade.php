@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="vapid-pub-key" content="{{ config('webpush.vapid.public_key') }}">
     <meta name="description" content="SmartRT Vision — Dashboard internal warga dan pengurus RT. Sistem Pendataan Warga RT berbasis AI.">
     <meta name="robots" content="noindex, nofollow"> <!-- Prevent indexing of private dashboard pages -->
 
@@ -169,9 +170,129 @@
         });
     </script>
     <script>
-        if ('serviceWorker' in navigator) {
+        document.addEventListener('DOMContentLoaded', () => {
+            // Global SweetAlert Confirm Override
+            document.querySelectorAll('form').forEach(form => {
+                const onsubmitAttr = form.getAttribute('onsubmit');
+                if (onsubmitAttr && onsubmitAttr.includes('return confirm')) {
+                    const match = onsubmitAttr.match(/confirm\(['"](.*?)['"]\)/);
+                    const message = match ? match[1] : 'Anda yakin ingin melanjutkan?';
+                    
+                    form.removeAttribute('onsubmit');
+                    
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                title: 'Konfirmasi',
+                                html: message,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#ef4444',
+                                cancelButtonColor: '#6b7280',
+                                confirmButtonText: 'Ya, Lanjutkan!',
+                                cancelButtonText: 'Batal',
+                                reverseButtons: true,
+                                customClass: {
+                                    confirmButton: 'rounded-xl',
+                                    cancelButton: 'rounded-xl',
+                                    popup: 'rounded-2xl'
+                                }
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    form.submit();
+                                }
+                            });
+                        } else {
+                            if(confirm(message)) {
+                                form.submit();
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <script>
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
+        window.subscribeToWebPush = function() {
+            if (Notification.permission !== 'granted') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        executeSubscription();
+                    } else {
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire('Izin Ditolak', 'Anda memblokir notifikasi di browser ini.', 'warning');
+                        }
+                    }
+                });
+            } else {
+                executeSubscription();
+            }
+        };
+
+        function executeSubscription() {
+            navigator.serviceWorker.ready.then((registration) => {
+                const subscribeOptions = {
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(
+                        document.querySelector('meta[name="vapid-pub-key"]').getAttribute('content')
+                    )
+                };
+                return registration.pushManager.subscribe(subscribeOptions);
+            })
+            .then((pushSubscription) => {
+                storePushSubscription(pushSubscription);
+            }).catch(err => console.error('Subscription error:', err));
+        }
+
+        function storePushSubscription(pushSubscription) {
+            fetch('/push-subscriptions', {
+                method: 'POST',
+                body: JSON.stringify(pushSubscription),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire('Berhasil!', 'Notifikasi diaktifkan untuk perangkat ini.', 'success');
+                }
+            })
+            .catch(err => console.log('Store subscription failed:', err));
+        }
+
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js');
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    // Cek jika sudah subscribe, maka update token ke server secara background
+                    registration.pushManager.getSubscription().then(subscription => {
+                        if (subscription) {
+                            fetch('/push-subscriptions', {
+                                method: 'POST',
+                                body: JSON.stringify(subscription),
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                }
+                            });
+                        }
+                    });
+                });
             });
         }
     </script>

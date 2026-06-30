@@ -20,6 +20,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\Public\BlogController;
@@ -314,6 +315,9 @@ Route::middleware('auth')->group(function () {
     // Leave impersonation — harus di luar grup super_admin karena saat impersonating,
     // auth user adalah Admin RT (bukan Super Admin), sehingga middleware super_admin akan 403.
     Route::post('/super-admin/leave-impersonation', [\App\Http\Controllers\SuperAdmin\ImpersonationController::class, 'leave'])->name('super-admin.leave-impersonation');
+    
+    // Web Push Subscriptions
+    Route::post('/push-subscriptions', [PushSubscriptionController::class, 'update'])->name('push-subscriptions.update');
 });
 
 // ===== PANEL SUPER ADMIN (internal PT Sekawan Putra Pratama) =====
