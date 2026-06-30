@@ -45,11 +45,17 @@ class AdminCctvController extends Controller
             'status' => 'required|in:active,inactive,maintenance',
         ]);
 
+        // Proteksi XSS: Hapus tag berbahaya, hanya izinkan iframe
+        $safeStreamUrl = strip_tags($request->stream_url, '<iframe>');
+        // Hapus atribut berbahaya seperti onload, onerror, javascript:
+        $safeStreamUrl = preg_replace('/(on[a-z]+)\s*=/i', 'blocked=', $safeStreamUrl);
+        $safeStreamUrl = preg_replace('/(javascript|vbscript|data):/i', 'blocked:', $safeStreamUrl);
+
         Cctv::create([
             'tenant_id' => auth()->user()->tenant_id,
             'name' => $request->name,
             'location' => $request->location,
-            'stream_url' => $request->stream_url,
+            'stream_url' => $safeStreamUrl,
             'status' => $request->status,
         ]);
 
@@ -69,10 +75,16 @@ class AdminCctvController extends Controller
             'status' => 'required|in:active,inactive,maintenance',
         ]);
 
+        // Proteksi XSS: Hapus tag berbahaya, hanya izinkan iframe
+        $safeStreamUrl = strip_tags($request->stream_url, '<iframe>');
+        // Hapus atribut berbahaya seperti onload, onerror, javascript:
+        $safeStreamUrl = preg_replace('/(on[a-z]+)\s*=/i', 'blocked=', $safeStreamUrl);
+        $safeStreamUrl = preg_replace('/(javascript|vbscript|data):/i', 'blocked:', $safeStreamUrl);
+
         $cctv->update([
             'name' => $request->name,
             'location' => $request->location,
-            'stream_url' => $request->stream_url,
+            'stream_url' => $safeStreamUrl,
             'status' => $request->status,
         ]);
 
