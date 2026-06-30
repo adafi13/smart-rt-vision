@@ -92,6 +92,14 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::post('/{family}/approve', [FamilyController::class, 'approve'])->name('approve');
         Route::post('/{family}/reject', [FamilyController::class, 'reject'])->name('reject');
 
+        // KK Updates (Pembaruan KK)
+        Route::prefix('updates')->name('updates.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\KkUpdateController::class, 'index'])->name('index');
+            Route::get('/{update}', [\App\Http\Controllers\Admin\KkUpdateController::class, 'show'])->name('show');
+            Route::post('/{update}/approve', [\App\Http\Controllers\Admin\KkUpdateController::class, 'approve'])->name('approve');
+            Route::post('/{update}/reject', [\App\Http\Controllers\Admin\KkUpdateController::class, 'reject'])->name('reject');
+        });
+
         // Catatan: harus didaftarkan SEBELUM /{family} agar tidak "ditelan" sebagai parameter family.
         Route::get('/import', [FamilyController::class, 'importForm'])->name('import.form');
         Route::post('/import', [FamilyController::class, 'import'])->name('import.store');

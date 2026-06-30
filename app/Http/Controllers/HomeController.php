@@ -739,15 +739,52 @@ class HomeController extends Controller
 
         $tenantId = $tenant->id;
 
-        // 3. Validasi Keunikan Nomor KK pada RT ini
-        $existsKk = \App\Models\Family::where('tenant_id', $tenantId)
+        // 3. Cek apakah Nomor KK sudah ada (Pendaftaran vs Pembaruan)
+        $existingFamily = \App\Models\Family::where('tenant_id', $tenantId)
             ->where('nomor_kk', $request->nomor_kk)
-            ->exists();
-        if ($existsKk) {
-            return back()->with('error', 'Gagal: Nomor KK ' . $request->nomor_kk . ' sudah terdaftar di database RT. Jika Anda ingin melakukan pembaruan, silakan hubungi Ketua RT Anda.')->withInput();
+            ->first();
+
+        if ($existingFamily) {
+            // Ini adalah request Pembaruan KK (Update)
+            // Pastikan tidak ada request update yang masih pending
+            $hasPendingUpdate = \App\Models\KkUpdateRequest::where('family_id', $existingFamily->id)
+                ->where('status', 'pending')
+                ->exists();
+
+            if ($hasPendingUpdate) {
+                return back()->with('error', 'Gagal: Anda sudah memiliki permohonan pembaruan KK yang sedang menunggu persetujuan Ketua RT.')->withInput();
+            }
+
+            try {
+                \App\Models\KkUpdateRequest::create([
+                    'tenant_id' => $tenantId,
+                    'family_id' => $existingFamily->id,
+                    'data' => $request->all(),
+                    'foto_path' => $request->foto_path ?? session('warga_kk_foto_path'),
+                    'status' => 'pending',
+                ]);
+
+                \App\Models\AuditLog::create([
+                    'tenant_id' => $tenantId,
+                    'user_id' => null,
+                    'action' => 'citizen_submit_family_update',
+                    'model_type' => \App\Models\Family::class,
+                    'model_id' => $existingFamily->id,
+                    'new_values' => ['nomor_kk' => $request->nomor_kk],
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                ]);
+
+                session()->forget(['warga_kk_extracted', 'warga_kk_foto_path']);
+                
+                return redirect()->route('home', ['tenant' => $tenant->slug])
+                    ->with('success', 'Data KK Anda sudah terdaftar. Permohonan pembaruan data KK Anda telah dikirim ke Ketua RT untuk disetujui.');
+            } catch (\Exception $e) {
+                return back()->with('error', 'Gagal mengirim permohonan pembaruan KK: ' . $e->getMessage())->withInput();
+            }
         }
 
-        // 4. Validasi Keunikan NIK Anggota pada RT ini
+        // 4. Validasi Keunikan NIK Anggota pada RT ini (Untuk Keluarga Baru)
         if ($request->has('anggota') && is_array($request->anggota)) {
             foreach ($request->anggota as $anggotaData) {
                 if (empty($anggotaData['nik'])) continue;
