@@ -97,10 +97,33 @@ class LetterRequestController extends Controller
                 ];
             }
 
+            $displayStatus = 'Pending';
+            $displayColor = 'bg-amber-100 text-amber-700';
+
+            if ($surat->status === 'Pending') {
+                $displayStatus = 'Menunggu RT';
+                $displayColor = 'bg-amber-100 text-amber-700';
+            } elseif ($surat->status === 'Diproses') {
+                $displayStatus = 'Diproses RT';
+                $displayColor = 'bg-indigo-100 text-indigo-700';
+            } elseif ($surat->status === 'Ditolak') {
+                $displayStatus = 'Ditolak';
+                $displayColor = 'bg-rose-100 text-rose-700';
+            } elseif ($surat->status === 'Selesai' || $surat->status === 'Disetujui') {
+                if ($surat->rw_status === 'Pending') {
+                    $displayStatus = 'Menunggu RW';
+                    $displayColor = 'bg-amber-100 text-amber-700';
+                } else {
+                    $displayStatus = 'Selesai';
+                    $displayColor = 'bg-emerald-100 text-emerald-700';
+                }
+            }
+
             return [
                 'jenis_surat' => $surat->jenis_surat,
                 'keperluan' => $surat->keperluan,
-                'status' => $surat->status,
+                'status' => $displayStatus,
+                'status_color' => $displayColor,
                 'tanggal_pengajuan' => $surat->created_at->translatedFormat('d F Y'),
                 'timeline' => array_reverse($timeline),
                 'download_url' => $surat->download_url ?? null,

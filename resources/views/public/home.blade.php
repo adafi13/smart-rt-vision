@@ -1602,7 +1602,7 @@
                     }
                     
                     let suratListHtml = json.data.map((s, idx) => {
-                        let statusColor = s.status === 'Pending' ? 'bg-amber-100 text-amber-700' : (s.status === 'Diproses' ? 'bg-indigo-100 text-indigo-700' : (s.status === 'Selesai' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'));
+                        let statusColor = s.status_color || 'bg-slate-100 text-slate-700';
                         
                         let timelineHtml = s.timeline.map(t => `
                             <div class="flex gap-2 items-start mt-2">
