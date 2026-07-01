@@ -10,13 +10,13 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     
-                    <div class="flex justify-between items-center mb-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                         <div>
-                            <h3 class="text-lg font-bold">Daftar Kegiatan RT</h3>
-                            <p class="text-sm text-gray-500">Kelola jadwal rapat, kerja bakti, dan posyandu.</p>
+                            <h3 class="text-lg font-bold text-gray-900">Daftar Kegiatan RW</h3>
+                            <p class="text-sm text-gray-500 mt-1">Kelola jadwal rapat, kerja bakti, posyandu tingkat RW.</p>
                         </div>
-                        <a href="{{ route('rw.agendas.create') }}" class="btn-primary">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        <a href="{{ route('rw.agendas.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-sm shadow-indigo-200 inline-flex items-center gap-2 w-full sm:w-auto justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                             Tambah Agenda
                         </a>
                     </div>
@@ -95,8 +95,12 @@
 
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="p-8 text-center text-gray-500">
-                                            Belum ada agenda kegiatan.
+                                        <td colspan="5" class="p-12 text-center">
+                                            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                            </div>
+                                            <h3 class="text-sm font-bold text-gray-900 mb-1">Belum Ada Agenda RW</h3>
+                                            <p class="text-xs text-gray-500 max-w-sm mx-auto">Klik tombol "Tambah Agenda" di atas untuk membuat jadwal kegiatan RW yang baru.</p>
                                         </td>
                                     </tr>
                                 @endforelse
@@ -142,8 +146,12 @@
                         @endforeach
                         
                         @if($agendas->isEmpty())
-                            <div class="p-8 text-center text-gray-500 bg-gray-50 rounded-2xl border border-gray-100 border-dashed">
-                                Belum ada agenda kegiatan.
+                            <div class="p-10 text-center bg-gray-50 rounded-3xl border border-gray-100 border-dashed">
+                                <div class="w-14 h-14 bg-white shadow-sm rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                </div>
+                                <h3 class="text-sm font-bold text-gray-900 mb-1">Belum Ada Agenda RW</h3>
+                                <p class="text-xs text-gray-500 max-w-[200px] mx-auto leading-relaxed">Agenda yang Bapak tambahkan akan tampil di sini.</p>
                             </div>
                         @endif
                     </div>
