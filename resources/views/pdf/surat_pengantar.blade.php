@@ -65,27 +65,21 @@
         .table-data td:nth-child(2) {
             width: 2%;
         }
-        .signature-section {
+        .signature-table {
             width: 100%;
             margin-top: 10px;
-        }
-        .signature-box {
-            width: 40%;
             text-align: center;
-            float: right;
+            page-break-inside: avoid;
         }
-        .signature-box-left {
-            width: 40%;
-            text-align: center;
-            float: left;
+        .signature-table td {
+            width: 33.33%;
+            vertical-align: bottom;
+            padding-top: 10px;
         }
         .signature-img {
             max-width: 150px;
             max-height: 80px;
             margin: 5px auto;
-        }
-        .clear {
-            clear: both;
         }
     </style>
 </head>
@@ -151,40 +145,40 @@
         <p>Demikian surat pengantar ini dibuat dengan sebenarnya agar dapat dipergunakan sebagaimana mestinya oleh instansi/pihak yang berwenang.</p>
     </div>
 
-    <div class="signature-section">
-        <div class="signature-box-left">
-            <p><br>Pemohon,</p>
-            <br><br><br>
-            <p><strong>( {{ $member->nama }} )</strong></p>
-        </div>
-
-        <div class="signature-box">
-            <p>Dikeluarkan pada tanggal: {{ now()->translatedFormat('d F Y') }}<br><strong>Ketua RT {{ substr($tenant->name ?? '001', 0, 3) }}</strong></p>
-            
-            @if($rtSignature)
-                <img src="{{ $rtSignature }}" alt="Tanda Tangan RT" class="signature-img">
-            @else
+    <table class="signature-table">
+        <tr>
+            <td>
+                <p><br>Pemohon,</p>
                 <br><br><br>
-            @endif
-            
-            <p><strong>( {{ $rtName ?? '...........................' }} )</strong></p>
-        </div>
-        <div class="clear"></div>
-        
+                <p><strong>( {{ $member->nama }} )</strong></p>
+            </td>
+            <td></td>
+            <td>
+                <p>Dikeluarkan pada tanggal: {{ now()->translatedFormat('d F Y') }}<br><strong>Ketua RT {{ substr($tenant->name ?? '001', 0, 3) }}</strong></p>
+                @if($rtSignature)
+                    <img src="{{ $rtSignature }}" alt="Tanda Tangan RT" class="signature-img">
+                @else
+                    <br><br><br>
+                @endif
+                <p><strong>( {{ $rtName ?? '...........................' }} )</strong></p>
+            </td>
+        </tr>
         @if(isset($rwName) && $rwName)
-        <div class="signature-box" style="float: none; margin: 15px auto 0;">
-            <p>Mengetahui,<br><strong>Ketua {{ $rwName }}</strong></p>
-            
-            @if(isset($rwSignature) && $rwSignature)
-                <img src="{{ $rwSignature }}" alt="Tanda Tangan RW" class="signature-img">
-            @else
-                <br><br><br>
-            @endif
-            
-            <p><strong>( {{ $rwHeadName ?? '...........................' }} )</strong></p>
-        </div>
+        <tr>
+            <td></td>
+            <td>
+                <p>Mengetahui,<br><strong>Ketua {{ $rwName }}</strong></p>
+                @if(isset($rwSignature) && $rwSignature)
+                    <img src="{{ $rwSignature }}" alt="Tanda Tangan RW" class="signature-img">
+                @else
+                    <br><br><br>
+                @endif
+                <p><strong>( {{ $rwHeadName ?? '...........................' }} )</strong></p>
+            </td>
+            <td></td>
+        </tr>
         @endif
-    </div>
+    </table>
 
 </body>
 </html>
