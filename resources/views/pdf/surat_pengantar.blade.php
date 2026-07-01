@@ -69,7 +69,6 @@
             width: 100%;
             margin-top: 10px;
             text-align: center;
-            page-break-inside: avoid;
         }
         .signature-table td {
             width: 33.33%;
@@ -154,7 +153,7 @@
             </td>
             <td></td>
             <td>
-                <p>Dikeluarkan pada tanggal: {{ now()->translatedFormat('d F Y') }}<br><strong>Ketua RT {{ substr($tenant->name ?? '001', 0, 3) }}</strong></p>
+                <p>Dikeluarkan pada tanggal: {{ now()->translatedFormat('d F Y') }}<br><strong>Ketua {{ $tenant->name ?? 'RT 001' }}</strong></p>
                 @if($rtSignature)
                     <img src="{{ $rtSignature }}" alt="Tanda Tangan RT" class="signature-img">
                 @else

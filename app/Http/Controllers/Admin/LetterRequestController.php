@@ -88,7 +88,7 @@ class LetterRequestController extends Controller
             $rtSignature = 'data:image/' . $type . ';base64,' . base64_encode($data);
         }
 
-        $rtAdmin = app('currentTenant')->users()->where('role', 'Admin')->first();
+        $rtAdmin = app('currentTenant')->users()->where('role', 'admin_rt')->first();
         $fallbackRtName = $rtAdmin ? $rtAdmin->name : '...........................';
         $rtName = Setting::get("tenant_{$tenantId}_rt_name") ?: $fallbackRtName;
         
@@ -107,7 +107,7 @@ class LetterRequestController extends Controller
             }
             $rwName = $rw->name;
             
-            $rwAdmin = $rw->users()->where('role', 'Super RW')->first();
+            $rwAdmin = $rw->users()->where('role', 'admin_rw')->first();
             $fallbackRwName = $rwAdmin ? $rwAdmin->name : '...........................';
             $rwHeadName = Setting::get("rw_{$rw->id}_head_name") ?: $fallbackRwName;
         }
