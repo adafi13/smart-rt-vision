@@ -156,7 +156,7 @@
                 signatureData.value = '';
             });
 
-            document.querySelector('form').addEventListener('submit', function(e) {
+            document.getElementById('submit-btn').closest('form').addEventListener('submit', function(e) {
                 if (!signaturePad.isEmpty()) {
                     signatureData.value = signaturePad.toDataURL();
                 }
