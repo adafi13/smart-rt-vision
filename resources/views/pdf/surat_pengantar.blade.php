@@ -47,7 +47,7 @@
             margin: 0;
         }
         .content {
-            margin-bottom: 30px;
+            margin-bottom: 10px;
             text-align: justify;
         }
         .table-data {
@@ -67,7 +67,7 @@
         }
         .signature-section {
             width: 100%;
-            margin-top: 50px;
+            margin-top: 20px;
         }
         .signature-box {
             width: 40%;
@@ -172,7 +172,7 @@
         <div class="clear"></div>
         
         @if(isset($rwName) && $rwName)
-        <div class="signature-box" style="float: none; margin: 40px auto 0;">
+        <div class="signature-box" style="float: none; margin: 15px auto 0;">
             <p>Mengetahui,<br><strong>Ketua {{ $rwName }}</strong></p>
             
             @if(isset($rwSignature) && $rwSignature)
