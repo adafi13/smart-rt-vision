@@ -17,7 +17,7 @@ class Contribution extends Model
         'periode',
         'tanggal_bayar',
         'keterangan',
-    
+        'tenant_id',
         'rw_id',
     ];
 

@@ -76,6 +76,7 @@
                         ($isOwner || $isBendahara) ? ['route' => 'admin.iuran.index', 'match' => 'admin.iuran.*', 'label' => 'Iuran Warga'] : null,
                         ($isOwner || $isBendahara) ? ['route' => 'admin.tunggakan.index', 'match' => 'admin.tunggakan.*', 'label' => 'Rekap Tunggakan'] : null,
                         ($isOwner || $isBendahara) ? ['route' => 'admin.pengeluaran.index', 'match' => 'admin.pengeluaran.*', 'label' => 'Pengeluaran Kas'] : null,
+                        ($isOwner || $isBendahara) && (app('currentTenant') && app('currentTenant')->rw_id) ? ['route' => 'admin.rw-finance.index', 'match' => 'admin.rw-finance.*', 'label' => 'Laporan Kas RW'] : null,
                     ]),
                 ],
                 [

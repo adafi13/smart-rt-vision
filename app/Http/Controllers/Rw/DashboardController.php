@@ -25,10 +25,15 @@ class DashboardController extends Controller
         $totalFamilies = Family::whereIn('tenant_id', $tenantIds)->count();
         $totalMembers = Member::whereIn('tenant_id', $tenantIds)->count();
 
-        // Keuangan
-        $totalPemasukan = Contribution::whereIn('tenant_id', $tenantIds)->sum('jumlah');
-        $totalPengeluaran = Expense::whereIn('tenant_id', $tenantIds)->sum('jumlah');
-        $saldoKas = $totalPemasukan - $totalPengeluaran;
+        // Keuangan RW
+        $totalPemasukanRW = Contribution::where('rw_id', $rw->id)->sum('jumlah');
+        $totalPengeluaranRW = Expense::where('rw_id', $rw->id)->sum('jumlah');
+        $saldoKasRW = $totalPemasukanRW - $totalPengeluaranRW;
+
+        // Keuangan Gabungan RT
+        $totalPemasukanGabungan = Contribution::whereIn('tenant_id', $tenantIds)->whereNull('rw_id')->sum('jumlah');
+        $totalPengeluaranGabungan = Expense::whereIn('tenant_id', $tenantIds)->whereNull('rw_id')->sum('jumlah');
+        $saldoKasGabungan = $totalPemasukanGabungan - $totalPengeluaranGabungan;
 
         // Demografi Lanjutan (Gender & Usia)
         $totalMale = Member::whereIn('tenant_id', $tenantIds)->where('jenis_kelamin', 'Laki-laki')->count();
@@ -47,8 +52,8 @@ class DashboardController extends Controller
         $rts = $rw->tenants()->withCount('families')
             ->with(['subscriptions.plan', 'rtStaffs' => fn($q) => $q->orderBy('order_level')])
             ->get()->map(function ($rt) {
-            $pemasukan = Contribution::where('tenant_id', $rt->id)->sum('jumlah');
-            $pengeluaran = Expense::where('tenant_id', $rt->id)->sum('jumlah');
+            $pemasukan = Contribution::where('tenant_id', $rt->id)->whereNull('rw_id')->sum('jumlah');
+            $pengeluaran = Expense::where('tenant_id', $rt->id)->whereNull('rw_id')->sum('jumlah');
             $rt->saldo = $pemasukan - $pengeluaran;
             return $rt;
         });
@@ -63,7 +68,7 @@ class DashboardController extends Controller
 
         return view('rw.dashboard', compact(
             'rw', 'totalFamilies', 'totalMembers', 
-            'totalPemasukan', 'totalPengeluaran', 'saldoKas', 
+            'saldoKasRW', 'saldoKasGabungan', 
             'rts', 'totalMale', 'totalFemale', 
             'anak', 'remaja', 'dewasa', 'lansia',
             'expiredCount'

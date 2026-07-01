@@ -64,15 +64,16 @@
                     <p class="text-3xl font-black text-gray-900 mt-1">{{ number_format($totalMembers, 0, ',', '.') }} <span class="text-sm font-medium text-gray-400">jiwa</span></p>
                 </div>
             </div>
-            {{-- Saldo Kas Gabungan --}}
+            {{-- Saldo Kas RW & Gabungan --}}
             <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
                 <div class="absolute -right-3 -top-3 w-20 h-20 bg-amber-50 rounded-full opacity-60 group-hover:scale-125 transition-transform duration-500"></div>
                 <div class="relative">
                     <div class="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center mb-3">
                         <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Kas Gabungan</p>
-                    <p class="text-2xl font-black mt-1 {{ $saldoKas < 0 ? 'text-rose-600' : 'text-gray-900' }}">Rp {{ number_format($saldoKas, 0, ',', '.') }}</p>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Saldo Kas RW</p>
+                    <p class="text-2xl font-black mt-1 {{ $saldoKasRW < 0 ? 'text-rose-600' : 'text-gray-900' }}">Rp {{ number_format($saldoKasRW, 0, ',', '.') }}</p>
+                    <p class="text-[10px] font-semibold text-gray-400 mt-1">Gabungan RT: Rp {{ number_format($saldoKasGabungan, 0, ',', '.') }}</p>
                 </div>
             </div>
         </div>

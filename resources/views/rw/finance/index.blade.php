@@ -84,10 +84,10 @@
                     <tbody class="divide-y divide-gray-50 text-gray-700">
                         @forelse($contributions as $c)
                         <tr class="hover:bg-gray-50/50 transition-colors">
-                            <td class="px-6 py-4">{{ \Carbon\Carbon::parse($c->date)->translatedFormat('d M Y') }}</td>
-                            <td class="px-6 py-4 font-semibold text-gray-900">{{ $c->tenant->name }}</td>
-                            <td class="px-6 py-4">{{ $c->description ?? '-' }}</td>
-                            <td class="px-6 py-4 text-right font-medium text-emerald-600">+ Rp {{ number_format($c->amount, 0, ',', '.') }}</td>
+                            <td class="px-6 py-4">{{ \Carbon\Carbon::parse($c->tanggal_bayar)->translatedFormat('d M Y') }}</td>
+                            <td class="px-6 py-4 font-semibold text-gray-900">{{ $c->tenant->name ?? 'RT Tidak Diketahui/Dihapus' }}</td>
+                            <td class="px-6 py-4">{{ $c->keterangan ?? '-' }}</td>
+                            <td class="px-6 py-4 text-right font-medium text-emerald-600">+ Rp {{ number_format($c->jumlah, 0, ',', '.') }}</td>
                             <td class="px-6 py-4 text-center">
                                 <form action="{{ route('rw.finance.contributions.destroy', $c) }}" method="POST" onsubmit="return confirm('Hapus data iuran ini?')">
                                     @csrf @method('DELETE')
@@ -129,16 +129,16 @@
                     <tbody class="divide-y divide-gray-50 text-gray-700">
                         @forelse($expenses as $e)
                         <tr class="hover:bg-gray-50/50 transition-colors">
-                            <td class="px-6 py-4">{{ \Carbon\Carbon::parse($e->date)->translatedFormat('d M Y') }}</td>
-                            <td class="px-6 py-4">{{ $e->description }}</td>
+                            <td class="px-6 py-4">{{ \Carbon\Carbon::parse($e->tanggal_keluar)->translatedFormat('d M Y') }}</td>
+                            <td class="px-6 py-4">{{ $e->keterangan }}</td>
                             <td class="px-6 py-4 text-center">
-                                @if($e->receipt_path)
-                                    <a href="{{ Storage::url($e->receipt_path) }}" target="_blank" class="text-indigo-600 hover:underline font-semibold text-xs">Lihat</a>
+                                @if($e->bukti_nota)
+                                    <a href="{{ Storage::url($e->bukti_nota) }}" target="_blank" class="text-indigo-600 hover:underline font-semibold text-xs">Lihat</a>
                                 @else
                                     <span class="text-gray-400 text-xs">-</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 text-right font-medium text-rose-600">- Rp {{ number_format($e->amount, 0, ',', '.') }}</td>
+                            <td class="px-6 py-4 text-right font-medium text-rose-600">- Rp {{ number_format($e->jumlah, 0, ',', '.') }}</td>
                             <td class="px-6 py-4 text-center">
                                 <form action="{{ route('rw.finance.expenses.destroy', $e) }}" method="POST" onsubmit="return confirm('Hapus data pengeluaran ini?')">
                                     @csrf @method('DELETE')
@@ -173,17 +173,26 @@
                         @endforeach
                     </select>
                 </div>
-                <div>
+                <div x-data="{ 
+                    raw: '', 
+                    formatted: '',
+                    format(val) {
+                        let num = val.replace(/\D/g, '');
+                        this.raw = num;
+                        this.formatted = num ? new Intl.NumberFormat('id-ID').format(num) : '';
+                    }
+                }">
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nominal (Rp) <span class="text-red-500">*</span></label>
-                    <input type="number" name="amount" required class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
+                    <input type="hidden" name="jumlah" x-model="raw">
+                    <input type="text" x-model="formatted" @input="format($event.target.value)" required class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">Tanggal <span class="text-red-500">*</span></label>
-                    <input type="date" name="date" required value="{{ date('Y-m-d') }}" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
+                    <input type="date" name="tanggal_bayar" required value="{{ date('Y-m-d') }}" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">Keterangan</label>
-                    <input type="text" name="description" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm" placeholder="Contoh: Iuran Wajib Bulan Juni">
+                    <input type="text" name="keterangan" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm" placeholder="Contoh: Iuran Wajib Bulan Juni">
                 </div>
             </div>
             <div class="mt-6 flex justify-end gap-3">
@@ -199,17 +208,26 @@
             @csrf
             <h2 class="text-lg font-bold text-gray-900 mb-4">Catat Pengeluaran RW</h2>
             <div class="space-y-4">
-                <div>
+                <div x-data="{ 
+                    raw: '', 
+                    formatted: '',
+                    format(val) {
+                        let num = val.replace(/\D/g, '');
+                        this.raw = num;
+                        this.formatted = num ? new Intl.NumberFormat('id-ID').format(num) : '';
+                    }
+                }">
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nominal (Rp) <span class="text-red-500">*</span></label>
-                    <input type="number" name="amount" required class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
+                    <input type="hidden" name="jumlah" x-model="raw">
+                    <input type="text" x-model="formatted" @input="format($event.target.value)" required class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">Tanggal <span class="text-red-500">*</span></label>
-                    <input type="date" name="date" required value="{{ date('Y-m-d') }}" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
+                    <input type="date" name="tanggal_keluar" required value="{{ date('Y-m-d') }}" class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">Keterangan <span class="text-red-500">*</span></label>
-                    <input type="text" name="description" required class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm" placeholder="Contoh: Biaya rapat bulanan">
+                    <input type="text" name="keterangan" required class="w-full rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm" placeholder="Contoh: Biaya rapat bulanan">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">Bukti Struk (Opsional)</label>

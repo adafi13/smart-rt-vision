@@ -15,7 +15,7 @@ class Expense extends Model
         'tanggal_keluar',
         'kategori',
         'bukti_nota',
-    
+        'tenant_id',
         'rw_id',
     ];
 

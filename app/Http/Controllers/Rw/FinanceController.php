@@ -27,8 +27,8 @@ class FinanceController extends Controller
             ->latest()
             ->paginate(10, ['*'], 'expenses_page');
 
-        $totalPemasukan = Contribution::where('rw_id', $rw->id)->sum('amount');
-        $totalPengeluaran = Expense::where('rw_id', $rw->id)->sum('amount');
+        $totalPemasukan = Contribution::where('rw_id', $rw->id)->sum('jumlah');
+        $totalPengeluaran = Expense::where('rw_id', $rw->id)->sum('jumlah');
         $saldoAkhir = $totalPemasukan - $totalPengeluaran;
 
         $rts = Tenant::where('rw_id', $rw->id)->get();
@@ -47,9 +47,9 @@ class FinanceController extends Controller
     {
         $request->validate([
             'tenant_id' => 'required|exists:tenants,id',
-            'amount' => 'required|numeric|min:0',
-            'date' => 'required|date',
-            'description' => 'nullable|string|max:255',
+            'jumlah' => 'required|numeric|min:0',
+            'tanggal_bayar' => 'required|date',
+            'keterangan' => 'nullable|string|max:255',
         ]);
 
         $rw = auth()->user()->rw;
@@ -57,9 +57,12 @@ class FinanceController extends Controller
         Contribution::create([
             'tenant_id' => $request->tenant_id,
             'rw_id' => $rw->id,
-            'amount' => $request->amount,
-            'date' => $request->date,
-            'description' => $request->description,
+            'family_id' => null, // now nullable
+            'jenis_iuran' => 'Iuran RT ke RW',
+            'jumlah' => $request->jumlah,
+            'periode' => $request->tanggal_bayar, // use same date for periode
+            'tanggal_bayar' => $request->tanggal_bayar,
+            'keterangan' => $request->keterangan,
         ]);
 
         return back()->with('success', 'Data iuran RT berhasil dicatat.');
@@ -77,9 +80,9 @@ class FinanceController extends Controller
     public function storeExpense(Request $request)
     {
         $request->validate([
-            'amount' => 'required|numeric|min:0',
-            'date' => 'required|date',
-            'description' => 'required|string|max:255',
+            'jumlah' => 'required|numeric|min:0',
+            'tanggal_keluar' => 'required|date',
+            'keterangan' => 'required|string|max:255',
             'receipt' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -93,10 +96,11 @@ class FinanceController extends Controller
         Expense::create([
             'rw_id' => $rw->id,
             'tenant_id' => null, // Explicitly null for RW global expense
-            'amount' => $request->amount,
-            'date' => $request->date,
-            'description' => $request->description,
-            'receipt_path' => $receiptPath,
+            'jumlah' => $request->jumlah,
+            'tanggal_keluar' => $request->tanggal_keluar,
+            'keterangan' => $request->keterangan,
+            'kategori' => 'Operasional RW', // default category
+            'bukti_nota' => $receiptPath,
             'recorded_by' => auth()->id(),
         ]);
 
@@ -109,8 +113,8 @@ class FinanceController extends Controller
             abort(403);
         }
 
-        if ($expense->receipt_path) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($expense->receipt_path);
+        if ($expense->bukti_nota) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($expense->bukti_nota);
         }
 
         $expense->delete();

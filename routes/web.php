@@ -164,6 +164,10 @@ Route::middleware(['auth', 'verified', 'tenant.auth'])->group(function () {
         Route::delete('/{expense}', [AdminExpenseController::class, 'destroy'])->name('destroy');
     });
 
+    Route::prefix('admin/laporan-kas-rw')->name('admin.rw-finance.')->middleware('rt_role:owner,bendahara')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\RwFinanceReportController::class, 'index'])->name('index');
+    });
+
     Route::prefix('admin/pengajuan-surat')->name('admin.pengajuan.')->middleware('rt_role:owner,sekretaris')->group(function () {
         Route::get('/', [AdminLetterRequestController::class, 'index'])->name('index');
         Route::post('/signature', [AdminLetterRequestController::class, 'updateSignature'])->name('signature');
