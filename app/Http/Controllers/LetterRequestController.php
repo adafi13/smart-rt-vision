@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\LetterRequest;
 use App\Models\Member;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Setting;
 
 class LetterRequestController extends Controller
 {
@@ -69,12 +72,15 @@ class LetterRequestController extends Controller
                     'pesan' => 'Sedang diverifikasi / diproses oleh pengurus RT.',
                     'is_system' => true,
                 ];
-            } elseif ($surat->status === 'Selesai') {
+            } elseif ($surat->status === 'Selesai' || $surat->status === 'Disetujui') {
                 $timeline[] = [
                     'waktu' => $surat->updated_at->translatedFormat('d M Y, H:i'),
-                    'pesan' => 'Surat selesai ditandatangani Ketua RT & siap diambil.',
+                    'pesan' => 'Surat selesai ditandatangani Ketua RT & siap diunduh.',
                     'is_system' => true,
                 ];
+                
+                // Add download url
+                $surat->download_url = route('unduh-surat', ['tenant' => app('currentTenant')->slug, 'id' => $surat->id]);
             } elseif ($surat->status === 'Ditolak') {
                 $timeline[] = [
                     'waktu' => $surat->updated_at->translatedFormat('d M Y, H:i'),
@@ -89,6 +95,7 @@ class LetterRequestController extends Controller
                 'status' => $surat->status,
                 'tanggal_pengajuan' => $surat->created_at->translatedFormat('d F Y'),
                 'timeline' => array_reverse($timeline),
+                'download_url' => $surat->download_url ?? null,
             ];
         });
 
@@ -97,5 +104,68 @@ class LetterRequestController extends Controller
             'nama' => $warga->nama,
             'data' => $formattedSurat,
         ]);
+    }
+
+    public function downloadPdfPublic($id)
+    {
+        $letterRequest = LetterRequest::where('id', $id)
+            ->whereHas('member.family.tenant', function ($q) {
+                $q->where('id', app('currentTenant')->id);
+            })->firstOrFail();
+
+        if ($letterRequest->status !== 'Disetujui' && $letterRequest->status !== 'Selesai') {
+            abort(403, 'Surat belum disetujui.');
+        }
+
+        $tenantId = app('currentTenant')->id;
+        $rtSignaturePath = Setting::get("tenant_{$tenantId}_rt_signature_path");
+        $rtSignature = $rtSignaturePath ? public_path('storage/' . $rtSignaturePath) : null;
+        
+        if ($rtSignature && file_exists($rtSignature)) {
+            $type = pathinfo($rtSignature, PATHINFO_EXTENSION);
+            $data = file_get_contents($rtSignature);
+            $rtSignature = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        }
+
+        $rtAdmin = app('currentTenant')->users()->where('role', 'admin_rt')->first();
+        $fallbackRtName = $rtAdmin ? $rtAdmin->name : '...........................';
+        $rtName = Setting::get("tenant_{$tenantId}_rt_name") ?: $fallbackRtName;
+        
+        $rw = app('currentTenant')->rw;
+        $rwSignature = null;
+        $rwName = null;
+        $rwHeadName = null;
+
+        if ($letterRequest->rw_status === 'Disetujui' && $rw) {
+            $rwSignaturePath = Setting::get("rw_{$rw->id}_signature_path");
+            $rwSignatureFile = $rwSignaturePath ? public_path('storage/' . $rwSignaturePath) : null;
+            if ($rwSignatureFile && file_exists($rwSignatureFile)) {
+                $type = pathinfo($rwSignatureFile, PATHINFO_EXTENSION);
+                $data = file_get_contents($rwSignatureFile);
+                $rwSignature = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
+            $rwName = $rw->name;
+            
+            $rwAdmin = $rw->users()->where('role', 'admin_rw')->first();
+            $fallbackRwName = $rwAdmin ? $rwAdmin->name : '...........................';
+            $rwHeadName = Setting::get("rw_{$rw->id}_head_name") ?: $fallbackRwName;
+        }
+        
+        $member = $letterRequest->member;
+
+        $pdf = Pdf::loadView('pdf.surat_pengantar', [
+            'nomor_surat' => $letterRequest->id,
+            'keperluan' => $letterRequest->keperluan,
+            'jenis_surat' => $letterRequest->jenis_surat,
+            'member' => $member,
+            'tenant' => app('currentTenant'),
+            'rtSignature' => $rtSignature,
+            'rtName' => $rtName,
+            'rwSignature' => $rwSignature,
+            'rwName' => $rwName,
+            'rwHeadName' => $rwHeadName,
+        ]);
+
+        return $pdf->download("Surat_Pengantar_{$member->nama}.pdf");
     }
 }

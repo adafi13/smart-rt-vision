@@ -1625,6 +1625,7 @@
                                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Riwayat Proses:</span>
                                     ${timelineHtml}
                                 </div>
+                                ${s.download_url ? `<div class="mt-4 pt-3 border-t border-slate-200/60"><a href="${s.download_url}" class="flex items-center justify-center gap-2 w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-colors shadow-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>Unduh PDF Surat</a></div>` : ''}
                             </div>
                         `;
                     }).join('');
