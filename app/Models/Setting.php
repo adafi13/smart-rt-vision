@@ -10,18 +10,19 @@ class Setting extends Model
 
     public static function get(string $key, $default = null)
     {
-        $setting = \Illuminate\Support\Facades\Cache::rememberForever("setting_{$key}", function () use ($key) {
-            return self::where('key', $key)->first();
+        $settingData = \Illuminate\Support\Facades\Cache::rememberForever("setting_{$key}", function () use ($key) {
+            $record = self::where('key', $key)->first();
+            return $record ? $record->toArray() : null;
         });
 
-        if (!$setting) return $default;
+        if (!$settingData) return $default;
 
-        return match ($setting->type) {
-            'boolean' => filter_var($setting->value, FILTER_VALIDATE_BOOLEAN),
-            'integer' => (int) $setting->value,
-            'float' => (float) $setting->value,
-            'json' => json_decode($setting->value, true),
-            default => $setting->value,
+        return match ($settingData['type']) {
+            'boolean' => filter_var($settingData['value'], FILTER_VALIDATE_BOOLEAN),
+            'integer' => (int) $settingData['value'],
+            'float' => (float) $settingData['value'],
+            'json' => json_decode($settingData['value'], true),
+            default => $settingData['value'],
         };
     }
 
