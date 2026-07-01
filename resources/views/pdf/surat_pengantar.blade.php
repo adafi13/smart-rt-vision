@@ -6,7 +6,7 @@
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;
-            font-size: 12pt;
+            font-size: 11pt;
             line-height: 1.5;
             margin: 0;
             padding: 20px;
@@ -15,7 +15,7 @@
             text-align: center;
             border-bottom: 3px solid black;
             padding-bottom: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         .header h3, .header h4, .header p {
             margin: 0;
@@ -35,7 +35,7 @@
         }
         .title {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         .title h4 {
             margin: 0;
@@ -67,7 +67,7 @@
         }
         .signature-section {
             width: 100%;
-            margin-top: 20px;
+            margin-top: 10px;
         }
         .signature-box {
             width: 40%;
