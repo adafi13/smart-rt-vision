@@ -92,18 +92,18 @@
 <body>
 
     <div class="header">
-        <h3>RUKUN TETANGGA (RT) {{ substr(app('currentTenant')->name ?? '001', 0, 3) }}</h3>
-        <h4>RUKUN WARGA (RW) {{ substr(app('currentTenant')->name ?? '020', -3) }}</h4>
+        <h3>RUKUN TETANGGA (RT) {{ substr($tenant->name ?? '001', 0, 3) }}</h3>
+        <h4>RUKUN WARGA (RW) {{ substr($tenant->name ?? '020', -3) }}</h4>
         <p>PERUM. MEGA REGENCY BLOK G-3 NO. 38, JAWA BARAT 17334</p>
     </div>
 
     <div class="title">
         <h4>SURAT PENGANTAR RT</h4>
-        <p>Nomor: {{ sprintf("%03d", $nomor_surat) }} / RT-{{ substr(app('currentTenant')->name ?? '001', 0, 3) }} / {{ date('m') }} / {{ date('Y') }}</p>
+        <p>Nomor: {{ sprintf("%03d", $nomor_surat) }} / RT-{{ substr($tenant->name ?? '001', 0, 3) }} / {{ date('m') }} / {{ date('Y') }}</p>
     </div>
 
     <div class="content">
-        <p>Yang bertanda tangan di bawah ini Ketua RT {{ substr(app('currentTenant')->name ?? '001', 0, 3) }} / RW {{ substr(app('currentTenant')->name ?? '020', -3) }}, dengan ini menerangkan bahwa:</p>
+        <p>Yang bertanda tangan di bawah ini Ketua RT {{ substr($tenant->name ?? '001', 0, 3) }} / RW {{ substr($tenant->name ?? '020', -3) }}, dengan ini menerangkan bahwa:</p>
         
         <table class="table-data">
             <tr>
@@ -159,7 +159,7 @@
         </div>
 
         <div class="signature-box">
-            <p>Dikeluarkan pada tanggal: {{ now()->translatedFormat('d F Y') }}<br><strong>Ketua RT {{ substr(app('currentTenant')->name ?? '001', 0, 3) }}</strong></p>
+            <p>Dikeluarkan pada tanggal: {{ now()->translatedFormat('d F Y') }}<br><strong>Ketua RT {{ substr($tenant->name ?? '001', 0, 3) }}</strong></p>
             
             @if($rtSignature)
                 <img src="{{ $rtSignature }}" alt="Tanda Tangan RT" class="signature-img">

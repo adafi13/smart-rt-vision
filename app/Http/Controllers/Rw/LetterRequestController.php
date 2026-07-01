@@ -111,6 +111,7 @@ class LetterRequestController extends Controller
             'keperluan' => $letterRequest->keperluan,
             'jenis_surat' => $letterRequest->jenis_surat,
             'member' => $member,
+            'tenant' => $letterRequest->member->family->tenant,
             'rtSignature' => $rtSignature,
             'rtName' => $rtName,
             'rwSignature' => $rwSignature,
