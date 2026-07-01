@@ -6,10 +6,10 @@
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;
-            font-size: 11pt;
-            line-height: 1.5;
+            font-size: 10.5pt;
+            line-height: 1.25;
             margin: 0;
-            padding: 20px;
+            padding: 10px 20px;
         }
         .header {
             text-align: center;
@@ -31,7 +31,7 @@
             font-weight: bold;
         }
         .header p {
-            font-size: 11pt;
+            font-size: 10pt;
         }
         .title {
             text-align: center;
@@ -53,7 +53,7 @@
         .table-data {
             width: 100%;
             margin-left: 20px;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
         }
         .table-data td {
             vertical-align: top;
@@ -73,12 +73,12 @@
         .signature-table td {
             width: 33.33%;
             vertical-align: bottom;
-            padding-top: 10px;
+            padding-top: 5px;
         }
         .signature-img {
-            max-width: 150px;
-            max-height: 80px;
-            margin: 5px auto;
+            max-width: 120px;
+            max-height: 55px;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -147,8 +147,8 @@
     <table class="signature-table">
         <tr>
             <td>
-                <p><br>Pemohon,</p>
-                <br><br><br>
+                <p>Pemohon,</p>
+                <br><br>
                 <p><strong>( {{ $member->nama }} )</strong></p>
             </td>
             <td></td>
@@ -157,7 +157,7 @@
                 @if($rtSignature)
                     <img src="{{ $rtSignature }}" alt="Tanda Tangan RT" class="signature-img">
                 @else
-                    <br><br><br>
+                    <br><br>
                 @endif
                 <p><strong>( {{ $rtName ?? '...........................' }} )</strong></p>
             </td>
@@ -170,7 +170,7 @@
                 @if(isset($rwSignature) && $rwSignature)
                     <img src="{{ $rwSignature }}" alt="Tanda Tangan RW" class="signature-img">
                 @else
-                    <br><br><br>
+                    <br><br>
                 @endif
                 <p><strong>( {{ $rwHeadName ?? '...........................' }} )</strong></p>
             </td>
