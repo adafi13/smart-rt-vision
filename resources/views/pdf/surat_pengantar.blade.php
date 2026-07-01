@@ -148,30 +148,50 @@
         <tr>
             <td>
                 <p>Pemohon,</p>
-                <br><br>
-                <p><strong>( {{ $member->nama }} )</strong></p>
             </td>
             <td></td>
             <td>
                 <p>Dikeluarkan pada tanggal: {{ now()->translatedFormat('d F Y') }}<br><strong>Ketua {{ $tenant->name ?? 'RT 001' }}</strong></p>
+            </td>
+        </tr>
+        <tr>
+            <td style="height: 60px; vertical-align: middle;"></td>
+            <td></td>
+            <td style="height: 60px; vertical-align: middle;">
                 @if($rtSignature)
                     <img src="{{ $rtSignature }}" alt="Tanda Tangan RT" class="signature-img">
-                @else
-                    <br><br>
                 @endif
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong>( {{ $member->nama }} )</strong></p>
+            </td>
+            <td></td>
+            <td>
                 <p><strong>( {{ $rtName ?? '...........................' }} )</strong></p>
             </td>
         </tr>
         @if(isset($rwName) && $rwName)
         <tr>
             <td></td>
-            <td>
+            <td style="padding-top: 5px;">
                 <p>Mengetahui,<br><strong>Ketua {{ $rwName }}</strong></p>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td style="height: 60px; vertical-align: middle;">
                 @if(isset($rwSignature) && $rwSignature)
                     <img src="{{ $rwSignature }}" alt="Tanda Tangan RW" class="signature-img">
-                @else
-                    <br><br>
                 @endif
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
                 <p><strong>( {{ $rwHeadName ?? '...........................' }} )</strong></p>
             </td>
             <td></td>
