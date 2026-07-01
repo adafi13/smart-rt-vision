@@ -1,4 +1,4 @@
-<x-app-layout title="Kelola Berita & Pengumuman">
+<x-rw-app-layout title="Kelola Berita & Pengumuman">
     <div class="max-w-7xl mx-auto space-y-6">
         
         <!-- Header -->

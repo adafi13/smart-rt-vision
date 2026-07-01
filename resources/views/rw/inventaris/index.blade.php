@@ -1,4 +1,4 @@
-<x-app-layout title="Manajemen Inventaris & Aset">
+<x-rw-app-layout title="Manajemen Inventaris & Aset">
     <div class="max-w-7xl mx-auto space-y-6" x-data="{ activeTab: 'katalog' }">
         
         <!-- Header -->
