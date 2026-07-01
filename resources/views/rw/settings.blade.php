@@ -62,7 +62,7 @@
 
                 <div class="pt-4 border-t border-gray-100">
                     <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Tanda Tangan RW & Stempel</label>
-                    <p class="text-xs text-gray-500 mb-3">Tanda tangan ini akan digunakan pada surat-surat yang disetujui RW.</p>
+                    <p class="text-xs text-gray-500 mb-3">Gambar tanda tangan langsung di bawah ini atau unggah file gambar. Tanda tangan ini akan digunakan pada surat-surat yang disetujui RW.</p>
                     
                     @if($rwSignature)
                         <div class="mb-4">
@@ -71,13 +71,30 @@
                         </div>
                     @endif
                     
+                    <div class="mb-4">
+                        <div class="border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 overflow-hidden" style="width: 100%; max-width: 400px;">
+                            <canvas id="signature-pad" class="w-full h-48 cursor-crosshair touch-none"></canvas>
+                        </div>
+                        <div class="flex justify-between items-center mt-2 max-w-[400px]">
+                            <p class="text-xs text-gray-500">Tanda tangan di dalam area kotak atas</p>
+                            <button type="button" id="clear-signature" class="text-xs text-rose-600 hover:text-rose-700 font-medium">Hapus & Ulangi</button>
+                        </div>
+                        <input type="hidden" name="signature_data" id="signature_data">
+                    </div>
+
+                    <div class="relative flex items-center py-2 max-w-[400px]">
+                        <div class="flex-grow border-t border-gray-200"></div>
+                        <span class="flex-shrink-0 mx-4 text-xs font-semibold text-gray-400 uppercase">ATAU UNGGAH FILE</span>
+                        <div class="flex-grow border-t border-gray-200"></div>
+                    </div>
+
                     <input type="file" name="rw_signature" accept="image/png, image/jpeg" 
-                           class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                           class="w-full mt-2 max-w-[400px] text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
                     @error('rw_signature') <p class="text-xs text-rose-500 mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="pt-4 border-t border-gray-100 flex justify-end">
-                    <button type="submit" class="px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm transition-colors">
+                    <button type="submit" id="submit-btn" class="px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm transition-colors">
                         Simpan Perubahan
                     </button>
                 </div>
@@ -108,4 +125,43 @@
             </div>
         </div>
     </div>
+    
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const canvas = document.getElementById('signature-pad');
+            const signatureData = document.getElementById('signature_data');
+            const clearBtn = document.getElementById('clear-signature');
+            
+            // Adjust canvas coordinate space taking into account pixel ratio,
+            // to make it look crisp on mobile devices.
+            function resizeCanvas() {
+                const ratio =  Math.max(window.devicePixelRatio || 1, 1);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = canvas.offsetHeight * ratio;
+                canvas.getContext("2d").scale(ratio, ratio);
+            }
+
+            window.onresize = resizeCanvas;
+            resizeCanvas();
+
+            const signaturePad = new SignaturePad(canvas, {
+                backgroundColor: 'rgba(255, 255, 255, 0)',
+                penColor: 'rgb(0, 0, 0)'
+            });
+
+            clearBtn.addEventListener('click', function () {
+                signaturePad.clear();
+                signatureData.value = '';
+            });
+
+            document.querySelector('form').addEventListener('submit', function(e) {
+                if (!signaturePad.isEmpty()) {
+                    signatureData.value = signaturePad.toDataURL();
+                }
+            });
+        });
+    </script>
+    @endpush
 </x-rw-app-layout>
