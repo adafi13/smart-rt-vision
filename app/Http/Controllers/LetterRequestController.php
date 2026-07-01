@@ -114,7 +114,7 @@ class LetterRequestController extends Controller
         ]);
     }
 
-    public function downloadPdfPublic($id)
+    public function downloadPdfPublic($tenant, $id)
     {
         $letterRequest = LetterRequest::where('id', $id)
             ->whereHas('member.family.tenant', function ($q) {
