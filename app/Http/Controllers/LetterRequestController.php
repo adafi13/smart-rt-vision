@@ -73,14 +73,22 @@ class LetterRequestController extends Controller
                     'is_system' => true,
                 ];
             } elseif ($surat->status === 'Selesai' || $surat->status === 'Disetujui') {
-                $timeline[] = [
-                    'waktu' => $surat->updated_at->translatedFormat('d M Y, H:i'),
-                    'pesan' => 'Surat selesai ditandatangani Ketua RT & siap diunduh.',
-                    'is_system' => true,
-                ];
-                
-                // Add download url
-                $surat->download_url = route('unduh-surat', ['tenant' => app('currentTenant')->slug, 'id' => $surat->id]);
+                if ($surat->rw_status === 'Pending') {
+                    $timeline[] = [
+                        'waktu' => $surat->updated_at->translatedFormat('d M Y, H:i'),
+                        'pesan' => 'Telah disetujui RT. Saat ini sedang menunggu tanda tangan Ketua RW.',
+                        'is_system' => true,
+                    ];
+                } else {
+                    $pesan = $surat->rw_status === 'Disetujui' ? 'Surat selesai ditandatangani Ketua RT & Ketua RW, dan siap diunduh.' : 'Surat selesai ditandatangani Ketua RT & siap diunduh.';
+                    $timeline[] = [
+                        'waktu' => $surat->updated_at->translatedFormat('d M Y, H:i'),
+                        'pesan' => $pesan,
+                        'is_system' => true,
+                    ];
+                    // Add download url
+                    $surat->download_url = route('unduh-surat', ['tenant' => app('currentTenant')->slug, 'id' => $surat->id]);
+                }
             } elseif ($surat->status === 'Ditolak') {
                 $timeline[] = [
                     'waktu' => $surat->updated_at->translatedFormat('d M Y, H:i'),
