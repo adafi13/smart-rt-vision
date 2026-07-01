@@ -90,9 +90,10 @@ class LetterRequestController extends Controller
                     $surat->download_url = route('unduh-surat', ['tenant' => app('currentTenant')->slug, 'id' => $surat->id]);
                 }
             } elseif ($surat->status === 'Ditolak') {
+                $alasan = $surat->catatan_admin ? ' Alasan penolakan: ' . $surat->catatan_admin . '.' : '';
                 $timeline[] = [
                     'waktu' => $surat->updated_at->translatedFormat('d M Y, H:i'),
-                    'pesan' => 'Permohonan ditolak oleh pengurus RT.',
+                    'pesan' => 'Permohonan ditolak oleh pengurus RT.' . $alasan . ' Silakan hubungi RT setempat untuk informasi lebih lanjut.',
                     'is_system' => true,
                 ];
             }
