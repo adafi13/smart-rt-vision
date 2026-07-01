@@ -85,7 +85,7 @@ class HomeController extends Controller
                               });
                           });
                 })
-                ->where('start_time', '>=', now())
+                ->whereDate('start_time', '>=', now()->format('Y-m-d'))
                 ->orderBy('start_time', 'asc')
                 ->take(5)
                 ->get(),
